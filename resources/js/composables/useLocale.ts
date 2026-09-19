@@ -29,12 +29,27 @@ export function setLocale(value: Locale): void {
     }
 }
 
+export type TranslateParams = Record<string, string | number>;
+
 export type UseLocaleReturn = {
     locale: Ref<Locale>;
     messages: ComputedRef<Messages>;
-    t: (key: string) => string;
+    t: (key: string, params?: TranslateParams) => string;
     setLocale: (value: Locale) => void;
 };
+
+export function interpolate(
+    template: string,
+    params?: TranslateParams,
+): string {
+    if (!params) {
+        return template;
+    }
+
+    return template.replace(/\{(\w+)\}/g, (match, name: string) =>
+        name in params ? String(params[name]) : match,
+    );
+}
 
 export function useLocale(): UseLocaleReturn {
     const current = computed(() => messages[locale.value]);
@@ -42,7 +57,8 @@ export function useLocale(): UseLocaleReturn {
     return {
         locale,
         messages: current,
-        t: (key: string) => current.value[key] ?? key,
+        t: (key: string, params?: TranslateParams) =>
+            interpolate(current.value[key] ?? key, params),
         setLocale,
     };
 }

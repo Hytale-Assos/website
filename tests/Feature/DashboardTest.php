@@ -87,6 +87,20 @@ it('shows the mods placeholder page', function () {
         ->assertInertia(fn ($page) => $page->component('Mods'));
 });
 
+it('shows the points page with a computed balance', function () {
+    $user = User::factory()->create(['hytale_id' => '11111111-1111-7111-8111-111111111111']);
+
+    $this->actingAs($user)
+        ->get(route('points.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Points')
+            ->has('points.points')
+            ->has('points.hoursTotal')
+            ->has('points.weeks')
+        );
+});
+
 it('prevents joining when no hytale account is linked', function () {
     $user = User::factory()->create(['hytale_id' => null]);
 

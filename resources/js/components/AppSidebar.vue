@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 import {
+    Award,
     BookOpen,
     CalendarClock,
     FolderGit2,
@@ -26,6 +27,7 @@ import {
 import { dashboard } from '@/routes';
 import { index as mapsIndex } from '@/routes/maps';
 import { index as modsIndex } from '@/routes/mods';
+import { index as pointsIndex } from '@/routes/points';
 import { index as serversIndex } from '@/routes/servers';
 import { index as sessionsIndex } from '@/routes/sessions';
 import { index as whitelistIndex } from '@/routes/whitelist';
@@ -61,6 +63,11 @@ const mainNavItems: NavItem[] = [
         title: 'Mods',
         href: modsIndex(),
         icon: Package,
+    },
+    {
+        title: 'Points Open',
+        href: pointsIndex(),
+        icon: Award,
     },
 ];
 

@@ -6,6 +6,7 @@ use App\Hytale\Clients\CachingHytaleApiClient;
 use App\Hytale\Clients\FakeHytaleApiClient;
 use App\Hytale\Clients\HttpHytaleApiClient;
 use App\Hytale\Contracts\HytaleApiClient;
+use App\Hytale\Points\PointsCalculator;
 use App\Hytale\Support\ApiSigner;
 use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Contracts\Foundation\Application;
@@ -51,6 +52,17 @@ class HytaleServiceProvider extends ServiceProvider
             return new ApiSigner(
                 apiKey: (string) $config['api_key'],
                 hmacSecret: (string) $config['hmac_secret'],
+            );
+        });
+
+        $this->app->singleton(PointsCalculator::class, function ($app): PointsCalculator {
+            $config = $app['config']->get('hytale.points');
+
+            return new PointsCalculator(
+                hoursThreshold: (float) $config['hours_threshold'],
+                pointsPerReward: (float) $config['points_per_reward'],
+                weekStartsOn: (int) $config['week_starts_on'],
+                maxSessionPoints: (float) $config['max_session_points'],
             );
         });
     }

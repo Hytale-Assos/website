@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MapController;
 use App\Http\Controllers\ModController;
+use App\Http\Controllers\PointsController;
 use App\Http\Controllers\ServerController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\WhitelistController;
@@ -24,6 +25,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('maps', [MapController::class, 'index'])->name('maps.index');
 
     Route::get('mods', [ModController::class, 'index'])->name('mods.index');
+
+    Route::get('points', [PointsController::class, 'index'])->name('points.index');
 });
 
 require __DIR__.'/settings.php';

@@ -94,5 +94,27 @@ return [
         'prefix' => env('HYTALE_API_CACHE_PREFIX', 'hytale-api'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Open Points
+    |--------------------------------------------------------------------------
+    |
+    | Rules for the member points ("Points Open"):
+    |  - a member earns `points_per_reward` once they accumulate
+    |    `hours_threshold` hours of play within a calendar week;
+    |  - hours below the threshold carry over to the following weeks;
+    |  - at most one reward per week: once rewarded, the counter resets and the
+    |    member must wait for the week to end before earning again;
+    |  - play sessions can award at most `max_session_points` points in total;
+    |    the global balance stays open to other sources (events, projects...).
+    |
+    */
+
+    'points' => [
+        'hours_threshold' => (float) env('HYTALE_POINTS_HOURS', 2),
+        'points_per_reward' => (float) env('HYTALE_POINTS_PER_REWARD', 0.5),
+        'week_starts_on' => (int) env('HYTALE_POINTS_WEEK_START', 1),
+        'max_session_points' => (float) env('HYTALE_POINTS_MAX_SESSION', 2),
+    ],
 
 ];

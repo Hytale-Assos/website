@@ -164,6 +164,29 @@ export const messages: Record<Locale, Messages> = {
         'dash.mods.cta': 'Voir le dépôt',
         'dash.mods.repository': 'Dépôt',
 
+        'dash.points.title': 'Points Open',
+        'dash.points.description':
+            'Gagne des points en jouant sur les serveurs de l’association.',
+        'dash.points.balance': 'Solde de points',
+        'dash.points.totalHours': 'Heures jouées',
+        'dash.points.progress': 'Progression vers le prochain point',
+        'dash.points.toNext': 'Encore {hours} h avant +0,5 point',
+        'dash.points.ready': 'Seuil atteint, point crédité',
+        'dash.points.unlockAt': 'Prochain point disponible après le {date}',
+        'dash.points.rule':
+            'Règle : 0,5 point dès 2 h de jeu cumulées dans la semaine. Les heures en dessous du seuil sont reportées. Un seul point par semaine.',
+        'dash.points.history': 'Détail par semaine',
+        'dash.points.week': 'Semaine du {date}',
+        'dash.points.weekHours': '{hours} h jouées',
+        'dash.points.carry': 'Report : {hours} h',
+        'dash.points.rewarded': '0,5 pt gagné',
+        'dash.points.notRewarded': 'Pas de point',
+        'dash.points.empty':
+            'Aucune session enregistrée pour le moment. Joue 2 h pour gagner 0,5 point.',
+        'dash.points.cap': 'Plafond par le jeu : {points} pts',
+        'dash.points.capReached':
+            'Plafond atteint : {points} pts gagnés en jouant. D’autres points peuvent être obtenus via d’autres activités.',
+        'dash.points.capProgress': '{points} / {max} pts via le jeu',
     },
     en: {
         'meta.title': 'Hytale Club',
@@ -322,6 +345,29 @@ export const messages: Record<Locale, Messages> = {
         'dash.mods.cta': 'View repository',
         'dash.mods.repository': 'Repository',
 
+        'dash.points.title': 'Open Points',
+        'dash.points.description':
+            'Earn points by playing on the club servers.',
+        'dash.points.balance': 'Points balance',
+        'dash.points.totalHours': 'Hours played',
+        'dash.points.progress': 'Progress to next point',
+        'dash.points.toNext': '{hours} h left before +0.5 point',
+        'dash.points.ready': 'Threshold reached, point credited',
+        'dash.points.unlockAt': 'Next point available after {date}',
+        'dash.points.rule':
+            'Rule: 0.5 point once 2 h of play accumulate within the week. Hours below the threshold carry over. Only one point per week.',
+        'dash.points.history': 'Weekly breakdown',
+        'dash.points.week': 'Week of {date}',
+        'dash.points.weekHours': '{hours} h played',
+        'dash.points.carry': 'Carry-over: {hours} h',
+        'dash.points.rewarded': '0.5 pt earned',
+        'dash.points.notRewarded': 'No point',
+        'dash.points.empty':
+            'No session recorded yet. Play 2 h to earn 0.5 point.',
+        'dash.points.cap': 'Play cap: {points} pts',
+        'dash.points.capReached':
+            'Cap reached: {points} pts earned from playing. More points can be earned through other activities.',
+        'dash.points.capProgress': '{points} / {max} pts from playing',
     },
 };
 
