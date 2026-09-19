@@ -82,6 +82,65 @@ export const messages: Record<Locale, Messages> = {
         'footer.builtWith': 'Fait avec passion par les membres.',
         'footer.discord': 'Discord',
 
+        'dash.title': 'Tableau de bord',
+        'dash.description':
+            'Retrouve tes serveurs, ta whitelist et tes sessions Hytale.',
+        'dash.tabs.servers': 'Serveurs',
+        'dash.tabs.whitelist': 'Liste blanche',
+        'dash.tabs.sessions': 'Mes sessions',
+        'dash.tabs.account': 'Mon compte',
+        'dash.error.title': 'API Hytale injoignable',
+        'dash.error.retry': 'Réessayer',
+        'dash.refresh': 'Rafraîchir',
+
+        'dash.account.title': 'Compte Hytale',
+        'dash.account.connected': 'Compte lié',
+        'dash.account.notConnected': 'Aucun compte Hytale lié',
+        'dash.account.hytaleId': 'Identifiant Hytale',
+        'dash.account.oauthNote':
+            'La connexion « Se connecter avec Hytale » (OAuth2) arrive bientôt. Une fois ton compte lié, tu pourras rejoindre les serveurs en un clic.',
+        'dash.account.soon': 'Bientôt disponible',
+
+        'dash.servers.title': 'Serveurs disponibles',
+        'dash.servers.description':
+            'Rejoins un serveur pour être ajouté à sa whitelist.',
+        'dash.servers.empty': 'Aucun serveur disponible pour le moment.',
+        'dash.servers.join': 'Rejoindre',
+        'dash.servers.joined': 'Tu es whitelisté',
+        'dash.servers.visit': 'Visiter',
+        'dash.servers.count': 'serveurs',
+        'dash.servers.address': 'Adresse du serveur',
+        'dash.servers.copy': 'Copier l’adresse',
+        'dash.servers.copied': 'Adresse copiée',
+        'dash.servers.enterInGame':
+            'Colle cette adresse dans le jeu pour rejoindre le serveur.',
+
+        'dash.whitelist.title': 'Liste blanche',
+        'dash.whitelist.description':
+            'Les serveurs sur lesquels tu es autorisé à jouer.',
+        'dash.whitelist.empty': 'Tu n’es encore whitelisté sur aucun serveur.',
+        'dash.whitelist.leave': 'Quitter',
+        'dash.whitelist.since': 'Depuis',
+
+        'dash.sessions.title': 'Mes sessions de jeu',
+        'dash.sessions.description':
+            'Ton historique de connexions sur les serveurs.',
+        'dash.sessions.empty': 'Aucune session enregistrée.',
+        'dash.sessions.open': 'En cours',
+        'dash.sessions.closed': 'Terminée',
+        'dash.sessions.joined': 'Connexion',
+        'dash.sessions.ended': 'Déconnexion',
+        'dash.sessions.duration': 'Durée',
+
+        'dash.mock.banner':
+            'Mode démo : l’API Hytale n’est pas connectée, les données affichées sont fictives.',
+
+        'dash.noHytaleId.title': 'Compte Hytale non lié',
+        'dash.noHytaleId.description':
+            'Lie ton compte Hytale pour rejoindre des serveurs et voir tes sessions.',
+
+        'dash.activity.viewAll': 'Tout voir',
+
     },
     en: {
         'meta.title': 'Hytale Club',
@@ -161,6 +220,63 @@ export const messages: Record<Locale, Messages> = {
         'footer.rights': 'All rights reserved.',
         'footer.builtWith': 'Made with passion by our members.',
         'footer.discord': 'Discord',
+
+        'dash.title': 'Dashboard',
+        'dash.description':
+            'Find your servers, your whitelist and your Hytale sessions.',
+        'dash.tabs.servers': 'Servers',
+        'dash.tabs.whitelist': 'Whitelist',
+        'dash.tabs.sessions': 'My sessions',
+        'dash.tabs.account': 'My account',
+        'dash.error.title': 'Hytale API unreachable',
+        'dash.error.retry': 'Retry',
+        'dash.refresh': 'Refresh',
+
+        'dash.account.title': 'Hytale account',
+        'dash.account.connected': 'Account linked',
+        'dash.account.notConnected': 'No Hytale account linked',
+        'dash.account.hytaleId': 'Hytale identifier',
+        'dash.account.oauthNote':
+            '“Sign in with Hytale” (OAuth2) is coming soon. Once your account is linked, you will be able to join servers in one click.',
+        'dash.account.soon': 'Coming soon',
+
+        'dash.servers.title': 'Available servers',
+        'dash.servers.description':
+            'Join a server to be added to its whitelist.',
+        'dash.servers.empty': 'No server available yet.',
+        'dash.servers.join': 'Join',
+        'dash.servers.joined': 'You are whitelisted',
+        'dash.servers.visit': 'Visit',
+        'dash.servers.count': 'servers',
+        'dash.servers.address': 'Server address',
+        'dash.servers.copy': 'Copy address',
+        'dash.servers.copied': 'Address copied',
+        'dash.servers.enterInGame':
+            'Paste this address in-game to join the server.',
+
+        'dash.whitelist.title': 'Whitelist',
+        'dash.whitelist.description': 'The servers you are allowed to play on.',
+        'dash.whitelist.empty': 'You are not whitelisted on any server yet.',
+        'dash.whitelist.leave': 'Leave',
+        'dash.whitelist.since': 'Since',
+
+        'dash.sessions.title': 'My gaming sessions',
+        'dash.sessions.description': 'Your connection history on servers.',
+        'dash.sessions.empty': 'No session recorded.',
+        'dash.sessions.open': 'Ongoing',
+        'dash.sessions.closed': 'Ended',
+        'dash.sessions.joined': 'Joined',
+        'dash.sessions.ended': 'Ended',
+        'dash.sessions.duration': 'Duration',
+
+        'dash.mock.banner':
+            'Demo mode: the Hytale API is not connected, the displayed data is fake.',
+
+        'dash.noHytaleId.title': 'Hytale account not linked',
+        'dash.noHytaleId.description':
+            'Link your Hytale account to join servers and see your sessions.',
+
+        'dash.activity.viewAll': 'View all',
 
     },
 };

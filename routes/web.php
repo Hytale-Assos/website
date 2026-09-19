@@ -1,11 +1,23 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ServerController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\WhitelistController;
 use Illuminate\Support\Facades\Route;
 
 Route::inertia('/', 'Welcome')->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'Dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('servers', [ServerController::class, 'index'])->name('servers.index');
+
+    Route::get('whitelist', [WhitelistController::class, 'index'])->name('whitelist.index');
+    Route::post('whitelist', [WhitelistController::class, 'store'])->name('whitelist.store');
+    Route::delete('whitelist/{entry}', [WhitelistController::class, 'destroy'])->name('whitelist.destroy');
+
+    Route::get('sessions', [SessionController::class, 'index'])->name('sessions.index');
 });
 
 require __DIR__.'/settings.php';

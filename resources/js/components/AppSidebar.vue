@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import {
+    BookOpen,
+    CalendarClock,
+    FolderGit2,
+    LayoutGrid,
+    Server,
+    ShieldCheck,
+} from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -15,6 +22,9 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import { index as serversIndex } from '@/routes/servers';
+import { index as sessionsIndex } from '@/routes/sessions';
+import { index as whitelistIndex } from '@/routes/whitelist';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
@@ -22,6 +32,21 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Servers',
+        href: serversIndex(),
+        icon: Server,
+    },
+    {
+        title: 'Whitelist',
+        href: whitelistIndex(),
+        icon: ShieldCheck,
+    },
+    {
+        title: 'Sessions',
+        href: sessionsIndex(),
+        icon: CalendarClock,
     },
 ];
 
