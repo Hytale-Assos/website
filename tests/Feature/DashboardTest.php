@@ -66,6 +66,27 @@ it('shows the sessions page', function () {
         );
 });
 
+it('shows the maps placeholder page with servers', function () {
+    $user = User::factory()->create(['hytale_id' => '66666666-6666-7666-8666-666666666666']);
+
+    $this->actingAs($user)
+        ->get(route('maps.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Maps')
+            ->has('servers', 2)
+        );
+});
+
+it('shows the mods placeholder page', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('mods.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Mods'));
+});
+
 it('prevents joining when no hytale account is linked', function () {
     $user = User::factory()->create(['hytale_id' => null]);
 

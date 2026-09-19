@@ -141,6 +141,29 @@ export const messages: Record<Locale, Messages> = {
 
         'dash.activity.viewAll': 'Tout voir',
 
+        'dash.maps.title': 'Cartes',
+        'dash.maps.description':
+            'Visualise la carte des serveurs en temps réel.',
+        'dash.maps.selectServer': 'Choisir un serveur',
+        'dash.maps.serverPlaceholder': 'Sélectionne un serveur',
+        'dash.maps.empty': 'La carte arrive bientôt',
+        'dash.maps.comingSoon':
+            'Rendu de carte en temps réel (type BlueMap / Dynmap) prochainement disponible. Sélectionne un serveur pour préparer l’affichage.',
+        'dash.maps.badge': 'En développement',
+        'dash.maps.cta': 'Bientôt disponible',
+        'dash.maps.noServer': 'Aucun serveur disponible.',
+        'dash.maps.openExternal': 'Ouvrir la carte',
+
+        'dash.mods.title': 'Mods',
+        'dash.mods.description':
+            'Les mods créés par les membres de l’association.',
+        'dash.mods.empty': 'Aucun mod pour le moment',
+        'dash.mods.comingSoon':
+            'Les mods créés par les membres seront listés ici, avec un lien vers leur dépôt Git.',
+        'dash.mods.badge': 'En développement',
+        'dash.mods.cta': 'Voir le dépôt',
+        'dash.mods.repository': 'Dépôt',
+
     },
     en: {
         'meta.title': 'Hytale Club',
@@ -277,6 +300,27 @@ export const messages: Record<Locale, Messages> = {
             'Link your Hytale account to join servers and see your sessions.',
 
         'dash.activity.viewAll': 'View all',
+
+        'dash.maps.title': 'Maps',
+        'dash.maps.description': 'View servers maps in real time.',
+        'dash.maps.selectServer': 'Choose a server',
+        'dash.maps.serverPlaceholder': 'Select a server',
+        'dash.maps.empty': 'The map is coming soon',
+        'dash.maps.comingSoon':
+            'Real-time map rendering (BlueMap / Dynmap style) available soon. Select a server to prepare the view.',
+        'dash.maps.badge': 'In development',
+        'dash.maps.cta': 'Coming soon',
+        'dash.maps.noServer': 'No server available.',
+        'dash.maps.openExternal': 'Open the map',
+
+        'dash.mods.title': 'Mods',
+        'dash.mods.description': 'The mods created by club members.',
+        'dash.mods.empty': 'No mod yet',
+        'dash.mods.comingSoon':
+            'Mods created by members will be listed here, with a link to their Git repository.',
+        'dash.mods.badge': 'In development',
+        'dash.mods.cta': 'View repository',
+        'dash.mods.repository': 'Repository',
 
     },
 };
