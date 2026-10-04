@@ -1,47 +1,140 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
-import PlaceholderPattern from '@/components/PlaceholderPattern.vue';
+import { Head, Link, router } from '@inertiajs/vue3';
+import {
+    ArrowRight,
+    CalendarClock,
+    RefreshCw,
+    Server,
+    ShieldCheck,
+    UserRound,
+} from '@lucide/vue';
+import MemberPage from '@/components/dashboard/MemberPage.vue';
+import LinkAccountsPrompt from '@/components/dashboard/LinkAccountsPrompt.vue';
+import SessionsList from '@/components/dashboard/SessionsList.vue';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { useLocale } from '@/composables/useLocale';
 import { dashboard } from '@/routes';
+import { index as serversIndex } from '@/routes/servers';
+import { index as sessionsIndex } from '@/routes/sessions';
+import { index as whitelistIndex } from '@/routes/whitelist';
+import type { HytaleServer, PlayerSession } from '@/types';
+
+defineProps<{
+    counts: {
+        servers: number;
+        whitelists: number;
+        sessions: number;
+    };
+    recentSessions: PlayerSession[];
+    servers: HytaleServer[];
+    hytaleId: string | null;
+    error: string | null;
+    mock: boolean;
+}>();
+
+const { t } = useLocale();
+
+const refresh = () => router.reload();
+
+const cards = [
+    {
+        key: 'dash.tabs.servers',
+        prop: 'servers',
+        icon: Server,
+        href: serversIndex,
+    },
+    {
+        key: 'dash.tabs.whitelist',
+        prop: 'whitelists',
+        icon: ShieldCheck,
+        href: whitelistIndex,
+    },
+    {
+        key: 'dash.tabs.sessions',
+        prop: 'sessions',
+        icon: CalendarClock,
+        href: sessionsIndex,
+    },
+] as const;
 
 defineOptions({
     layout: {
-        breadcrumbs: [
-            {
-                title: 'Dashboard',
-                href: dashboard(),
-            },
-        ],
+        breadcrumbs: [{ title: 'Dashboard', href: dashboard() }],
     },
 });
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head :title="t('dash.title')" />
 
-    <div
-        class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
+    <LinkAccountsPrompt />
+
+    <MemberPage
+        :title="t('dash.title')"
+        :description="t('dash.description')"
+        :error="error"
+        :mock="mock"
+        :hytale-id="hytaleId"
     >
-        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div
-                class="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border"
-            >
-                <PlaceholderPattern />
+        <template #actions>
+            <div class="flex items-center gap-2">
+                <Badge v-if="hytaleId" variant="outline" class="gap-1.5">
+                    <UserRound class="size-3.5" />
+                    {{ t('dash.account.connected') }}
+                </Badge>
+                <Button variant="outline" size="sm" @click="refresh">
+                    <RefreshCw class="size-4" />
+                    {{ t('dash.refresh') }}
+                </Button>
             </div>
-            <div
-                class="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border"
+        </template>
+
+        <div class="grid gap-4 sm:grid-cols-3">
+            <Link
+                v-for="card in cards"
+                :key="card.key"
+                :href="card.href()"
+                class="group"
             >
-                <PlaceholderPattern />
-            </div>
-            <div
-                class="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border"
-            >
-                <PlaceholderPattern />
-            </div>
+                <Card
+                    class="transition-colors group-hover:border-emerald-500/40"
+                >
+                    <CardContent class="flex items-center justify-between">
+                        <div>
+                            <p
+                                class="text-muted-foreground flex items-center gap-1.5 text-xs font-medium"
+                            >
+                                <component :is="card.icon" class="size-3.5" />
+                                {{ t(card.key) }}
+                            </p>
+                            <p class="mt-1 text-3xl font-bold tracking-tight">
+                                {{ counts[card.prop] }}
+                            </p>
+                        </div>
+                        <ArrowRight
+                            class="text-muted-foreground size-4 transition-transform group-hover:translate-x-0.5"
+                        />
+                    </CardContent>
+                </Card>
+            </Link>
         </div>
-        <div
-            class="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 rounded-xl border md:min-h-min"
-        >
-            <PlaceholderPattern />
+
+        <div class="space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="text-sm font-semibold">
+                    {{ t('dash.sessions.title') }}
+                </h2>
+                <Link
+                    :href="sessionsIndex()"
+                    class="text-muted-foreground hover:text-foreground text-xs font-medium"
+                >
+                    {{ t('dash.activity.viewAll') }}
+                </Link>
+            </div>
+
+            <SessionsList :sessions="recentSessions" :servers="servers" />
         </div>
-    </div>
+    </MemberPage>
 </template>
