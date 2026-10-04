@@ -46,15 +46,13 @@ class WhitelistController extends Controller
         $hytaleId = $this->hytaleId($request);
 
         if ($hytaleId === null) {
-            return back()->withErrors([
-                'whitelist' => __('Connect your Hytale account first.'),
-            ]);
+            return $this->fail(__('Connect your Hytale account first.'));
         }
 
         try {
             $this->client->addToWhitelist($validated['hytale_server_id'], $hytaleId);
         } catch (HytaleApiException $exception) {
-            return back()->withErrors(['whitelist' => $exception->getMessage()]);
+            return $this->fail($exception->getMessage());
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Added to whitelist.')]);
@@ -70,11 +68,22 @@ class WhitelistController extends Controller
         try {
             $this->client->removeFromWhitelist($entry);
         } catch (HytaleApiException $exception) {
-            return back()->withErrors(['whitelist' => $exception->getMessage()]);
+            return $this->fail($exception->getMessage());
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Removed from whitelist.')]);
 
         return back();
+    }
+
+    /**
+     * Report a whitelist action failure as both an inline error and a toast,
+     * so an unreachable core never results in a blank page.
+     */
+    private function fail(string $message): RedirectResponse
+    {
+        Inertia::flash('toast', ['type' => 'error', 'message' => $message]);
+
+        return back()->withErrors(['whitelist' => $message]);
     }
 }

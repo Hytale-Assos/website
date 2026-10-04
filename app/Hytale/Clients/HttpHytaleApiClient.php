@@ -10,6 +10,7 @@ use App\Hytale\Data\PlayerSession;
 use App\Hytale\Data\WhitelistEntry;
 use App\Hytale\Exceptions\HytaleApiException;
 use App\Hytale\Support\ApiSigner;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -29,20 +30,22 @@ final class HttpHytaleApiClient implements HytaleApiClient
 
     public function health(): array
     {
-        $response = $this->request()->get('/health');
+        $endpoint = '/health';
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint));
 
         /** @var array{status: string, database: string} $payload */
-        $payload = $this->decodeObject($response, '/health');
+        $payload = $this->decodeObject($response, $endpoint);
 
         return $payload;
     }
 
     public function servers(array $query = []): Page
     {
-        $response = $this->request()->get('/api/v1/servers', $query);
+        $endpoint = '/api/v1/servers';
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint, $query));
 
         return Page::fromArray(
-            $this->decodeObject($response, '/api/v1/servers'),
+            $this->decodeObject($response, $endpoint),
             HytaleServer::fromArray(...),
         );
     }
@@ -50,21 +53,20 @@ final class HttpHytaleApiClient implements HytaleApiClient
     public function server(string $id): HytaleServer
     {
         $endpoint = '/api/v1/servers/'.$id;
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint));
 
-        return HytaleServer::fromArray(
-            $this->decodeObject($this->request()->get($endpoint), $endpoint),
-        );
+        return HytaleServer::fromArray($this->decodeObject($response, $endpoint));
     }
 
     public function createServer(string $moduleId, string $name, string $url): HytaleServer
     {
         $endpoint = '/api/v1/servers';
 
-        $response = $this->signer->signWrite($this->request(), [
+        $response = $this->send($endpoint, fn (): Response => $this->signer->signWrite($this->request(), [
             'module_id' => $moduleId,
             'name' => $name,
             'url' => $url,
-        ])->post($endpoint);
+        ])->post($endpoint));
 
         return HytaleServer::fromArray($this->decodeObject($response, $endpoint));
     }
@@ -74,17 +76,18 @@ final class HttpHytaleApiClient implements HytaleApiClient
         $endpoint = '/api/v1/servers/'.$id;
 
         $this->ensureSuccess(
-            $this->signer->signWrite($this->request())->delete($endpoint),
+            $this->send($endpoint, fn (): Response => $this->signer->signWrite($this->request())->delete($endpoint)),
             $endpoint,
         );
     }
 
     public function sessions(array $query = []): Page
     {
-        $response = $this->request()->get('/api/v1/sessions', $query);
+        $endpoint = '/api/v1/sessions';
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint, $query));
 
         return Page::fromArray(
-            $this->decodeObject($response, '/api/v1/sessions'),
+            $this->decodeObject($response, $endpoint),
             PlayerSession::fromArray(...),
         );
     }
@@ -92,19 +95,21 @@ final class HttpHytaleApiClient implements HytaleApiClient
     public function playerSessions(string $hytaleId, array $query = []): Page
     {
         $endpoint = '/api/v1/players/'.$hytaleId.'/sessions';
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint, $query));
 
         return Page::fromArray(
-            $this->decodeObject($this->request()->get($endpoint, $query), $endpoint),
+            $this->decodeObject($response, $endpoint),
             PlayerSession::fromArray(...),
         );
     }
 
     public function whitelists(array $query = []): Page
     {
-        $response = $this->request()->get('/api/v1/whitelists', $query);
+        $endpoint = '/api/v1/whitelists';
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint, $query));
 
         return Page::fromArray(
-            $this->decodeObject($response, '/api/v1/whitelists'),
+            $this->decodeObject($response, $endpoint),
             WhitelistEntry::fromArray(...),
         );
     }
@@ -112,9 +117,10 @@ final class HttpHytaleApiClient implements HytaleApiClient
     public function playerWhitelists(string $hytaleId, array $query = []): Page
     {
         $endpoint = '/api/v1/players/'.$hytaleId.'/whitelists';
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint, $query));
 
         return Page::fromArray(
-            $this->decodeObject($this->request()->get($endpoint, $query), $endpoint),
+            $this->decodeObject($response, $endpoint),
             WhitelistEntry::fromArray(...),
         );
     }
@@ -123,10 +129,10 @@ final class HttpHytaleApiClient implements HytaleApiClient
     {
         $endpoint = '/api/v1/whitelists';
 
-        $response = $this->signer->signWrite($this->request(), [
+        $response = $this->send($endpoint, fn (): Response => $this->signer->signWrite($this->request(), [
             'hytale_server_id' => $hytaleServerId,
             'hytale_id' => $hytaleId,
-        ])->post($endpoint);
+        ])->post($endpoint));
 
         return WhitelistEntry::fromArray($this->decodeObject($response, $endpoint));
     }
@@ -136,7 +142,7 @@ final class HttpHytaleApiClient implements HytaleApiClient
         $endpoint = '/api/v1/whitelists/'.$id;
 
         $this->ensureSuccess(
-            $this->signer->signWrite($this->request())->delete($endpoint),
+            $this->send($endpoint, fn (): Response => $this->signer->signWrite($this->request())->delete($endpoint)),
             $endpoint,
         );
     }
@@ -144,9 +150,10 @@ final class HttpHytaleApiClient implements HytaleApiClient
     public function modules(): array
     {
         $endpoint = '/api/v1/modules';
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint));
 
         /** @var array<int, array<string, mixed>> $payload */
-        $payload = $this->decodeList($this->request()->get($endpoint), $endpoint);
+        $payload = $this->decodeList($response, $endpoint);
 
         return array_map(Module::fromArray(...), $payload);
     }
@@ -154,8 +161,9 @@ final class HttpHytaleApiClient implements HytaleApiClient
     public function module(string $id): Module
     {
         $endpoint = '/api/v1/modules/'.$id;
+        $response = $this->send($endpoint, fn (): Response => $this->request()->get($endpoint));
 
-        return Module::fromArray($this->decodeObject($this->request()->get($endpoint), $endpoint));
+        return Module::fromArray($this->decodeObject($response, $endpoint));
     }
 
     private function request(): PendingRequest
@@ -208,5 +216,24 @@ final class HttpHytaleApiClient implements HytaleApiClient
             is_string($message) ? $message : null,
             $endpoint,
         );
+    }
+
+    /**
+     * Runs an HTTP call, normalizing transport failures (connection refused,
+     * DNS, timeout) into a typed {@see HytaleApiException} so callers never
+     * crash on a raw connection error.
+     *
+     * @template T
+     *
+     * @param  \Closure(): T  $callback
+     * @return T
+     */
+    private function send(string $endpoint, \Closure $callback): mixed
+    {
+        try {
+            return $callback();
+        } catch (ConnectionException $exception) {
+            throw HytaleApiException::unavailable($endpoint, $exception);
+        }
     }
 }

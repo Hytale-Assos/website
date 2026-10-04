@@ -3,6 +3,7 @@
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Hytale\Exceptions\HytaleApiException;
 use App\Hytale\Support\ApiSigner;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
@@ -98,6 +99,20 @@ it('throws a typed exception on api errors', function () {
 
     app(HytaleApiClient::class)->server('missing');
 })->throws(HytaleApiException::class, 'server not found');
+
+it('normalizes a connection failure into an unreachable exception', function () {
+    Http::fake([
+        'core.test/api/v1/servers*' => fn () => throw new ConnectionException('cURL error 7'),
+    ]);
+
+    try {
+        app(HytaleApiClient::class)->servers();
+        $this->fail('A connection failure should not be swallowed.');
+    } catch (HytaleApiException $exception) {
+        expect($exception->isUnavailable())->toBeTrue()
+            ->and($exception->status)->toBe(HytaleApiException::UNAVAILABLE);
+    }
+});
 
 it('maps a paginated response', function () use ($serverPayload) {
     Http::fake([

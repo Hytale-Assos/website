@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Concerns;
 
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 trait SharesHytaleProps
 {
@@ -19,11 +20,23 @@ trait SharesHytaleProps
     /**
      * Props every member page shares: linked account, mock flag, API error.
      *
+     * When the core is unreachable, a toast is flashed so the failure is made
+     * obvious even on pages that render no inline alert.
+     *
      * @param  array<string, mixed>  $props
      * @return array<string, mixed>
      */
     protected function baseProps(Request $request, array $props = []): array
     {
+        $error = $props['error'] ?? null;
+
+        if (is_string($error) && $error !== '') {
+            Inertia::flash('toast', [
+                'type' => 'error',
+                'message' => $error,
+            ]);
+        }
+
         return [
             'hytaleId' => $this->hytaleId($request),
             'mock' => (bool) config('hytale.mock'),
