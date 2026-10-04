@@ -34,6 +34,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $hytale_id_hash
  * @property string|null $discord_nickname
  * @property string|null $hytale_nickname
+ * @property Carbon|null $hytale_account_verified_at
  * @property string|null $firstname
  * @property string|null $lastname
  * @property string|null $grade_level
@@ -63,6 +64,7 @@ class User extends Authenticatable implements PasskeyUser
             'name' => 'encrypted',
             'email' => EncryptedEmailWithHash::class.':email_hash',
             'email_verified_at' => 'datetime',
+            'hytale_account_verified_at' => 'datetime',
             'discord_id' => EncryptedWithHash::class.':discord_id_hash',
             'discord_nickname' => 'encrypted',
             'hytale_id' => EncryptedWithHash::class.':hytale_id_hash',

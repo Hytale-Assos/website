@@ -93,6 +93,16 @@ export const messages: Record<Locale, Messages> = {
         'dash.error.retry': 'Réessayer',
         'dash.refresh': 'Rafraîchir',
 
+        'dash.linkPrompt.title': 'Liez vos comptes',
+        'dash.linkPrompt.hytaleMissing':
+            'Ton compte Hytale n’est pas encore renseigné.',
+        'dash.linkPrompt.discordMissing':
+            'Ton compte Discord n’est pas encore lié.',
+        'dash.linkPrompt.description':
+            'Lier tes comptes te donne accès aux serveurs, à la whitelist et au suivi de tes points.',
+        'dash.linkPrompt.yes': 'Oui',
+        'dash.linkPrompt.later': 'Plus tard',
+
         'dash.account.title': 'Compte Hytale',
         'dash.account.connected': 'Compte lié',
         'dash.account.notConnected': 'Aucun compte Hytale lié',
@@ -277,6 +287,16 @@ export const messages: Record<Locale, Messages> = {
         'dash.error.title': 'Hytale API unreachable',
         'dash.error.retry': 'Retry',
         'dash.refresh': 'Refresh',
+
+        'dash.linkPrompt.title': 'Link your accounts',
+        'dash.linkPrompt.hytaleMissing':
+            'Your Hytale account is not filled in yet.',
+        'dash.linkPrompt.discordMissing':
+            'Your Discord account is not linked yet.',
+        'dash.linkPrompt.description':
+            'Linking your accounts gives you access to servers, whitelist and points tracking.',
+        'dash.linkPrompt.yes': 'Yes',
+        'dash.linkPrompt.later': 'Later',
 
         'dash.account.title': 'Hytale account',
         'dash.account.connected': 'Account linked',

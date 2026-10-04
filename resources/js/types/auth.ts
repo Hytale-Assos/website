@@ -5,6 +5,11 @@ export type User = {
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;
+    hytale_id?: string | null;
+    hytale_nickname?: string | null;
+    hytale_account_verified_at?: string | null;
+    discord_id?: string | null;
+    discord_nickname?: string | null;
     created_at: string;
     updated_at: string;
     [key: string]: unknown;
