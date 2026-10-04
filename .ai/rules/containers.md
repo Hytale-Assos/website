@@ -45,4 +45,4 @@ Before pushing a Containerfile change: build the image, then smoke-test it: run 
 
 ## CI workflow
 
-`.github/workflows/build.yml` builds the image on every push to `develop` (verification only, no publish) and builds and pushes to `ghcr.io/hytale-assos/website` on every push to `main` with two tags: `latest` and `sha-<short commit>`. Pin GitHub Actions by commit SHA with the version in a comment. The registry namespace is lowercase.
+`.github/workflows/build.yml` builds the image on every pull request targeting `develop` and on every push to `develop` (verification only, no publish), and builds and pushes to `ghcr.io/hytale-assos/website` on every push to `main` with two tags: `latest` and `sha-<short commit>`. Pin GitHub Actions by commit SHA with the version in a comment. The registry namespace is lowercase.
