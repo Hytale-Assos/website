@@ -1,0 +1,38 @@
+# PostgreSQL 18, reachable only from the hytale-website-hytale-postgres
+# network. The generated systemd unit is hytale-postgres.service.
+#
+# Image pinned by digest. Bump the tag and the digest together.
+# Credentials come from the environment file below (POSTGRES_DB,
+# POSTGRES_USER, POSTGRES_PASSWORD). Create it on the deployment
+# host and adjust the path if you run rootless.
+#
+# Hardening, to be verified on the host step by step:
+#   1. NoNewPrivileges      2. User=postgres (the named volume
+#   provides the data dir ownership)   3. DropCapability=ALL
+#   4. ReadOnly + Tmpfs. If the entrypoint fails to initialize
+#   the volume, check the volume ownership:
+#   podman volume inspect hytale-postgres-data
+
+[Container]
+Image=docker.io/library/postgres:18.6-alpine@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+ContainerName=hytale-postgres
+Network=hytale-website-hytale-postgres.network
+NoNewPrivileges=true
+User=postgres
+DropCapability=ALL
+ReadOnly=true
+Tmpfs=/tmp:rw,uid=999,gid=999,mode=1777
+Tmpfs=/var/run/postgresql:rw,uid=999,gid=999,mode=755
+EnvironmentFile=/etc/hytale/postgres.env
+Volume=hytale-postgres-data.volume:/var/lib/postgresql/data
+HealthCmd=pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+HealthInterval=5s
+HealthTimeout=3s
+HealthRetries=10
+
+[Service]
+Restart=always
+RestartSec=3s
+
+[Install]
+WantedBy=default.target
