@@ -285,7 +285,7 @@ final class FakeHytaleApiClient implements HytaleApiClient
         $pluginModuleId = '01a0a967-cb39-76c1-a30a-4983d3633604';
         $survivalId = '01a0a967-cbaa-7746-b9e8-b16daee6d50b';
         $creativeId = '01a0a967-cbbb-7746-b9e8-b16daee6d50c';
-        $playerId = '11111111-1111-7111-8111-111111111111';
+        $playerId = 'f70e3709-5014-44d2-95ef-124f7696252d';
 
         return [
             'modules' => [
@@ -327,12 +327,16 @@ final class FakeHytaleApiClient implements HytaleApiClient
                 ],
             ],
             'sessions' => [
+                $this->session($survivalId, $playerId, 1, 2.5),
+                $this->session($survivalId, $playerId, 2, 2.0),
+                $this->session($survivalId, $playerId, 3, 2.0),
+                $this->session($survivalId, $playerId, 6, 1.75),
                 [
                     'id' => (string) Str::uuid7(),
                     'hytale_server_id' => $survivalId,
                     'hytale_id' => $playerId,
-                    'joined_at' => Carbon::now()->subHours(2)->toIso8601ZuluString(),
-                    'ended_at' => Carbon::now()->subHour()->toIso8601ZuluString(),
+                    'joined_at' => Carbon::now()->subMinutes(30)->toIso8601ZuluString(),
+                    'ended_at' => null,
                     'created_at' => $now,
                     'updated_at' => $now,
                 ],
@@ -346,6 +350,26 @@ final class FakeHytaleApiClient implements HytaleApiClient
                     'updated_at' => $now,
                 ],
             ],
+        ];
+    }
+
+    /**
+     * Builds a finished session ending at midnight, `daysAgo` days back.
+     *
+     * @return array<string, mixed>
+     */
+    private function session(string $serverId, string $playerId, int $daysAgo, float $hours): array
+    {
+        $endedAt = Carbon::now()->subDays($daysAgo)->startOfDay();
+
+        return [
+            'id' => (string) Str::uuid7(),
+            'hytale_server_id' => $serverId,
+            'hytale_id' => $playerId,
+            'joined_at' => $endedAt->copy()->subHours($hours)->toIso8601ZuluString(),
+            'ended_at' => $endedAt->toIso8601ZuluString(),
+            'created_at' => $endedAt->copy()->subHours($hours)->toIso8601ZuluString(),
+            'updated_at' => $endedAt->toIso8601ZuluString(),
         ];
     }
 }
