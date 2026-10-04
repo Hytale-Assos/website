@@ -65,3 +65,4 @@ Always write in English: commit messages (subject and body), branch names, and P
 - Never commit secrets or `.env` values; new env keys go into `.env.example`.
 - Before committing PHP changes, run `vendor/bin/sail bin pint --dirty --format agent`.
 - Run the narrowest relevant test suite (`vendor/bin/sail artisan test --compact --filter=...`) before committing a behavior change.
+- Always re-run the complete test suite before pushing, never push on stale green.
