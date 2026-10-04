@@ -132,7 +132,8 @@ test('school member flags are not stored as plain booleans while the public flag
         expect($raw->{$column})->not->toBeIn([true, false, 1, 0, '1', '0', 'true', 'false', 't', 'f', 'on', 'off', 'yes', 'no', '']);
     }
 
-    expect($raw->is_public)->toBe(false);
+    // Raw boolean columns come back as 0/1 on SQLite and as bool on Postgres.
+    expect((bool) $raw->is_public)->toBe(false);
 
     expect($raw->firstname)->not->toBe('Grace')
         ->not->toContain('Grace');
