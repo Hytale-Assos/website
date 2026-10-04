@@ -5,6 +5,7 @@ namespace App\Auth\Passwords;
 use App\Support\EmailHasher;
 use Illuminate\Auth\Passwords\DatabaseTokenRepository;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Support\Carbon;
 
 /**
  * Password reset token repository that never stores the email address in
@@ -30,11 +31,14 @@ class HashedEmailTokenRepository extends DatabaseTokenRepository
      *
      * @param  string  $email
      * @param  string  $token
-     * @return array
+     * @return array{email: string, token: string, created_at: Carbon}
      */
     protected function getPayload($email, #[\SensitiveParameter] $token)
     {
-        return parent::getPayload(EmailHasher::hash($email), $token);
+        /** @var array{email: string, token: string, created_at: Carbon} $payload */
+        $payload = parent::getPayload(EmailHasher::hash($email), $token);
+
+        return $payload;
     }
 
     /**

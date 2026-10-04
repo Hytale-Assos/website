@@ -12,7 +12,7 @@ trait ProfileValidationRules
     /**
      * Get the validation rules used to validate user profiles.
      *
-     * @return array<string, array<int, ValidationRule|array<mixed>|string>>
+     * @return array<string, array<int, Closure|ValidationRule|array<mixed>|string>>
      */
     protected function profileRules(?string $userId = null): array
     {
@@ -35,7 +35,7 @@ trait ProfileValidationRules
     /**
      * Get the validation rules used to validate user emails.
      *
-     * @return array<int, ValidationRule|array<mixed>|string>
+     * @return array<int, Closure|ValidationRule|array<mixed>|string>
      */
     protected function emailRules(?string $userId = null): array
     {
