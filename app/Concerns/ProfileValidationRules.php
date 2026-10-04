@@ -3,8 +3,9 @@
 namespace App\Concerns;
 
 use App\Models\User;
+use App\Support\EmailHasher;
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Validation\Rule;
 
 trait ProfileValidationRules
 {
@@ -43,9 +44,29 @@ trait ProfileValidationRules
             'string',
             'email',
             'max:255',
-            $userId === null
-                ? Rule::unique(User::class)
-                : Rule::unique(User::class)->ignore($userId),
+            $this->uniqueEmailRule($userId),
         ];
+    }
+
+    /**
+     * Rule enforcing the uniqueness of the email address. The email column
+     * is encrypted, so the check runs on its deterministic hash column.
+     */
+    private function uniqueEmailRule(?string $userId): Closure
+    {
+        return function (string $attribute, mixed $value, Closure $fail) use ($userId): void {
+            if ($value === null) {
+                return;
+            }
+
+            $takenByAnotherUser = User::query()
+                ->where('email_hash', EmailHasher::hash($value))
+                ->when($userId !== null, fn ($query) => $query->whereKeyNot($userId))
+                ->exists();
+
+            if ($takenByAnotherUser) {
+                $fail(__('validation.unique'));
+            }
+        };
     }
 }
