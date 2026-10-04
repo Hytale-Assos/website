@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'hytale_id' => 'f70e3709-5014-44d2-95ef-124f7696252d',
         ]);
     }
 }

@@ -9,6 +9,7 @@ import {
     UserRound,
 } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
+import LinkAccountsPrompt from '@/components/dashboard/LinkAccountsPrompt.vue';
 import SessionsList from '@/components/dashboard/SessionsList.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -67,6 +68,8 @@ defineOptions({
 
 <template>
     <Head :title="t('dash.title')" />
+
+    <LinkAccountsPrompt />
 
     <MemberPage
         :title="t('dash.title')"

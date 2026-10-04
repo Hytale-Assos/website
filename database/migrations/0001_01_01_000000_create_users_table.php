@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('name');
-            $table->string('email')->unique();
+            // The name is stored encrypted via the `encrypted` Eloquent cast.
+            $table->text('name');
+            // The email is stored encrypted, so it cannot be queried; the
+            // deterministic keyed hash (blind index) carries the uniqueness
+            // and the login lookups instead.
+            $table->text('email');
+            $table->string('email_hash', 64)->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
@@ -22,7 +27,9 @@ return new class extends Migration
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            // The email column stores the deterministic keyed hash of the
+            // email address, not the address itself.
+            $table->string('email', 64)->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

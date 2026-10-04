@@ -1,13 +1,37 @@
 <?php
 
 use App\Hytale\Contracts\HytaleApiClient;
+use App\Hytale\Exceptions\HytaleApiException;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
 
 uses(RefreshDatabase::class);
 
 it('redirects guests to the login page', function () {
     $this->get(route('dashboard'))->assertRedirect(route('login'));
+});
+
+it('renders the dashboard with an error instead of crashing when the core is down', function () {
+    config()->set('hytale.mock', false);
+    config()->set('hytale.base_url', 'http://core.test');
+    config()->set('hytale.api_key', 'test-api-key');
+    config()->set('hytale.hmac_secret', 'test-hmac-secret');
+    config()->set('hytale.cache.enabled', false);
+    app()->forgetInstance(HytaleApiClient::class);
+
+    Http::fake(fn () => throw new ConnectionException('cURL error 7'));
+
+    $user = User::factory()->create(['hytale_id' => 'f70e3709-5014-44d2-95ef-124f7696252d']);
+
+    $response = $this->actingAs($user)->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertInertia(fn ($page) => $page
+        ->component('Dashboard')
+        ->where('error', HytaleApiException::unavailable()->getMessage())
+    );
 });
 
 it('shows the dashboard to authenticated verified users', function () {
