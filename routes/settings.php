@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\IdentityController;
 use App\Http\Controllers\Settings\LinkedAccountController;
 use App\Http\Controllers\Settings\LinkedAccountOAuthController;
 use App\Http\Controllers\Settings\ProfileController;
@@ -12,6 +13,9 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    Route::get('settings/identity', [IdentityController::class, 'edit'])->name('identity.edit');
+    Route::put('settings/identity', [IdentityController::class, 'update'])->name('identity.update');
 
     Route::get('settings/accounts', [LinkedAccountController::class, 'edit'])->name('accounts.edit');
     Route::put('settings/accounts', [LinkedAccountController::class, 'update'])->name('accounts.update');
