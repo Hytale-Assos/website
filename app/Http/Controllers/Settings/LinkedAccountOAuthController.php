@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\IdHasher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -64,7 +65,7 @@ class LinkedAccountOAuthController extends Controller
         $providerId = $oauthUser->getId();
 
         $lookupColumn = $hashColumn ?? $idColumn;
-        $lookupValue = $hashColumn !== null ? hash('sha256', $providerId) : $providerId;
+        $lookupValue = $hashColumn !== null ? IdHasher::hash($providerId) : $providerId;
 
         $alreadyLinked = User::query()
             ->where($lookupColumn, $lookupValue)

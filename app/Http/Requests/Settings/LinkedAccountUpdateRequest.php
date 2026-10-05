@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Settings;
 
 use App\Models\User;
+use App\Support\IdHasher;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -62,7 +63,7 @@ class LinkedAccountUpdateRequest extends FormRequest
             }
 
             $takenByAnotherUser = User::query()
-                ->where('hytale_id_hash', hash('sha256', $value))
+                ->where('hytale_id_hash', IdHasher::hash($value))
                 ->whereKeyNot($this->user()->id)
                 ->exists();
 
