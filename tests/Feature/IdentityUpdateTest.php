@@ -3,8 +3,28 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
+
+test('identity page is displayed', function () {
+    $user = User::factory()->create();
+
+    $response = $this
+        ->actingAs($user)
+        ->get(route('identity.edit'));
+
+    $response->assertInertia(fn (Assert $page) => $page
+        ->component('settings/Identity'));
+});
+
+test('guests are redirected to the login page when visiting the identity page', function () {
+    $response = $this->get(route('identity.edit'));
+
+    $response->assertRedirect(route('login'));
+
+    $this->assertGuest();
+});
 
 test('guests are redirected to the login page when updating their identity', function () {
     $response = $this->put(route('identity.update'), [
