@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { Form, Head, usePage } from '@inertiajs/vue3';
 import { Link } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import DeleteUser from '@/components/DeleteUser.vue';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { edit } from '@/routes/profile';
@@ -25,6 +26,7 @@ defineOptions({
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
+const isPublic = ref(Boolean(user.value?.is_public));
 </script>
 
 <template>
@@ -71,6 +73,29 @@ const user = computed(() => page.props.auth.user);
                     placeholder="Email address"
                 />
                 <InputError class="mt-2" :message="errors.email" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="is_public" class="flex items-center space-x-3">
+                    <Checkbox
+                        id="is_public"
+                        :model-value="isPublic"
+                        @update:model-value="
+                            (value) => (isPublic = Boolean(value))
+                        "
+                    />
+                    <span>Appear on the public leaderboard</span>
+                </Label>
+                <p class="text-muted-foreground text-sm">
+                    Only your game nickname can appear publicly. Your name,
+                    email address, and identification data are never shown.
+                </p>
+                <InputError class="mt-2" :message="errors.is_public" />
+                <input
+                    type="hidden"
+                    name="is_public"
+                    :value="isPublic ? '1' : '0'"
+                />
             </div>
 
             <div v-if="page.props.mustVerifyEmail && !user.email_verified_at">
