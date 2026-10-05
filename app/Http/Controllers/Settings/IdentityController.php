@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Enums\GradeLevel;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\IdentityUpdateRequest;
+use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -30,7 +31,7 @@ class IdentityController extends Controller
     {
         $request->user()->update($request->validated());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Identity updated.')]);
+        Toast::success(__('Identity updated.'));
 
         return to_route('identity.edit');
     }

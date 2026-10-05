@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\LinkedAccountUpdateRequest;
+use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -27,7 +28,7 @@ class LinkedAccountController extends Controller
         $request->user()->fill($request->validated());
         $request->user()->save();
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Linked accounts updated.')]);
+        Toast::success(__('Linked accounts updated.'));
 
         return to_route('accounts.edit');
     }

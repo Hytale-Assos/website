@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\InvitationStoreRequest;
 use App\Models\Invitation;
+use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -54,7 +55,7 @@ class InvitationController extends Controller
             'expires_at' => now()->addDays((int) config('members.invitation_validity_days')),
         ]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation sent.')]);
+        Toast::success(__('Invitation sent.'));
 
         return to_route('invitations.edit');
     }
@@ -69,7 +70,7 @@ class InvitationController extends Controller
 
         $invitation->update(['revoked_at' => now()]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation revoked.')]);
+        Toast::success(__('Invitation revoked.'));
 
         return to_route('invitations.edit');
     }

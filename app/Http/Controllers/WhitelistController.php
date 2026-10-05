@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\SharesHytaleProps;
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Hytale\Exceptions\HytaleApiException;
 use App\Hytale\HytaleData;
+use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -55,7 +56,7 @@ class WhitelistController extends Controller
             return $this->fail($exception->getMessage());
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Added to whitelist.')]);
+        Toast::success(__('Added to whitelist.'));
 
         return back();
     }
@@ -71,7 +72,7 @@ class WhitelistController extends Controller
             return $this->fail($exception->getMessage());
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Removed from whitelist.')]);
+        Toast::success(__('Removed from whitelist.'));
 
         return back();
     }
@@ -82,7 +83,7 @@ class WhitelistController extends Controller
      */
     private function fail(string $message): RedirectResponse
     {
-        Inertia::flash('toast', ['type' => 'error', 'message' => $message]);
+        Toast::error($message);
 
         return back()->withErrors(['whitelist' => $message]);
     }
