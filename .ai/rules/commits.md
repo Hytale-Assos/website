@@ -59,7 +59,10 @@ Always write in English: commit messages (subject and body), branch names, and P
 - Commit at every atomic unit of work: as soon as a function, component, page, route, or rule is added and the change builds (and its tests pass), commit it. Do not save up finished features into one commit: the history should narrate the whole development of the branch, step by step. The default state of the working tree is clean (`git status` empty).
 - If something already committed needs rework later in the same branch, add a new commit on top instead of leaving uncommitted changes lying around.
 - Keep commits atomic: one logical change each, that builds and passes its own tests.
-- One logical change per commit. A feature ships with its migrations, routes, controllers, frontend pages, and the tests that cover it in the same commit.
+- One increment per commit, with the tests that cover it in the same commit. A feature spreads over several increments (e.g. validation + endpoint, then its page, then its export), each building and passing its own tests.
+- Calibrate granularity to the smallest coherent, testable unit: never land dead code alone (a FormRequest without its route and controller), and never bundle two concerns into one commit to save time.
+- Plan the commit sequence before starting the work; it doubles as the work plan and gets adjusted as the work reveals itself.
+- Intermediate commits are not individually deployable: they must build and pass their own tests, but deployability is only guaranteed at the merge boundary. Keep the seams small (a route lands in the commit right before its page).
 - Never mix a refactor or chore with a feature commit. When a file straddles two logical changes, split it with `git add -p` and commit in dependency order.
 - `composer.lock` changes ship with the `composer.json` change that caused them.
 - Never commit secrets or `.env` values; new env keys go into `.env.example`.
