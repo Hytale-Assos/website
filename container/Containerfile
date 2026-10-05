@@ -1,0 +1,67 @@
+# syntax=docker/dockerfile:1
+
+# Image versions, pinned by digest. Bump the tag and the digest together.
+ARG BUN_IMAGE=oven/bun:1.3.14-alpine@sha256:5acc90a93e91ff07bf72aa90a7c9f0fa189765aec90b47bdbf2152d2196383c0
+ARG COMPOSER_IMAGE=composer:2@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac
+ARG EXT_INSTALLER_IMAGE=mlocati/php-extension-installer@sha256:1afade3e29cfc97362cf5885e5ac333bf2faab1146cb28ebbb59b17e68f87e88
+ARG PHP_IMAGE=php:8.4-cli-alpine@sha256:37c8c64177612b72e7f9d2c00481739c166a3708bea27c1cfd27fea1291d82d1
+ARG RUNTIME_IMAGE=dunglas/frankenphp:1.13-php8.4-trixie@sha256:81f7030a2b7230f26dbdf281bee328e03221a33b3545a5d432d7f67e3346d704
+
+# Named sources: COPY --from does not support ARG expansion, FROM does.
+FROM ${BUN_IMAGE} AS bun
+FROM ${COMPOSER_IMAGE} AS composer
+FROM ${EXT_INSTALLER_IMAGE} AS php-extension-installer
+
+# Dependencies, generated Wayfinder routes, and frontend assets
+FROM ${PHP_IMAGE} AS build
+
+COPY --from=php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions mbstring pdo_pgsql
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+COPY --from=bun /usr/local/bin/bun /usr/local/bin/bun
+RUN apk add --no-cache libstdc++
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-interaction --no-progress --no-scripts
+
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+
+COPY . .
+RUN mkdir -p bootstrap/cache storage/framework/cache/data storage/framework/sessions storage/framework/testing storage/framework/views storage/logs \
+    && php artisan package:discover --ansi \
+    && php artisan wayfinder:generate \
+    && bun run build
+
+RUN rm -rf node_modules
+
+# Production runtime served by FrankenPHP (Caddy), unprivileged
+FROM ${RUNTIME_IMAGE}
+
+ARG APP_USER=appuser
+
+RUN install-php-extensions opcache pdo_pgsql redis \
+    && useradd ${APP_USER} \
+    && setcap -r /usr/local/bin/frankenphp \
+    && chown -R ${APP_USER}:${APP_USER} /config/caddy /data/caddy
+
+WORKDIR /app
+
+COPY --chown=${APP_USER}:${APP_USER} --from=build /app ./
+
+RUN chmod -R ug+rwX storage bootstrap/cache
+
+ENV APP_ENV=production \
+    APP_DEBUG=false \
+    INERTIA_SSR_ENABLED=false \
+    LOG_CHANNEL=stderr \
+    SERVER_NAME=":8080"
+
+USER ${APP_USER}
+
+EXPOSE 8080
+
+CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]

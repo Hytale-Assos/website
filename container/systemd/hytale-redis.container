@@ -1,0 +1,33 @@
+# Redis, reachable only from the hytale-website-hytale-redis network.
+# The generated systemd unit is hytale-redis.service.
+#
+# Image pinned by digest. Bump the tag and the digest together.
+# No persistent volume: Redis is only used as a cache backend
+# (sessions live in PostgreSQL), losing it on restart is harmless.
+#
+# Hardening, to be verified on the host step by step:
+#   1. NoNewPrivileges   2. User=redis   3. DropCapability=ALL
+#   4. ReadOnly + Tmpfs. If the entrypoint fails, check the logs:
+#   journalctl --user -u hytale-redis.service
+
+[Container]
+Image=docker.io/library/redis:8.8.3-alpine@sha256:0b2b77d3ea5078274795e3177cdbdada8b96316684a38911d528534ed679b5ec
+ContainerName=hytale-redis
+Network=hytale-website-hytale-redis.network
+NoNewPrivileges=true
+User=redis
+DropCapability=ALL
+ReadOnly=true
+Tmpfs=/tmp:rw,uid=999,gid=999,mode=1777
+Tmpfs=/data:rw,uid=999,gid=999,mode=755
+HealthCmd=redis-cli ping
+HealthInterval=5s
+HealthTimeout=3s
+HealthRetries=10
+
+[Service]
+Restart=always
+RestartSec=3s
+
+[Install]
+WantedBy=default.target

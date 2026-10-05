@@ -1,0 +1,9 @@
+# Peer network between hytale-website and hytale-redis.
+# The generated systemd unit is hytale-website-hytale-redis.service.
+
+[Network]
+Label=app=hytale
+Label=layer=cache
+
+[Install]
+WantedBy=default.target
