@@ -19,6 +19,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('settings/identity', [IdentityController::class, 'update'])->name('identity.update');
 
     Route::get('settings/data', [DataPrivacyController::class, 'edit'])->name('data.edit');
+    Route::get('settings/data/export', [DataPrivacyController::class, 'export'])->name('data.export');
 
     Route::get('settings/accounts', [LinkedAccountController::class, 'edit'])->name('accounts.edit');
     Route::put('settings/accounts', [LinkedAccountController::class, 'update'])->name('accounts.update');
