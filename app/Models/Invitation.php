@@ -6,6 +6,7 @@ use App\Casts\EncryptedEmailWithHash;
 use App\Support\EmailHasher;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -75,17 +76,49 @@ class Invitation extends Model
     }
 
     /**
-     * The usable invitation for the given email, if any: pending, not
-     * revoked, not expired. This is the registration gate for external
-     * guests.
+     * Invitations neither consumed nor revoked, whether or not they have
+     * expired.
+     */
+    public function scopePending(Builder $query): Builder
+    {
+        return $query->whereNull('accepted_at')->whereNull('revoked_at');
+    }
+
+    /**
+     * Pending invitations that have not expired: the ones that can still
+     * register an account.
+     */
+    public function scopeUsable(Builder $query): Builder
+    {
+        return $query->pending()->where('expires_at', '>', now());
+    }
+
+    /**
+     * Stamp the expired pending invitations for the given email as
+     * superseded, freeing their unique email slot for a fresh invitation.
+     *
+     * The partial unique index only knows about accepted_at and revoked_at
+     * (now() is not immutable, so expiry cannot be part of the index
+     * predicate): stamping revoked_at is what frees the slot.
+     */
+    public static function supersedeExpiredFor(string $email): int
+    {
+        return static::query()
+            ->where('email_hash', EmailHasher::hash($email))
+            ->pending()
+            ->where('expires_at', '<=', now())
+            ->update(['revoked_at' => now()]);
+    }
+
+    /**
+     * The usable invitation for the given email, if any. This is the
+     * registration gate for external guests.
      */
     public static function usableFor(string $email): ?self
     {
         return static::query()
             ->where('email_hash', EmailHasher::hash($email))
-            ->whereNull('accepted_at')
-            ->whereNull('revoked_at')
-            ->where('expires_at', '>', now())
+            ->usable()
             ->first();
     }
 

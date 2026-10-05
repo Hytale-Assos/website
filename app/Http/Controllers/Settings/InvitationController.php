@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\InvitationStoreRequest;
 use App\Models\Invitation;
-use App\Support\EmailHasher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -42,19 +41,12 @@ class InvitationController extends Controller
      * Send a new invitation.
      *
      * Expired invitations for the same email are stamped as superseded
-     * first: the partial unique index only knows about accepted_at and
-     * revoked_at (now() is not immutable, so expiry cannot be part of the
-     * index predicate), so stamping frees the unique slot for the new
-     * invitation.
+     * first (see Invitation::supersedeExpiredFor) so the new invitation
+     * can take the unique email slot.
      */
     public function store(InvitationStoreRequest $request): RedirectResponse
     {
-        Invitation::query()
-            ->where('email_hash', EmailHasher::hash($request->validated('email')))
-            ->whereNull('accepted_at')
-            ->whereNull('revoked_at')
-            ->where('expires_at', '<=', now())
-            ->update(['revoked_at' => now()]);
+        Invitation::supersedeExpiredFor($request->validated('email'));
 
         Invitation::create([
             'inviter_user_id' => $request->user()->id,
