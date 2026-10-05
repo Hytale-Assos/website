@@ -23,18 +23,12 @@ class IdentityController extends Controller
 
     /**
      * Update the user's identification data.
+     *
+     * The member status is frozen at registration and never changes here.
      */
     public function update(IdentityUpdateRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-
-        $request->user()->update([
-            'firstname' => $validated['firstname'],
-            'lastname' => $validated['lastname'],
-            'grade_level' => $validated['grade_level'],
-            'is_internal' => $validated['status'] === 'internal',
-            'is_external' => $validated['status'] === 'external',
-        ]);
+        $request->user()->update($request->validated());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => __('Identity updated.')]);
 

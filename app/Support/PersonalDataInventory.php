@@ -24,7 +24,7 @@ class PersonalDataInventory
      * Build the inventory of the given user's personal data.
      *
      * @return array{
-     *     account: array{name: string, email: string, created_at: string|null},
+     *     account: array{name: string, email: string, school_email: string|null, created_at: string|null},
      *     identification: array{firstname: string|null, lastname: string|null, grade_level: string|null, status: string|null, is_public: bool},
      *     linked_accounts: array{discord: array{linked: bool, nickname: string|null}, hytale: array{linked: bool, nickname: string|null, verified_at: string|null}},
      *     security: array{two_factor: array{enabled: bool, confirmed_at: string|null}, passkeys: array<int, array{name: string, created_at: string|null, last_used_at: string|null}>, sessions: array<int, array{ip_address: string|null, user_agent: string|null, last_activity: string|null}>}
@@ -36,6 +36,7 @@ class PersonalDataInventory
             'account' => [
                 'name' => $user->name,
                 'email' => $user->email,
+                'school_email' => $user->school_email,
                 'created_at' => $user->created_at?->toIso8601String(),
             ],
             'identification' => [

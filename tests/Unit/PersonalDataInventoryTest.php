@@ -26,6 +26,7 @@ function userWithEverything(Illuminate\Foundation\Testing\TestCase $test): User
     $user = User::factory()->withTwoFactor()->create([
         'name' => 'Grace Hopper',
         'email' => 'grace@example.com',
+        'school_email' => 'grace@school.edu',
         'firstname' => 'Grace',
         'lastname' => 'Hopper',
         'grade_level' => '10th grade',
@@ -129,8 +130,8 @@ it('returns the four sections with exactly the contracted keys', function () {
     expect($sections)->toHaveCount(4)
         ->toHaveKeys(['account', 'identification', 'linked_accounts', 'security']);
 
-    expect($sections['account'])->toHaveCount(3)
-        ->toHaveKeys(['name', 'email', 'created_at']);
+    expect($sections['account'])->toHaveCount(4)
+        ->toHaveKeys(['name', 'email', 'school_email', 'created_at']);
 
     expect($sections['identification'])->toHaveCount(5)
         ->toHaveKeys(['firstname', 'lastname', 'grade_level', 'status', 'is_public']);
@@ -157,7 +158,8 @@ it('returns the account data as plain values with the creation date', function (
     $account = inventory($user)['account'];
 
     expect($account['name'])->toBe('Grace Hopper')
-        ->and($account['email'])->toBe('grace@example.com');
+        ->and($account['email'])->toBe('grace@example.com')
+        ->and($account['school_email'])->toBe('grace@school.edu');
 
     expectIsoTimestamp($account['created_at'], $user->created_at);
 });
@@ -271,7 +273,8 @@ it('lists the active sessions newest first with the last activity as an ISO-8601
 it('returns empty but present structures for a user with no personal data', function () {
     $sections = inventory(User::factory()->create());
 
-    expect($sections['identification']['firstname'])->toBeNull()
+    expect($sections['account']['school_email'])->toBeNull()
+        ->and($sections['identification']['firstname'])->toBeNull()
         ->and($sections['identification']['lastname'])->toBeNull()
         ->and($sections['identification']['grade_level'])->toBeNull()
         ->and($sections['identification']['status'])->toBeNull()
@@ -312,6 +315,7 @@ it('never exposes raw encrypted database contents', function () {
 
     expect($sections['account']['name'])->toBe('Grace Hopper')
         ->and($sections['account']['email'])->toBe('grace@example.com')
+        ->and($sections['account']['school_email'])->toBe('grace@school.edu')
         ->and($sections['identification']['firstname'])->toBe('Grace')
         ->and($sections['identification']['lastname'])->toBe('Hopper');
 
@@ -323,6 +327,8 @@ it('never exposes raw encrypted database contents', function () {
         $rawUser->name,
         $rawUser->email,
         $rawUser->email_hash,
+        $rawUser->school_email,
+        $rawUser->school_email_hash,
         $rawUser->password,
         $rawUser->remember_token,
         $rawUser->two_factor_secret,
