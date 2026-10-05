@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\DataPrivacyController;
 use App\Http\Controllers\Settings\IdentityController;
 use App\Http\Controllers\Settings\LinkedAccountController;
 use App\Http\Controllers\Settings\LinkedAccountOAuthController;
@@ -16,6 +17,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('settings/identity', [IdentityController::class, 'edit'])->name('identity.edit');
     Route::put('settings/identity', [IdentityController::class, 'update'])->name('identity.update');
+
+    Route::get('settings/data', [DataPrivacyController::class, 'edit'])->name('data.edit');
 
     Route::get('settings/accounts', [LinkedAccountController::class, 'edit'])->name('accounts.edit');
     Route::put('settings/accounts', [LinkedAccountController::class, 'update'])->name('accounts.update');
