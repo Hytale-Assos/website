@@ -33,6 +33,7 @@ defineProps<{
         account: {
             name: string;
             email: string;
+            school_email: string | null;
             created_at: string | null;
         };
         identification: {
@@ -107,6 +108,14 @@ defineOptions({
                 <div class="flex justify-between gap-4">
                     <span class="text-muted-foreground text-sm">Email</span>
                     <span class="text-sm">{{ sections.account.email }}</span>
+                </div>
+                <div class="flex justify-between gap-4">
+                    <span class="text-muted-foreground text-sm"
+                        >School email</span
+                    >
+                    <span class="text-sm">{{
+                        sections.account.school_email ?? '—'
+                    }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
                     <span class="text-muted-foreground text-sm"
