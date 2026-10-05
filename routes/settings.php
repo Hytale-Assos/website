@@ -13,24 +13,32 @@ Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', '/settings/profile');
 
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::patch('settings/profile', [ProfileController::class, 'update'])
+        ->middleware('throttle:settings')
+        ->name('profile.update');
 
     Route::get('settings/identity', [IdentityController::class, 'edit'])->name('identity.edit');
-    Route::put('settings/identity', [IdentityController::class, 'update'])->name('identity.update');
+    Route::put('settings/identity', [IdentityController::class, 'update'])
+        ->middleware('throttle:settings')
+        ->name('identity.update');
 
     Route::get('settings/data', [DataPrivacyController::class, 'edit'])->name('data.edit');
-    Route::get('settings/data/export', [DataPrivacyController::class, 'export'])->name('data.export');
+    Route::get('settings/data/export', [DataPrivacyController::class, 'export'])
+        ->middleware('throttle:data-export')
+        ->name('data.export');
 
     Route::get('settings/invitations', [InvitationController::class, 'edit'])->name('invitations.edit');
     Route::post('settings/invitations', [InvitationController::class, 'store'])
-        ->middleware('throttle:10,1')
+        ->middleware('throttle:invitations')
         ->name('invitations.store');
     Route::delete('settings/invitations/{invitation}', [InvitationController::class, 'destroy'])
-        ->middleware('throttle:10,1')
+        ->middleware('throttle:invitations')
         ->name('invitations.destroy');
 
     Route::get('settings/accounts', [LinkedAccountController::class, 'edit'])->name('accounts.edit');
-    Route::put('settings/accounts', [LinkedAccountController::class, 'update'])->name('accounts.update');
+    Route::put('settings/accounts', [LinkedAccountController::class, 'update'])
+        ->middleware('throttle:settings')
+        ->name('accounts.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -41,7 +49,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('security.edit');
 
     Route::put('settings/password', [SecurityController::class, 'update'])
-        ->middleware('throttle:6,1')
+        ->middleware('throttle:password')
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');

@@ -17,8 +17,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('servers', [ServerController::class, 'index'])->name('servers.index');
 
     Route::get('whitelist', [WhitelistController::class, 'index'])->name('whitelist.index');
-    Route::post('whitelist', [WhitelistController::class, 'store'])->name('whitelist.store');
-    Route::delete('whitelist/{entry}', [WhitelistController::class, 'destroy'])->name('whitelist.destroy');
+    Route::post('whitelist', [WhitelistController::class, 'store'])
+        ->middleware('throttle:whitelist')
+        ->name('whitelist.store');
+    Route::delete('whitelist/{entry}', [WhitelistController::class, 'destroy'])
+        ->middleware('throttle:whitelist')
+        ->name('whitelist.destroy');
 
     Route::get('sessions', [SessionController::class, 'index'])->name('sessions.index');
 
