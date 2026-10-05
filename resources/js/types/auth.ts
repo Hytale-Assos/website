@@ -10,6 +10,12 @@ export type User = {
     hytale_account_verified_at?: string | null;
     discord_id?: string | null;
     discord_nickname?: string | null;
+    firstname?: string | null;
+    lastname?: string | null;
+    grade_level?: string | null;
+    is_internal?: boolean;
+    is_external?: boolean;
+    is_public?: boolean;
     created_at: string;
     updated_at: string;
     [key: string]: unknown;

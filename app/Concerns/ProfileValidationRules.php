@@ -19,7 +19,18 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'is_public' => $this->visibilityRules(),
         ];
+    }
+
+    /**
+     * Get the validation rules for the public leaderboard visibility flag.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function visibilityRules(): array
+    {
+        return ['boolean'];
     }
 
     /**

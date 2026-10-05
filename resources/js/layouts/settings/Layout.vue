@@ -7,6 +7,8 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { toUrl } from '@/lib/utils';
 import { edit as editAccounts } from '@/routes/accounts';
 import { edit as editAppearance } from '@/routes/appearance';
+import { edit as editData } from '@/routes/data';
+import { edit as editIdentity } from '@/routes/identity';
 import { edit as editProfile } from '@/routes/profile';
 import { edit as editSecurity } from '@/routes/security';
 import type { NavItem } from '@/types';
@@ -17,12 +19,20 @@ const sidebarNavItems: NavItem[] = [
         href: editProfile(),
     },
     {
+        title: 'Identity',
+        href: editIdentity(),
+    },
+    {
         title: 'Security',
         href: editSecurity(),
     },
     {
         title: 'Linked accounts',
         href: editAccounts(),
+    },
+    {
+        title: 'Data & privacy',
+        href: editData(),
     },
     {
         title: 'Appearance',

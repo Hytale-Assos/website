@@ -56,7 +56,7 @@ Always write in English: commit messages (subject and body), branch names, and P
 
 ## Structure
 
-- Commit as you go: as soon as a feature or fix is implemented on the working branch, commit it. The default state of the working tree is clean (`git status` empty).
+- Commit at every atomic unit of work: as soon as a function, component, page, route, or rule is added and the change builds (and its tests pass), commit it. Do not save up finished features into one commit: the history should narrate the whole development of the branch, step by step. The default state of the working tree is clean (`git status` empty).
 - If something already committed needs rework later in the same branch, add a new commit on top instead of leaving uncommitted changes lying around.
 - Keep commits atomic: one logical change each, that builds and passes its own tests.
 - One logical change per commit. A feature ships with its migrations, routes, controllers, frontend pages, and the tests that cover it in the same commit.
