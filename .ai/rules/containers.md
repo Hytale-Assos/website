@@ -37,7 +37,10 @@ Before pushing a Containerfile change: build the image, then smoke-test it: run 
 - One systemd unit per file; the unit name equals the file name. Prefix everything with `hytale-`.
 - Peer networks linking exactly two containers are named `hytale-<container-a>-hytale-<container-b>`. Networks with more members get an intelligible functional name. Never put all services on one shared flat network: each dependency pair gets its own network, the website is the only bridge.
 - Volumes are named after their owning container: `hytale-postgres-data.volume`.
-- Secrets never live in the repo: containers reference `EnvironmentFile=/etc/hytale/*.env` created on the host. `DB_HOST` and `REDIS_HOST` are Podman container names (`hytale-postgres`, `hytale-redis`), not the Sail dev names.
+- Secrets never live in the repo. Sensitive values are Podman secrets injected with `Secret=<name>,type=env,target=<VAR>` and provisioned on the host with `podman secret create`. They are resolved at container creation: rotation means recreating the secret and restarting the unit. A missing secret makes systemd fail to start the unit.
+- Secret names follow the unit prefixes: `hytale-website-*`, `hytale-postgres-*`.
+- Non-secret configuration lives in an env file on the host, provisioned from `container/website.env.example`; the template never contains secret values. `DB_HOST` and `REDIS_HOST` are Podman container names (`hytale-postgres`, `hytale-redis`), not the Sail dev names.
+- Rootless deployment layout: quadlets in `~/.config/containers/systemd/`, env files in `~/hytale/env/`, secret source files in `~/hytale/secrets/`.
 - Wire dependencies in the `[Unit]` section (`Requires=`/`After=` on the generated service names). `Restart=always` goes in `[Service]`. Every container declares a `HealthCmd`.
 - Hardening is mandatory: `NoNewPrivileges=true` everywhere; run application images as their non-root user (`User=postgres`, `User=redis`, or the image USER) so `DropCapability=ALL` is safe; `ReadOnly=true` with a `Tmpfs=` per writable path, each carrying `uid=`/`gid=` matching the container user. Do not add capabilities back: the named volume copy-up provides the data dir ownership for the official images.
 - `AutoUpdate=registry` only on the application container, never on databases.

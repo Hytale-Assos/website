@@ -2,9 +2,14 @@
 # network. The generated systemd unit is hytale-postgres.service.
 #
 # Image pinned by digest. Bump the tag and the digest together.
-# Credentials come from the environment file below (POSTGRES_DB,
-# POSTGRES_USER, POSTGRES_PASSWORD). Create it on the deployment
-# host and adjust the path if you run rootless.
+# The database name and user are inline below; the password comes
+# from the hytale-postgres-password podman secret, provisioned on
+# the deployment host (rootless layout):
+#   podman secret create hytale-postgres-password \
+#     /home/hytale/hytale/secrets/postgres_password
+# If the secret is missing, systemd fails to start the unit. The
+# secret is resolved at container creation: to rotate it, recreate
+# the secret and restart the service.
 #
 # Hardening, to be verified on the host step by step:
 #   1. NoNewPrivileges      2. User=postgres (the named volume
@@ -23,7 +28,9 @@ DropCapability=ALL
 ReadOnly=true
 Tmpfs=/tmp:rw,uid=999,gid=999,mode=1777
 Tmpfs=/var/run/postgresql:rw,uid=999,gid=999,mode=755
-EnvironmentFile=/etc/hytale/postgres.env
+Secret=hytale-postgres-password,type=env,target=POSTGRES_PASSWORD
+Environment=POSTGRES_DB=hytale
+Environment=POSTGRES_USER=hytale
 Volume=hytale-postgres-data.volume:/var/lib/postgresql/data
 HealthCmd=pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
 HealthInterval=5s
