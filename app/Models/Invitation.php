@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\EncryptedEmailWithHash;
+use App\Support\EmailHasher;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -71,6 +72,37 @@ class Invitation extends Model
         return $this->accepted_at === null
             && $this->revoked_at === null
             && $this->expires_at->isFuture();
+    }
+
+    /**
+     * The usable invitation for the given email, if any: pending, not
+     * revoked, not expired. This is the registration gate for external
+     * guests.
+     */
+    public static function usableFor(string $email): ?self
+    {
+        return static::query()
+            ->where('email_hash', EmailHasher::hash($email))
+            ->whereNull('accepted_at')
+            ->whereNull('revoked_at')
+            ->where('expires_at', '>', now())
+            ->first();
+    }
+
+    /**
+     * Consume the invitation for the freshly created account. Guarded by
+     * accepted_at: a concurrent registration cannot consume it twice
+     * (the partial unique index holds the slot until it does).
+     */
+    public function consume(User $user): bool
+    {
+        return (bool) $this->newQuery()
+            ->whereKey($this->id)
+            ->whereNull('accepted_at')
+            ->update([
+                'accepted_at' => now(),
+                'accepted_user_id' => $user->id,
+            ]);
     }
 
     /**

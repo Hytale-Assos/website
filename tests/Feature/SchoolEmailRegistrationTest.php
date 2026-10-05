@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
@@ -51,10 +52,18 @@ test('a school domain match is case-insensitive on the domain part of the email'
     'mixed case domain' => ['student@Ecole.Fr'],
 ]);
 
-test('registering with an email outside the configured school domains creates an external account without a school email', function () {
+test('registering an invited email outside the configured school domains creates an external account without a school email', function () {
     $this->skipUnlessFortifyHas(Features::registration());
 
     config(['members.school_email_domains' => ['ecole.fr']]);
+
+    $inviter = User::factory()->create(['is_internal' => true]);
+
+    Invitation::create([
+        'inviter_user_id' => $inviter->id,
+        'email' => 'student@example.com',
+        'expires_at' => now()->addDays(7),
+    ]);
 
     $this->post(route('register.store'), [
         'name' => 'Outside Student',
@@ -72,10 +81,18 @@ test('registering with an email outside the configured school domains creates an
     expect($user->school_email)->toBeNull();
 });
 
-test('an empty school domain configuration makes every registration external', function () {
+test('an empty school domain configuration makes every invited registration external', function () {
     $this->skipUnlessFortifyHas(Features::registration());
 
     config(['members.school_email_domains' => []]);
+
+    $inviter = User::factory()->create(['is_internal' => true]);
+
+    Invitation::create([
+        'inviter_user_id' => $inviter->id,
+        'email' => 'student@ecole.fr',
+        'expires_at' => now()->addDays(7),
+    ]);
 
     $this->post(route('register.store'), [
         'name' => 'Unmatched Student',
@@ -92,6 +109,94 @@ test('an empty school domain configuration makes every registration external', f
     expect($user->is_internal)->toBe(false);
     expect($user->school_email)->toBeNull();
 });
+
+test('registering with an invitation consumes it and links it to the created account', function () {
+    $this->skipUnlessFortifyHas(Features::registration());
+
+    config(['members.school_email_domains' => ['ecole.fr']]);
+
+    $inviter = User::factory()->create(['is_internal' => true]);
+
+    $invitation = Invitation::create([
+        'inviter_user_id' => $inviter->id,
+        'email' => 'invited-student@example.com',
+        'expires_at' => now()->addDays(7),
+    ]);
+
+    $this->post(route('register.store'), [
+        'name' => 'Invited Student',
+        'email' => 'invited-student@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertSessionHasNoErrors();
+
+    $this->assertAuthenticated();
+
+    $user = User::findOrFail(auth()->id());
+
+    $raw = DB::table('invitations')->where('id', $invitation->id)->sole();
+
+    expect($raw->accepted_at)->not->toBeNull();
+    expect($raw->accepted_user_id)->toBe($user->id);
+    expect($raw->revoked_at)->toBeNull();
+});
+
+test('registering a non-school email without an invitation for it is rejected and creates no account', function () {
+    $this->skipUnlessFortifyHas(Features::registration());
+
+    config(['members.school_email_domains' => ['ecole.fr']]);
+
+    $inviter = User::factory()->create(['is_internal' => true]);
+
+    Invitation::create([
+        'inviter_user_id' => $inviter->id,
+        'email' => 'someone-else@example.com',
+        'expires_at' => now()->addDays(7),
+    ]);
+
+    $usersBefore = DB::table('users')->count();
+
+    $this->post(route('register.store'), [
+        'name' => 'Uninvited Student',
+        'email' => 'student@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertSessionHasErrors('email');
+
+    $this->assertGuest();
+
+    expect(DB::table('users')->count())->toBe($usersBefore);
+});
+
+test('a revoked, expired, or already accepted invitation does not allow registration', function (string $state) {
+    $this->skipUnlessFortifyHas(Features::registration());
+
+    config(['members.school_email_domains' => ['ecole.fr']]);
+
+    $inviter = User::factory()->create(['is_internal' => true]);
+
+    Invitation::factory()->{$state}()->create([
+        'inviter_user_id' => $inviter->id,
+        'email' => 'invited@example.com',
+    ]);
+
+    $usersBefore = DB::table('users')->count();
+
+    $this->post(route('register.store'), [
+        'name' => 'Gated Student',
+        'email' => 'invited@example.com',
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ])->assertSessionHasErrors('email');
+
+    $this->assertGuest();
+
+    expect(DB::table('users')->count())->toBe($usersBefore);
+})->with([
+    'revoked invitation' => ['revoked'],
+    'expired invitation' => ['expired'],
+    'already accepted invitation' => ['accepted'],
+]);
 
 test('the member status is frozen at account creation and ignores later configuration changes', function () {
     $this->skipUnlessFortifyHas(Features::registration());
