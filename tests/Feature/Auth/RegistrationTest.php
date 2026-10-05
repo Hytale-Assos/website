@@ -16,9 +16,11 @@ test('registration screen can be rendered', function () {
 });
 
 test('new users can register', function () {
+    config(['members.school_email_domains' => ['ecole.fr']]);
+
     $response = $this->post(route('register.store'), [
         'name' => 'Test User',
-        'email' => 'test@example.com',
+        'email' => 'test@ecole.fr',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);

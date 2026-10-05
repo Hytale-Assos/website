@@ -12,9 +12,11 @@ uses(RefreshDatabase::class);
 test('a registered account keeps working while its personal data is not stored in clear', function () {
     $this->skipUnlessFortifyHas(Features::registration());
 
+    config(['members.school_email_domains' => ['ecole.fr']]);
+
     $this->post(route('register.store'), [
         'name' => 'Confidential User',
-        'email' => 'confidential@example.com',
+        'email' => 'confidential@ecole.fr',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
@@ -23,22 +25,22 @@ test('a registered account keeps working while its personal data is not stored i
 
     $raw = DB::table('users')->where('id', auth()->id())->sole();
 
-    expect($raw->email)->not->toBe('confidential@example.com')
-        ->not->toContain('confidential@example.com');
+    expect($raw->email)->not->toBe('confidential@ecole.fr')
+        ->not->toContain('confidential@ecole.fr');
     expect($raw->name)->not->toBe('Confidential User')
         ->not->toContain('Confidential User');
 
     $user = User::findOrFail(auth()->id());
 
     expect($user->name)->toBe('Confidential User');
-    expect($user->email)->toBe('confidential@example.com');
+    expect($user->email)->toBe('confidential@ecole.fr');
 
     $this->post(route('logout'));
 
     $this->assertGuest();
 
     $this->post(route('login.store'), [
-        'email' => 'confidential@example.com',
+        'email' => 'confidential@ecole.fr',
         'password' => 'password',
     ]);
 
@@ -49,11 +51,13 @@ test('the password reset flow stores no email in clear and still works end to en
     $this->skipUnlessFortifyHas(Features::registration());
     $this->skipUnlessFortifyHas(Features::resetPasswords());
 
+    config(['members.school_email_domains' => ['ecole.fr']]);
+
     Notification::fake();
 
     $this->post(route('register.store'), [
         'name' => 'Reset Me',
-        'email' => 'reset-me@example.com',
+        'email' => 'reset-me@ecole.fr',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
@@ -66,7 +70,7 @@ test('the password reset flow stores no email in clear and still works end to en
 
     $this->assertGuest();
 
-    $this->post(route('password.email'), ['email' => 'reset-me@example.com'])
+    $this->post(route('password.email'), ['email' => 'reset-me@ecole.fr'])
         ->assertSessionHasNoErrors();
 
     $token = null;
@@ -77,7 +81,7 @@ test('the password reset flow stores no email in clear and still works end to en
         function ($notification, $channels, $notifiable) use (&$token) {
             $token = $notification->token;
 
-            return $notifiable->email === 'reset-me@example.com';
+            return $notifiable->email === 'reset-me@ecole.fr';
         }
     );
 
@@ -85,18 +89,18 @@ test('the password reset flow stores no email in clear and still works end to en
 
     $resetRow = DB::table('password_reset_tokens')->sole();
 
-    expect($resetRow->email)->not->toBe('reset-me@example.com')
-        ->not->toContain('reset-me@example.com');
+    expect($resetRow->email)->not->toBe('reset-me@ecole.fr')
+        ->not->toContain('reset-me@ecole.fr');
 
     $this->post(route('password.update'), [
         'token' => $token,
-        'email' => 'reset-me@example.com',
+        'email' => 'reset-me@ecole.fr',
         'password' => 'new-password',
         'password_confirmation' => 'new-password',
     ])->assertSessionHasNoErrors();
 
     $this->post(route('login.store'), [
-        'email' => 'reset-me@example.com',
+        'email' => 'reset-me@ecole.fr',
         'password' => 'new-password',
     ]);
 
