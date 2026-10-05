@@ -4,6 +4,7 @@ namespace App\Http\Requests\Settings;
 
 use App\Enums\GradeLevel;
 use App\Models\User;
+use App\Rules\UniqueEncrypted;
 use App\Support\EmailHasher;
 use App\Support\SchoolEmails;
 use Closure;
@@ -63,24 +64,14 @@ class IdentityUpdateRequest extends FormRequest
 
     /**
      * Rule enforcing the uniqueness of the school email: one account per
-     * student. The column is encrypted, so the check runs on its
-     * deterministic hash column, ignoring the current user.
+     * student, ignoring the current user.
      */
-    private function uniqueSchoolEmailRule(): Closure
+    private function uniqueSchoolEmailRule(): UniqueEncrypted
     {
-        return function (string $attribute, mixed $value, Closure $fail): void {
-            if (! is_string($value)) {
-                return;
-            }
-
-            $takenByAnotherUser = User::query()
-                ->where('school_email_hash', EmailHasher::hash($value))
-                ->whereKeyNot($this->user()->id)
-                ->exists();
-
-            if ($takenByAnotherUser) {
-                $fail(__('validation.unique'));
-            }
-        };
+        return new UniqueEncrypted(
+            'school_email_hash',
+            EmailHasher::hash(...),
+            $this->user()->id,
+        );
     }
 }

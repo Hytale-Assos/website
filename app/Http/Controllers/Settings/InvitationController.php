@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Settings;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Settings\InvitationStoreRequest;
 use App\Models\Invitation;
-use App\Support\EmailHasher;
+use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,7 +18,7 @@ class InvitationController extends Controller
      */
     public function edit(Request $request): Response
     {
-        abort_unless((bool) $request->user()->is_internal, 403);
+        $this->authorize('manage', Invitation::class);
 
         return Inertia::render('settings/Invitations', [
             'invitations' => $request->user()
@@ -42,19 +42,12 @@ class InvitationController extends Controller
      * Send a new invitation.
      *
      * Expired invitations for the same email are stamped as superseded
-     * first: the partial unique index only knows about accepted_at and
-     * revoked_at (now() is not immutable, so expiry cannot be part of the
-     * index predicate), so stamping frees the unique slot for the new
-     * invitation.
+     * first (see Invitation::supersedeExpiredFor) so the new invitation
+     * can take the unique email slot.
      */
     public function store(InvitationStoreRequest $request): RedirectResponse
     {
-        Invitation::query()
-            ->where('email_hash', EmailHasher::hash($request->validated('email')))
-            ->whereNull('accepted_at')
-            ->whereNull('revoked_at')
-            ->where('expires_at', '<=', now())
-            ->update(['revoked_at' => now()]);
+        Invitation::supersedeExpiredFor($request->validated('email'));
 
         Invitation::create([
             'inviter_user_id' => $request->user()->id,
@@ -62,7 +55,7 @@ class InvitationController extends Controller
             'expires_at' => now()->addDays((int) config('members.invitation_validity_days')),
         ]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation sent.')]);
+        Toast::success(__('Invitation sent.'));
 
         return to_route('invitations.edit');
     }
@@ -72,12 +65,11 @@ class InvitationController extends Controller
      */
     public function destroy(Request $request, Invitation $invitation): RedirectResponse
     {
-        abort_unless($invitation->inviter_user_id === $request->user()->id, 403);
-        abort_unless($invitation->accepted_at === null && $invitation->revoked_at === null, 403);
+        $this->authorize('delete', $invitation);
 
         $invitation->update(['revoked_at' => now()]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Invitation revoked.')]);
+        Toast::success(__('Invitation revoked.'));
 
         return to_route('invitations.edit');
     }

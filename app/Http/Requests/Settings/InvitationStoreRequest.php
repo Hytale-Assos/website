@@ -14,11 +14,11 @@ use Illuminate\Validation\Validator;
 class InvitationStoreRequest extends FormRequest
 {
     /**
-     * Only internal members can invite.
+     * Internal members can invite (InvitationPolicy::manage).
      */
     public function authorize(): bool
     {
-        return (bool) $this->user()?->is_internal;
+        return $this->user()->can('manage', Invitation::class);
     }
 
     /**
@@ -63,9 +63,7 @@ class InvitationStoreRequest extends FormRequest
 
                     $invited = Invitation::query()
                         ->where('email_hash', EmailHasher::hash($value))
-                        ->whereNull('accepted_at')
-                        ->whereNull('revoked_at')
-                        ->where('expires_at', '>', now())
+                        ->usable()
                         ->exists();
 
                     if ($invited) {
@@ -90,9 +88,7 @@ class InvitationStoreRequest extends FormRequest
                     ->where('inviter_user_id', $this->user()->id)
                     ->where(function ($query): void {
                         $query->whereNotNull('accepted_at')->orWhere(function ($query): void {
-                            $query->whereNull('accepted_at')
-                                ->whereNull('revoked_at')
-                                ->where('expires_at', '>', now());
+                            $query->usable();
                         });
                     })
                     ->count();
