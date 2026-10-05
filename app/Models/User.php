@@ -35,6 +35,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $discord_nickname
  * @property string|null $hytale_nickname
  * @property Carbon|null $hytale_account_verified_at
+ * @property string|null $school_email
+ * @property string|null $school_email_hash
  * @property string|null $firstname
  * @property string|null $lastname
  * @property string|null $grade_level
@@ -46,7 +48,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'firstname', 'lastname', 'grade_level', 'is_internal', 'is_external', 'is_public'])]
+#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'school_email', 'school_email_hash', 'firstname', 'lastname', 'grade_level', 'is_internal', 'is_external', 'is_public'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
@@ -69,6 +71,7 @@ class User extends Authenticatable implements PasskeyUser
             'discord_nickname' => 'encrypted',
             'hytale_id' => EncryptedWithHash::class.':hytale_id_hash',
             'hytale_nickname' => 'encrypted',
+            'school_email' => EncryptedEmailWithHash::class.':school_email_hash',
             'firstname' => 'encrypted',
             'lastname' => 'encrypted',
             'grade_level' => 'encrypted',
