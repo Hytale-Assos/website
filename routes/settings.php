@@ -4,7 +4,6 @@ use App\Http\Controllers\Settings\DataPrivacyController;
 use App\Http\Controllers\Settings\IdentityController;
 use App\Http\Controllers\Settings\InvitationController;
 use App\Http\Controllers\Settings\LinkedAccountController;
-use App\Http\Controllers\Settings\LinkedAccountOAuthController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -32,10 +31,6 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('settings/accounts', [LinkedAccountController::class, 'edit'])->name('accounts.edit');
     Route::put('settings/accounts', [LinkedAccountController::class, 'update'])->name('accounts.update');
-
-    Route::get('auth/{provider}/redirect', [LinkedAccountOAuthController::class, 'redirect'])->name('linked.redirect');
-    Route::get('auth/{provider}/callback', [LinkedAccountOAuthController::class, 'callback'])->name('linked.callback');
-    Route::delete('settings/accounts/{provider}', [LinkedAccountOAuthController::class, 'destroy'])->name('linked.unlink');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
