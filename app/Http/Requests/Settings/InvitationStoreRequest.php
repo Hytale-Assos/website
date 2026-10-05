@@ -14,11 +14,11 @@ use Illuminate\Validation\Validator;
 class InvitationStoreRequest extends FormRequest
 {
     /**
-     * Only internal members can invite.
+     * Internal members can invite (InvitationPolicy::manage).
      */
     public function authorize(): bool
     {
-        return (bool) $this->user()?->is_internal;
+        return $this->user()->can('manage', Invitation::class);
     }
 
     /**

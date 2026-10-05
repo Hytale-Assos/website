@@ -18,7 +18,7 @@ class InvitationController extends Controller
      */
     public function edit(Request $request): Response
     {
-        abort_unless((bool) $request->user()->is_internal, 403);
+        $this->authorize('manage', Invitation::class);
 
         return Inertia::render('settings/Invitations', [
             'invitations' => $request->user()
@@ -65,8 +65,7 @@ class InvitationController extends Controller
      */
     public function destroy(Request $request, Invitation $invitation): RedirectResponse
     {
-        abort_unless($invitation->inviter_user_id === $request->user()->id, 403);
-        abort_unless($invitation->accepted_at === null && $invitation->revoked_at === null, 403);
+        $this->authorize('delete', $invitation);
 
         $invitation->update(['revoked_at' => now()]);
 
