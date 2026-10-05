@@ -75,13 +75,17 @@ class Invitation extends Model
 
     /**
      * The invitation's derived status.
+     *
+     * Expiry is reported even when the row was later stamped as revoked
+     * (freeing the email for a fresh invitation): that stamp only marks
+     * a superseded invitation, not a decision by the inviter.
      */
     public function status(): string
     {
         return match (true) {
             $this->accepted_at !== null => 'accepted',
-            $this->revoked_at !== null => 'revoked',
             ! $this->expires_at->isFuture() => 'expired',
+            $this->revoked_at !== null => 'revoked',
             default => 'pending',
         };
     }
