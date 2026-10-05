@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { Lock } from '@lucide/vue';
+import { Download, Lock } from '@lucide/vue';
 import Heading from '@/components/Heading.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
     Card,
     CardContent,
@@ -13,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { formatDateTime } from '@/lib/hytale';
-import { edit as editData } from '@/routes/data';
+import { edit as editData, exportMethod as exportData } from '@/routes/data';
 
 type PasskeyEntry = {
     name: string;
@@ -304,5 +305,14 @@ defineOptions({
                 </div>
             </CardContent>
         </Card>
+
+        <div class="flex justify-end">
+            <Button as-child variant="outline" data-test="export-data-button">
+                <a :href="exportData.url()" download>
+                    <Download class="size-4" />
+                    Export my data (JSON)
+                </a>
+            </Button>
+        </div>
     </div>
 </template>
