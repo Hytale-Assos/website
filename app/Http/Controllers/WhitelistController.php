@@ -62,11 +62,16 @@ class WhitelistController extends Controller
     }
 
     /**
-     * Remove a whitelist entry.
+     * Remove a whitelist entry owned by the current member.
      */
     public function destroy(Request $request, string $entry): RedirectResponse
     {
         try {
+            abort_unless(
+                $this->hytale->ownsWhitelistEntry($this->hytaleId($request), $entry),
+                403,
+            );
+
             $this->client->removeFromWhitelist($entry);
         } catch (HytaleApiException $exception) {
             return $this->fail($exception->getMessage());
