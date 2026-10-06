@@ -50,6 +50,18 @@ class HytaleApiException extends RuntimeException
         );
     }
 
+    /**
+     * The core answered but its payload is malformed (missing or empty
+     * required fields) and cannot be turned into a typed resource.
+     */
+    public static function malformed(string $detail): self
+    {
+        return new self(
+            status: 500,
+            message: 'Malformed Hytale API payload: '.$detail,
+        );
+    }
+
     public function isUnavailable(): bool
     {
         return $this->status === self::UNAVAILABLE;

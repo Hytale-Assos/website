@@ -2,6 +2,7 @@
 
 namespace App\Hytale\Data;
 
+use App\Hytale\Support\ApiPayloads;
 use Illuminate\Support\Carbon;
 
 /**
@@ -25,13 +26,13 @@ final readonly class PlayerSession
     public static function fromArray(array $payload): self
     {
         return new self(
-            id: (string) $payload['id'],
+            id: ApiPayloads::requiredString($payload, 'id'),
             hytaleServerId: (string) ($payload['hytale_server_id'] ?? ''),
             hytaleId: (string) ($payload['hytale_id'] ?? ''),
-            joinedAt: self::toDate($payload['joined_at'] ?? null),
-            endedAt: self::toDate($payload['ended_at'] ?? null),
-            createdAt: self::toDate($payload['created_at'] ?? null),
-            updatedAt: self::toDate($payload['updated_at'] ?? null),
+            joinedAt: ApiPayloads::toCarbon($payload['joined_at'] ?? null),
+            endedAt: ApiPayloads::toCarbon($payload['ended_at'] ?? null),
+            createdAt: ApiPayloads::toCarbon($payload['created_at'] ?? null),
+            updatedAt: ApiPayloads::toCarbon($payload['updated_at'] ?? null),
         );
     }
 
@@ -54,10 +55,5 @@ final readonly class PlayerSession
             'created_at' => $this->createdAt?->toIso8601ZuluString(),
             'updated_at' => $this->updatedAt?->toIso8601ZuluString(),
         ];
-    }
-
-    private static function toDate(mixed $value): ?Carbon
-    {
-        return is_string($value) && $value !== '' ? Carbon::parse($value) : null;
     }
 }
