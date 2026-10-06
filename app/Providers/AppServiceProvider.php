@@ -58,27 +58,27 @@ class AppServiceProvider extends ServiceProvider
     protected function configureRateLimiting(): void
     {
         RateLimiter::for('settings', function (Request $request) {
-            return Limit::perMinute(30)->by($request->user()?->id ?? $request->ip());
+            return Limit::perMinute(30)->by($request->user()->id ?? $request->ip());
         });
 
         RateLimiter::for('invitations', function (Request $request) {
-            return Limit::perMinute(10)->by($request->user()?->id ?? $request->ip());
+            return Limit::perMinute(10)->by($request->user()->id ?? $request->ip());
         });
 
         RateLimiter::for('whitelist', function (Request $request) {
-            return Limit::perMinute(10)->by($request->user()?->id ?? $request->ip());
+            return Limit::perMinute(10)->by($request->user()->id ?? $request->ip());
         });
 
         RateLimiter::for('data-export', function (Request $request) {
-            return Limit::perMinute(6)->by($request->user()?->id ?? $request->ip());
+            return Limit::perMinute(6)->by($request->user()->id ?? $request->ip());
         });
 
         RateLimiter::for('oauth', function (Request $request) {
-            return Limit::perMinute(10)->by($request->user()?->id ?? $request->ip());
+            return Limit::perMinute(10)->by($request->user()->id ?? $request->ip());
         });
 
         RateLimiter::for('password', function (Request $request) {
-            return Limit::perMinute(6)->by($request->user()?->id ?? $request->ip());
+            return Limit::perMinute(6)->by($request->user()->id ?? $request->ip());
         });
     }
 

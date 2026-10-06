@@ -16,7 +16,7 @@ class Toast
      */
     public static function success(string $message): void
     {
-        static::flash('success', $message);
+        self::flash('success', $message);
     }
 
     /**
@@ -24,7 +24,7 @@ class Toast
      */
     public static function error(string $message): void
     {
-        static::flash('error', $message);
+        self::flash('error', $message);
     }
 
     /**

@@ -13,6 +13,13 @@ final class PointsService
 {
     private const PAGE_SIZE = 200;
 
+    /**
+     * Upper bound on the pages fetched per member: 25 pages of 200, far
+     * beyond any plausible play history, so an absurd core total turns
+     * into the standard error instead of an unbounded request storm.
+     */
+    private const MAX_PAGES = 25;
+
     public function __construct(
         private readonly HytaleApiClient $client,
         private readonly PointsCalculator $calculator,
@@ -43,7 +50,12 @@ final class PointsService
     }
 
     /**
-     * Fetch every session for a member, page by page.
+     * Fetch a member's sessions, page by page.
+     *
+     * The advertised `total` drives the loop but is not trusted:
+     * iteration stops as soon as the core stops returning items, and a
+     * hard page cap turns an absurd total into the standard error
+     * instead of an unbounded request storm.
      *
      * @return array<int, array{hytale_server_id?: mixed, joined_at?: mixed, ended_at?: mixed}>
      */
@@ -51,6 +63,7 @@ final class PointsService
     {
         $sessions = [];
         $offset = 0;
+        $pages = 0;
 
         do {
             $page = $this->client->playerSessions($hytaleId, [
@@ -62,8 +75,15 @@ final class PointsService
                 $sessions[] = $session->toArray();
             }
 
-            $offset += self::PAGE_SIZE;
-        } while ($offset < $page->total);
+            $offset += count($page->items);
+            $pages++;
+
+            if ($pages >= self::MAX_PAGES && $offset < $page->total) {
+                throw HytaleApiException::malformed(
+                    sprintf('more than %d sessions advertised', self::MAX_PAGES * self::PAGE_SIZE)
+                );
+            }
+        } while ($offset < $page->total && $page->items !== []);
 
         return $sessions;
     }

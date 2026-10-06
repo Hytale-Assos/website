@@ -4,7 +4,9 @@ namespace App\Actions\Fortify;
 
 use App\Concerns\PasswordValidationRules;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Laravel\Fortify\Contracts\ResetsUserPasswords;
 
 class ResetUserPassword implements ResetsUserPasswords
@@ -13,6 +15,10 @@ class ResetUserPassword implements ResetsUserPasswords
 
     /**
      * Validate and reset the user's forgotten password.
+     *
+     * Every session and remember-me token of the user is invalidated:
+     * the reset is the emergency exit, there is no trusted session to
+     * preserve.
      *
      * @param  array<string, string>  $input
      */
@@ -24,6 +30,9 @@ class ResetUserPassword implements ResetsUserPasswords
 
         $user->forceFill([
             'password' => $input['password'],
+            'remember_token' => Str::random(60),
         ])->save();
+
+        DB::table('sessions')->where('user_id', $user->id)->delete();
     }
 }

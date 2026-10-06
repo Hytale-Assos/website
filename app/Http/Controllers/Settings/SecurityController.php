@@ -7,6 +7,8 @@ use App\Http\Requests\Settings\PasswordUpdateRequest;
 use App\Http\Requests\Settings\TwoFactorAuthenticationRequest;
 use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -53,12 +55,26 @@ class SecurityController extends Controller
 
     /**
      * Update the user's password.
+     *
+     * The remember-me token is rotated and every other stored session is
+     * dropped, so a password change evicts a stolen session; the current
+     * session survives, its identity was just proven with the current
+     * password.
      */
     public function update(PasswordUpdateRequest $request): RedirectResponse
     {
         $request->user()->update([
             'password' => $request->password,
         ]);
+
+        $request->user()->forceFill([
+            'remember_token' => Str::random(60),
+        ])->save();
+
+        DB::table('sessions')
+            ->where('user_id', $request->user()->id)
+            ->where('id', '!=', $request->session()->getId())
+            ->delete();
 
         Toast::success(__('Password updated.'));
 

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\EncryptedEmailWithHash;
 use App\Support\EmailHasher;
+use Database\Factories\InvitationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
@@ -50,6 +51,8 @@ class Invitation extends Model
 
     /**
      * The internal member who sent the invitation.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function inviter(): BelongsTo
     {
@@ -58,6 +61,8 @@ class Invitation extends Model
 
     /**
      * The account created with this invitation, once consumed.
+     *
+     * @return BelongsTo<User, $this>
      */
     public function acceptedUser(): BelongsTo
     {
@@ -78,6 +83,9 @@ class Invitation extends Model
     /**
      * Invitations neither consumed nor revoked, whether or not they have
      * expired.
+     *
+     * @param  Builder<Invitation>  $query
+     * @return Builder<Invitation>
      */
     public function scopePending(Builder $query): Builder
     {
@@ -87,6 +95,9 @@ class Invitation extends Model
     /**
      * Pending invitations that have not expired: the ones that can still
      * register an account.
+     *
+     * @param  Builder<Invitation>  $query
+     * @return Builder<Invitation>
      */
     public function scopeUsable(Builder $query): Builder
     {
