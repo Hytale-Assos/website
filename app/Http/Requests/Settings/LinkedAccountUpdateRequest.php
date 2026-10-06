@@ -3,7 +3,8 @@
 namespace App\Http\Requests\Settings;
 
 use App\Models\User;
-use Closure;
+use App\Rules\UniqueEncrypted;
+use App\Support\IdHasher;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -51,24 +52,12 @@ class LinkedAccountUpdateRequest extends FormRequest
     }
 
     /**
-     * Rule enforcing the uniqueness of the Hytale id. The id column is
-     * encrypted, so the check runs on its deterministic hash column.
+    /**
+     * Rule enforcing the uniqueness of the Hytale id, ignoring the
+     * current user.
      */
-    private function uniqueHytaleIdRule(): Closure
+    private function uniqueHytaleIdRule(): UniqueEncrypted
     {
-        return function (string $attribute, mixed $value, Closure $fail): void {
-            if ($value === null) {
-                return;
-            }
-
-            $takenByAnotherUser = User::query()
-                ->where('hytale_id_hash', hash('sha256', $value))
-                ->whereKeyNot($this->user()->id)
-                ->exists();
-
-            if ($takenByAnotherUser) {
-                $fail(__('validation.unique'));
-            }
-        };
+        return new UniqueEncrypted('hytale_id_hash', IdHasher::hash(...), $this->user()->id);
     }
 }

@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\IdHasher;
+use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 use Throwable;
@@ -51,10 +52,7 @@ class LinkedAccountOAuthController extends Controller
         } catch (Throwable $e) {
             report($e);
 
-            Inertia::flash('toast', [
-                'type' => 'error',
-                'message' => __('The :provider account could not be linked. Please try again.', ['provider' => $provider]),
-            ]);
+            Toast::error(__('The :provider account could not be linked. Please try again.', ['provider' => $provider]));
 
             return to_route('accounts.edit');
         }
@@ -64,7 +62,7 @@ class LinkedAccountOAuthController extends Controller
         $providerId = $oauthUser->getId();
 
         $lookupColumn = $hashColumn ?? $idColumn;
-        $lookupValue = $hashColumn !== null ? hash('sha256', $providerId) : $providerId;
+        $lookupValue = $hashColumn !== null ? IdHasher::hash($providerId) : $providerId;
 
         $alreadyLinked = User::query()
             ->where($lookupColumn, $lookupValue)
@@ -72,10 +70,7 @@ class LinkedAccountOAuthController extends Controller
             ->exists();
 
         if ($alreadyLinked) {
-            Inertia::flash('toast', [
-                'type' => 'error',
-                'message' => __('This :provider account is already linked to another user.', ['provider' => $provider]),
-            ]);
+            Toast::error(__('This :provider account is already linked to another user.', ['provider' => $provider]));
 
             return to_route('accounts.edit');
         }
@@ -87,10 +82,7 @@ class LinkedAccountOAuthController extends Controller
 
         $request->user()->fill($attributes)->save();
 
-        Inertia::flash('toast', [
-            'type' => 'success',
-            'message' => __('Your :provider account has been linked.', ['provider' => Str::ucfirst($provider)]),
-        ]);
+        Toast::success(__('Your :provider account has been linked.', ['provider' => Str::ucfirst($provider)]));
 
         return to_route('accounts.edit');
     }
@@ -111,10 +103,7 @@ class LinkedAccountOAuthController extends Controller
 
         $request->user()->fill($attributes)->save();
 
-        Inertia::flash('toast', [
-            'type' => 'success',
-            'message' => __('Your :provider account has been unlinked.', ['provider' => Str::ucfirst($provider)]),
-        ]);
+        Toast::success(__('Your :provider account has been unlinked.', ['provider' => Str::ucfirst($provider)]));
 
         return to_route('accounts.edit');
     }

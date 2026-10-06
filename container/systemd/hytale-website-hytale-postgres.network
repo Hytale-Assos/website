@@ -1,0 +1,9 @@
+# Peer network between hytale-website and hytale-postgres.
+# The generated systemd unit is hytale-website-hytale-postgres.service.
+
+[Network]
+Label=app=hytale
+Label=layer=db
+
+[Install]
+WantedBy=default.target

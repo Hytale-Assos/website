@@ -1,0 +1,75 @@
+# Hytale website (Laravel + FrankenPHP), unprivileged image.
+# The generated systemd unit is hytale-website.service.
+#
+# The image runs as appuser (uid 1000) and listens on :8080
+# (SERVER_NAME default). Application configuration is split in two:
+#   - non-secret values live in the environment file below, created
+#     on the deployment host from container/website.env.example;
+#   - sensitive values come from podman secrets, provisioned on the
+#     deployment host (rootless layout, adjust the source paths):
+#       podman secret create hytale-website-app-key /home/hytale/hytale/secrets/app_key
+#       podman secret create hytale-website-db-password /home/hytale/hytale/secrets/db_password
+#       podman secret create hytale-website-hytale-api-key /home/hytale/hytale/secrets/hytale_api_key
+#       podman secret create hytale-website-hytale-api-hmac /home/hytale/hytale/secrets/hytale_api_hmac
+#       podman secret create hytale-website-discord-client-secret /home/hytale/hytale/secrets/discord_client_secret
+#       podman secret create hytale-website-mail-password /home/hytale/hytale/secrets/mail_password
+#     If a secret is missing, systemd fails to start the unit.
+#     Secrets are resolved at container creation: to rotate one,
+#     recreate it and restart the service.
+#
+# Hardening: NoNewPrivileges + DropCapability=ALL (the image is
+# already non-root, port > 1024, no file capabilities) and a
+# read-only root filesystem. Tmpfs mounts give back the writable
+# paths: /tmp (PHP uploads), /app/storage (compiled views, cache),
+# /app/bootstrap/cache (framework manifests, regenerated when
+# absent), /data/caddy and /config/caddy (Caddy autosave).
+# Nothing writable survives a restart, nothing persists outside
+# PostgreSQL.
+#
+# Run migrations after pulling a new image:
+#   podman run --rm --network hytale-website-hytale-postgres \
+#     --env-file /home/hytale/hytale/env/website.env \
+#     --secret hytale-website-db-password,type=env,target=DB_PASSWORD \
+#     --secret hytale-website-app-key,type=env,target=APP_KEY \
+#     ghcr.io/hytale-assos/website:latest php artisan migrate --force
+
+[Unit]
+Description=Hytale website (Laravel + FrankenPHP)
+Requires=hytale-postgres.service hytale-redis.service
+After=hytale-postgres.service hytale-redis.service
+
+[Container]
+Image=ghcr.io/hytale-assos/website:latest
+ContainerName=hytale-website
+Network=hytale-website-hytale-postgres.network
+Network=hytale-website-hytale-redis.network
+PublishPort=80:8080
+NoNewPrivileges=true
+DropCapability=ALL
+ReadOnly=true
+Tmpfs=/tmp:rw,uid=1000,gid=1000,mode=1777
+Tmpfs=/app/storage:rw,uid=1000,gid=1000
+Tmpfs=/app/bootstrap/cache:rw,uid=1000,gid=1000
+Tmpfs=/data/caddy:rw,uid=1000,gid=1000
+Tmpfs=/config/caddy:rw,uid=1000,gid=1000
+Secret=hytale-website-app-key,type=env,target=APP_KEY
+Secret=hytale-website-db-password,type=env,target=DB_PASSWORD
+Secret=hytale-website-hytale-api-key,type=env,target=HYTALE_API_KEY
+Secret=hytale-website-hytale-api-hmac,type=env,target=HYTALE_API_HMAC_SECRET
+Secret=hytale-website-discord-client-secret,type=env,target=DISCORD_CLIENT_SECRET
+Secret=hytale-website-mail-password,type=env,target=MAIL_PASSWORD
+EnvironmentFile=/home/hytale/hytale/env/website.env
+HealthCmd=curl -fsS http://127.0.0.1:8080/up
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthStartPeriod=10s
+# podman-auto-update.service can roll this container forward:
+AutoUpdate=registry
+
+[Service]
+Restart=always
+RestartSec=3s
+
+[Install]
+WantedBy=default.target

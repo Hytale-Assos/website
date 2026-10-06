@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Concerns;
 
+use App\Support\Toast;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
 
 trait SharesHytaleProps
 {
@@ -31,10 +31,7 @@ trait SharesHytaleProps
         $error = $props['error'] ?? null;
 
         if (is_string($error) && $error !== '') {
-            Inertia::flash('toast', [
-                'type' => 'error',
-                'message' => $error,
-            ]);
+            Toast::error($error);
         }
 
         return [

@@ -5,10 +5,13 @@ namespace App\Providers;
 use App\Auth\HashedEloquentUserProvider;
 use App\Auth\Passwords\HashedEmailPasswordBrokerManager;
 use Carbon\CarbonImmutable;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use SocialiteProviders\Discord\Provider as DiscordProvider;
@@ -43,7 +46,40 @@ class AppServiceProvider extends ServiceProvider
             $event->extendSocialite('discord', DiscordProvider::class);
         });
 
+        $this->configureRateLimiting();
         $this->configureDefaults();
+    }
+
+    /**
+     * Named rate limiters for the application's own write endpoints
+     * (Fortify configures the authentication ones). Every limiter keys
+     * by user id when signed in, by IP otherwise.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('settings', function (Request $request) {
+            return Limit::perMinute(30)->by($request->user()->id ?? $request->ip());
+        });
+
+        RateLimiter::for('invitations', function (Request $request) {
+            return Limit::perMinute(10)->by($request->user()->id ?? $request->ip());
+        });
+
+        RateLimiter::for('whitelist', function (Request $request) {
+            return Limit::perMinute(10)->by($request->user()->id ?? $request->ip());
+        });
+
+        RateLimiter::for('data-export', function (Request $request) {
+            return Limit::perMinute(6)->by($request->user()->id ?? $request->ip());
+        });
+
+        RateLimiter::for('oauth', function (Request $request) {
+            return Limit::perMinute(10)->by($request->user()->id ?? $request->ip());
+        });
+
+        RateLimiter::for('password', function (Request $request) {
+            return Limit::perMinute(6)->by($request->user()->id ?? $request->ip());
+        });
     }
 
     /**

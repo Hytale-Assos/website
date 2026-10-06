@@ -3,6 +3,7 @@
 namespace App\Concerns;
 
 use App\Models\User;
+use App\Rules\UniqueEncrypted;
 use App\Support\EmailHasher;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -19,7 +20,18 @@ trait ProfileValidationRules
         return [
             'name' => $this->nameRules(),
             'email' => $this->emailRules($userId),
+            'is_public' => $this->visibilityRules(),
         ];
+    }
+
+    /**
+     * Get the validation rules for the public leaderboard visibility flag.
+     *
+     * @return array<int, ValidationRule|array<mixed>|string>
+     */
+    protected function visibilityRules(): array
+    {
+        return ['boolean'];
     }
 
     /**
@@ -49,24 +61,12 @@ trait ProfileValidationRules
     }
 
     /**
-     * Rule enforcing the uniqueness of the email address. The email column
-     * is encrypted, so the check runs on its deterministic hash column.
+     * Rule enforcing the uniqueness of the email address: the email
+     * column is encrypted, so the check runs on its deterministic hash
+     * column.
      */
-    private function uniqueEmailRule(?string $userId): Closure
+    private function uniqueEmailRule(?string $userId): UniqueEncrypted
     {
-        return function (string $attribute, mixed $value, Closure $fail) use ($userId): void {
-            if ($value === null) {
-                return;
-            }
-
-            $takenByAnotherUser = User::query()
-                ->where('email_hash', EmailHasher::hash($value))
-                ->when($userId !== null, fn ($query) => $query->whereKeyNot($userId))
-                ->exists();
-
-            if ($takenByAnotherUser) {
-                $fail(__('validation.unique'));
-            }
-        };
+        return new UniqueEncrypted('email_hash', EmailHasher::hash(...), $userId);
     }
 }

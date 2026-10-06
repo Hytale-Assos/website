@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Form, Head } from '@inertiajs/vue3';
+import { Info } from '@lucide/vue';
 import InputError from '@/components/InputError.vue';
 import PasswordInput from '@/components/PasswordInput.vue';
 import TextLink from '@/components/TextLink.vue';
@@ -24,6 +25,18 @@ defineOptions({
 
 <template>
     <Head title="Register" />
+
+    <p
+        class="bg-muted text-muted-foreground flex items-start gap-2 rounded-md p-3 text-sm"
+        data-test="registration-notice"
+    >
+        <Info class="mt-0.5 size-4 shrink-0" />
+        <span>
+            Registration is open to school members with their school email
+            address. Outside guests can create an account once an internal
+            member has invited them.
+        </span>
+    </p>
 
     <Form
         v-bind="store.form()"

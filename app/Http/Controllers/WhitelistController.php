@@ -6,8 +6,10 @@ use App\Http\Controllers\Concerns\SharesHytaleProps;
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Hytale\Exceptions\HytaleApiException;
 use App\Hytale\HytaleData;
+use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -40,7 +42,7 @@ class WhitelistController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'hytale_server_id' => ['required', 'string'],
+            'hytale_server_id' => ['required', 'uuid'],
         ]);
 
         $hytaleId = $this->hytaleId($request);
@@ -55,23 +57,30 @@ class WhitelistController extends Controller
             return $this->fail($exception->getMessage());
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Added to whitelist.')]);
+        Toast::success(__('Added to whitelist.'));
 
         return back();
     }
 
     /**
-     * Remove a whitelist entry.
+     * Remove a whitelist entry owned by the current member.
      */
     public function destroy(Request $request, string $entry): RedirectResponse
     {
+        abort_unless(Str::isUuid($entry), 404);
+
         try {
+            abort_unless(
+                $this->hytale->ownsWhitelistEntry($this->hytaleId($request), $entry),
+                403,
+            );
+
             $this->client->removeFromWhitelist($entry);
         } catch (HytaleApiException $exception) {
             return $this->fail($exception->getMessage());
         }
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => __('Removed from whitelist.')]);
+        Toast::success(__('Removed from whitelist.'));
 
         return back();
     }
@@ -82,7 +91,7 @@ class WhitelistController extends Controller
      */
     private function fail(string $message): RedirectResponse
     {
-        Inertia::flash('toast', ['type' => 'error', 'message' => $message]);
+        Toast::error($message);
 
         return back()->withErrors(['whitelist' => $message]);
     }

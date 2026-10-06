@@ -1,0 +1,8 @@
+# PostgreSQL data directory, owned by the hytale-postgres container.
+# The generated systemd unit is hytale-postgres-data.service.
+
+[Volume]
+Label=app=hytale
+
+[Install]
+WantedBy=default.target

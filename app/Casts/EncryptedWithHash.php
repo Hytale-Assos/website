@@ -2,6 +2,7 @@
 
 namespace App\Casts;
 
+use App\Support\IdHasher;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
@@ -52,7 +53,7 @@ class EncryptedWithHash implements CastsAttributes
      */
     protected function hashValue(string $value): string
     {
-        return hash('sha256', $value);
+        return IdHasher::hash($value);
     }
 
     /**

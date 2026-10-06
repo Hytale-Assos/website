@@ -2,6 +2,7 @@
 
 namespace App\Hytale\Data;
 
+use App\Hytale\Support\ApiPayloads;
 use Illuminate\Support\Carbon;
 
 /**
@@ -31,13 +32,13 @@ final readonly class Module
         $scopes = is_array($payload['scopes'] ?? null) ? array_values($payload['scopes']) : [];
 
         return new self(
-            id: (string) $payload['id'],
+            id: ApiPayloads::requiredString($payload, 'id'),
             name: (string) ($payload['name'] ?? ''),
             description: isset($payload['description']) ? (string) $payload['description'] : null,
             isEnabled: (bool) ($payload['is_enabled'] ?? false),
             scopes: $scopes,
-            createdAt: self::toDate($payload['created_at'] ?? null),
-            updatedAt: self::toDate($payload['updated_at'] ?? null),
+            createdAt: ApiPayloads::toCarbon($payload['created_at'] ?? null),
+            updatedAt: ApiPayloads::toCarbon($payload['updated_at'] ?? null),
         );
     }
 
@@ -55,10 +56,5 @@ final readonly class Module
             'created_at' => $this->createdAt?->toIso8601ZuluString(),
             'updated_at' => $this->updatedAt?->toIso8601ZuluString(),
         ];
-    }
-
-    private static function toDate(mixed $value): ?Carbon
-    {
-        return is_string($value) && $value !== '' ? Carbon::parse($value) : null;
     }
 }
