@@ -27,7 +27,7 @@ final readonly class HytaleServer
             id: (string) $payload['id'],
             moduleId: (string) ($payload['module_id'] ?? ''),
             name: (string) ($payload['name'] ?? ''),
-            url: (string) ($payload['url'] ?? ''),
+            url: self::toUrl($payload['url'] ?? ''),
             createdAt: self::toDate($payload['created_at'] ?? null),
             updatedAt: self::toDate($payload['updated_at'] ?? null),
         );
@@ -51,5 +51,21 @@ final readonly class HytaleServer
     private static function toDate(mixed $value): ?Carbon
     {
         return is_string($value) && $value !== '' ? Carbon::parse($value) : null;
+    }
+
+    /**
+     * Keep only http(s) URLs: a server url comes from the core and is
+     * rendered as a link, so any other scheme (javascript:, data:, ...) is
+     * neutralized to an empty string instead of becoming clickable.
+     */
+    private static function toUrl(mixed $value): string
+    {
+        if (! is_string($value) || $value === '') {
+            return '';
+        }
+
+        $scheme = parse_url($value, PHP_URL_SCHEME);
+
+        return in_array($scheme, ['http', 'https'], true) ? $value : '';
     }
 }

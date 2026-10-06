@@ -109,7 +109,7 @@ defineOptions({
                     </span>
 
                     <a
-                        v-if="selectedServer"
+                        v-if="selectedServer?.url"
                         :href="selectedServer.url"
                         target="_blank"
                         rel="noopener noreferrer"
