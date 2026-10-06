@@ -52,7 +52,8 @@ class HytaleApiException extends RuntimeException
 
     /**
      * The core answered but its payload is malformed (missing or empty
-     * required fields) and cannot be turned into a typed resource.
+     * required fields, or values beyond any plausible bound) and cannot
+     * be turned into a typed resource.
      */
     public static function malformed(string $detail): self
     {
