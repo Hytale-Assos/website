@@ -58,6 +58,8 @@ class User extends Authenticatable implements PasskeyUser
 
     /**
      * The invitations this member has sent.
+     *
+     * @return HasMany<Invitation, $this>
      */
     public function invitations(): HasMany
     {
