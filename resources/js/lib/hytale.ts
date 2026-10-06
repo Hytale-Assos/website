@@ -1,4 +1,15 @@
+import { usePage } from '@inertiajs/vue3';
 import { locale } from '@/composables/useLocale';
+
+/**
+ * Format times in the application timezone shared by the server, not the
+ * browser timezone. Otherwise the server-rendered markup and the freshly
+ * hydrated client disagree on every timestamp, which desyncs Vue's DOM and
+ * can crash the keyed diff during navigation.
+ */
+const timeZone = (): string =>
+    (usePage().props.app as { timezone?: string } | undefined)?.timezone ??
+    Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export function formatDateTime(value: string | null): string {
     if (!value) {
@@ -14,6 +25,7 @@ export function formatDateTime(value: string | null): string {
     return new Intl.DateTimeFormat(locale.value, {
         dateStyle: 'medium',
         timeStyle: 'short',
+        timeZone: timeZone(),
     }).format(date);
 }
 
