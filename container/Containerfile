@@ -58,6 +58,7 @@ ENV APP_ENV=production \
     APP_DEBUG=false \
     INERTIA_SSR_ENABLED=false \
     LOG_CHANNEL=stderr \
+    SESSION_SECURE_COOKIE=true \
     SERVER_NAME=":8080"
 
 USER ${APP_USER}
