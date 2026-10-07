@@ -47,11 +47,11 @@ PublishPort=80:8080
 NoNewPrivileges=true
 DropCapability=ALL
 ReadOnly=true
-Tmpfs=/tmp:rw,uid=1000,gid=1000,mode=1777
-Tmpfs=/app/storage:rw,uid=1000,gid=1000
-Tmpfs=/app/bootstrap/cache:rw,uid=1000,gid=1000
-Tmpfs=/data/caddy:rw,uid=1000,gid=1000
-Tmpfs=/config/caddy:rw,uid=1000,gid=1000
+Tmpfs=/tmp:rw,mode=1777
+Tmpfs=/app/storage:rw,mode=1777
+Tmpfs=/app/bootstrap/cache:rw,mode=1777
+Tmpfs=/data/caddy:rw,mode=1777
+Tmpfs=/config/caddy:rw,mode=1777
 Secret=hytale-website-app-key,type=env,target=APP_KEY
 Secret=hytale-website-db-password,type=env,target=DB_PASSWORD
 Secret=hytale-website-hytale-api-key,type=env,target=HYTALE_API_KEY
