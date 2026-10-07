@@ -31,7 +31,11 @@ Tmpfs=/var/run/postgresql:rw,uid=999,gid=999,mode=755
 Secret=hytale-postgres-password,type=env,target=POSTGRES_PASSWORD
 Environment=POSTGRES_DB=hytale
 Environment=POSTGRES_USER=hytale
-Volume=hytale-postgres-data.volume:/var/lib/postgresql/data
+# Postgres 18+ stores data in /var/lib/postgresql/<major>/docker and
+# refuses to start if a volume is mounted directly on the data dir:
+# mount the volume on /var/lib/postgresql so pg_upgrade has no mount
+# boundary, or the entrypoint aborts with "unused mount/volume".
+Volume=hytale-postgres-data.volume:/var/lib/postgresql
 HealthCmd=pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
 HealthInterval=5s
 HealthTimeout=3s
