@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, setLayoutProps } from '@inertiajs/vue3';
 import { Construction, Package } from '@lucide/vue';
+import { watchEffect } from 'vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
 import EmptyState from '@/components/dashboard/EmptyState.vue';
 import { Button } from '@/components/ui/button';
@@ -14,10 +15,10 @@ defineProps<{
 
 const { t } = useLocale();
 
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Mods', href: modsIndex() }],
-    },
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [{ title: t('nav.items.mods'), href: modsIndex() }],
+    });
 });
 </script>
 

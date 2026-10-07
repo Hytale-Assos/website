@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
+import { watchEffect } from 'vue';
 import { RefreshCw } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
 import SessionsList from '@/components/dashboard/SessionsList.vue';
@@ -20,10 +21,12 @@ const { t } = useLocale();
 
 const refresh = () => router.reload();
 
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Sessions', href: sessionsIndex() }],
-    },
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [
+            { title: t('nav.items.sessions'), href: sessionsIndex() },
+        ],
+    });
 });
 </script>
 

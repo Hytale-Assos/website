@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, setLayoutProps } from '@inertiajs/vue3';
 import {
     ArrowRight,
     CalendarClock,
@@ -8,6 +8,7 @@ import {
     ShieldCheck,
     UserRound,
 } from '@lucide/vue';
+import { watchEffect } from 'vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
 import LinkAccountsPrompt from '@/components/dashboard/LinkAccountsPrompt.vue';
 import SessionsList from '@/components/dashboard/SessionsList.vue';
@@ -38,6 +39,12 @@ const { t } = useLocale();
 
 const refresh = () => router.reload();
 
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [{ title: t('nav.items.dashboard'), href: dashboard() }],
+    });
+});
+
 const cards = [
     {
         key: 'dash.tabs.servers',
@@ -58,12 +65,6 @@ const cards = [
         href: sessionsIndex,
     },
 ] as const;
-
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Dashboard', href: dashboard() }],
-    },
-});
 </script>
 
 <template>

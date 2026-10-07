@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
+import { ref, watchEffect } from 'vue';
 import { RefreshCw } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
 import WhitelistList from '@/components/dashboard/WhitelistList.vue';
@@ -22,6 +22,14 @@ defineProps<{
 
 const { t } = useLocale();
 
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [
+            { title: t('nav.items.whitelist'), href: whitelistIndex() },
+        ],
+    });
+});
+
 const processingId = ref<string | null>(null);
 
 const leaveEntry = (entry: WhitelistEntry) => {
@@ -40,12 +48,6 @@ const leaveEntry = (entry: WhitelistEntry) => {
 };
 
 const refresh = () => router.reload();
-
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Whitelist', href: whitelistIndex() }],
-    },
-});
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
+import { computed, watchEffect } from 'vue';
 import { Award, Clock, Flame, RefreshCw, Target } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
 import { Badge } from '@/components/ui/badge';
@@ -36,6 +36,14 @@ const props = defineProps<{
 
 const { t } = useLocale();
 
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [{ title: t('nav.items.points'), href: pointsIndex() }],
+    });
+});
+
+const refresh = () => router.reload();
+
 const threshold = 2;
 
 const progress = computed(() => {
@@ -46,14 +54,6 @@ const progress = computed(() => {
     const hours = Math.min(props.points.hoursSinceLastReward, threshold);
 
     return Math.round((hours / threshold) * 100);
-});
-
-const refresh = () => router.reload();
-
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Points Open', href: pointsIndex() }],
-    },
 });
 </script>
 

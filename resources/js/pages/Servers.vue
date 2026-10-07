@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
+import { computed, ref, watchEffect } from 'vue';
 import { RefreshCw } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
 import ServersList from '@/components/dashboard/ServersList.vue';
@@ -19,6 +19,12 @@ const props = defineProps<{
 }>();
 
 const { t } = useLocale();
+
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [{ title: t('nav.items.servers'), href: serversIndex() }],
+    });
+});
 
 const processingId = ref<string | null>(null);
 const canJoin = computed(() => Boolean(props.hytaleId));
@@ -43,12 +49,6 @@ const joinServer = (server: HytaleServer) => {
 };
 
 const refresh = () => router.reload();
-
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Servers', href: serversIndex() }],
-    },
-});
 </script>
 
 <template>

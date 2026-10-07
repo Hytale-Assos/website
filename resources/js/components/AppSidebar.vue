@@ -24,6 +24,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { computed } from 'vue';
 import { dashboard } from '@/routes';
 import { index as mapsIndex } from '@/routes/maps';
 import { index as modsIndex } from '@/routes/mods';
@@ -31,58 +32,61 @@ import { index as pointsIndex } from '@/routes/points';
 import { index as serversIndex } from '@/routes/servers';
 import { index as sessionsIndex } from '@/routes/sessions';
 import { index as whitelistIndex } from '@/routes/whitelist';
+import { useLocale } from '@/composables/useLocale';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
+const { t } = useLocale();
+
+const mainNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Dashboard',
+        title: t('nav.items.dashboard'),
         href: dashboard(),
         icon: LayoutGrid,
     },
     {
-        title: 'Servers',
+        title: t('nav.items.servers'),
         href: serversIndex(),
         icon: Server,
     },
     {
-        title: 'Whitelist',
+        title: t('nav.items.whitelist'),
         href: whitelistIndex(),
         icon: ShieldCheck,
     },
     {
-        title: 'Sessions',
+        title: t('nav.items.sessions'),
         href: sessionsIndex(),
         icon: CalendarClock,
     },
     {
-        title: 'Maps',
+        title: t('nav.items.maps'),
         href: mapsIndex(),
         icon: MapIcon,
     },
     {
-        title: 'Mods',
+        title: t('nav.items.mods'),
         href: modsIndex(),
         icon: Package,
     },
     {
-        title: 'Points Open',
+        title: t('nav.items.points'),
         href: pointsIndex(),
         icon: Award,
     },
-];
+]);
 
-const footerNavItems: NavItem[] = [
+const footerNavItems = computed<NavItem[]>(() => [
     {
-        title: 'Repository',
+        title: t('nav.items.repository'),
         href: 'https://github.com/laravel/vue-starter-kit',
         icon: FolderGit2,
     },
     {
-        title: 'Documentation',
+        title: t('nav.items.documentation'),
         href: 'https://laravel.com/docs/starter-kits#vue',
         icon: BookOpen,
     },
-];
+]);
 </script>
 
 <template>
