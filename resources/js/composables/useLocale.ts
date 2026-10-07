@@ -8,6 +8,20 @@ const STORAGE_KEY = 'locale';
 const isLocale = (value: string | null): value is Locale =>
     value === 'fr' || value === 'en';
 
+const detected = (): Locale => {
+    if (typeof navigator === 'undefined') {
+        return 'fr';
+    }
+
+    const languages = navigator.languages?.length
+        ? navigator.languages
+        : [navigator.language];
+
+    return languages.some((language) => language.toLowerCase().startsWith('fr'))
+        ? 'fr'
+        : 'en';
+};
+
 const stored = (): Locale => {
     if (typeof window === 'undefined') {
         return 'fr';
@@ -15,7 +29,7 @@ const stored = (): Locale => {
 
     const value = localStorage.getItem(STORAGE_KEY);
 
-    return isLocale(value) ? value : 'fr';
+    return isLocale(value) ? value : detected();
 };
 
 export const locale = ref<Locale>(stored());

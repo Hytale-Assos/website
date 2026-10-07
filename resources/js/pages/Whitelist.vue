@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
-import { RefreshCw } from '@lucide/vue';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
+import { ref, watchEffect } from 'vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
+import RefreshButton from '@/components/dashboard/RefreshButton.vue';
 import WhitelistList from '@/components/dashboard/WhitelistList.vue';
-import { Button } from '@/components/ui/button';
 import { useLocale } from '@/composables/useLocale';
 import {
     index as whitelistIndex,
@@ -22,6 +21,14 @@ defineProps<{
 
 const { t } = useLocale();
 
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [
+            { title: t('nav.items.whitelist'), href: whitelistIndex() },
+        ],
+    });
+});
+
 const processingId = ref<string | null>(null);
 
 const leaveEntry = (entry: WhitelistEntry) => {
@@ -38,14 +45,6 @@ const leaveEntry = (entry: WhitelistEntry) => {
         },
     });
 };
-
-const refresh = () => router.reload();
-
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Whitelist', href: whitelistIndex() }],
-    },
-});
 </script>
 
 <template>
@@ -60,10 +59,7 @@ defineOptions({
         require-hytale
     >
         <template #actions>
-            <Button variant="outline" size="sm" @click="refresh">
-                <RefreshCw class="size-4" />
-                {{ t('dash.refresh') }}
-            </Button>
+            <RefreshButton />
         </template>
 
         <WhitelistList

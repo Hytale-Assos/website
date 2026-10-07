@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
-import { RefreshCw } from '@lucide/vue';
+import { Head, router, setLayoutProps } from '@inertiajs/vue3';
+import { computed, ref, watchEffect } from 'vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
+import RefreshButton from '@/components/dashboard/RefreshButton.vue';
 import ServersList from '@/components/dashboard/ServersList.vue';
-import { Button } from '@/components/ui/button';
 import { useLocale } from '@/composables/useLocale';
 import { index as serversIndex } from '@/routes/servers';
 import { store as whitelistStore } from '@/routes/whitelist';
@@ -19,6 +18,12 @@ const props = defineProps<{
 }>();
 
 const { t } = useLocale();
+
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [{ title: t('nav.items.servers'), href: serversIndex() }],
+    });
+});
 
 const processingId = ref<string | null>(null);
 const canJoin = computed(() => Boolean(props.hytaleId));
@@ -41,14 +46,6 @@ const joinServer = (server: HytaleServer) => {
         },
     );
 };
-
-const refresh = () => router.reload();
-
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Servers', href: serversIndex() }],
-    },
-});
 </script>
 
 <template>
@@ -63,10 +60,7 @@ defineOptions({
         require-hytale
     >
         <template #actions>
-            <Button variant="outline" size="sm" @click="refresh">
-                <RefreshCw class="size-4" />
-                {{ t('dash.refresh') }}
-            </Button>
+            <RefreshButton />
         </template>
 
         <ServersList

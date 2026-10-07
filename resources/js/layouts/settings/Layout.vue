@@ -5,6 +5,7 @@ import Heading from '@/components/Heading.vue';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
+import { useLocale } from '@/composables/useLocale';
 import { toUrl } from '@/lib/utils';
 import { edit as editAccounts } from '@/routes/accounts';
 import { edit as editAppearance } from '@/routes/appearance';
@@ -17,41 +18,42 @@ import type { NavItem } from '@/types';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
+const { t } = useLocale();
 
 const sidebarNavItems = computed<NavItem[]>(() => {
     const items: NavItem[] = [
         {
-            title: 'Profile',
+            title: t('settings.nav.profile'),
             href: editProfile(),
         },
         {
-            title: 'Identity',
+            title: t('settings.nav.identity'),
             href: editIdentity(),
         },
         {
-            title: 'Security',
+            title: t('settings.nav.security'),
             href: editSecurity(),
         },
         {
-            title: 'Linked accounts',
+            title: t('settings.nav.accounts'),
             href: editAccounts(),
         },
     ];
 
     if (user.value?.is_internal) {
         items.push({
-            title: 'Invitations',
+            title: t('settings.nav.invitations'),
             href: editInvitations(),
         });
     }
 
     items.push(
         {
-            title: 'Data & privacy',
+            title: t('settings.nav.data'),
             href: editData(),
         },
         {
-            title: 'Appearance',
+            title: t('settings.nav.appearance'),
             href: editAppearance(),
         },
     );
@@ -65,15 +67,15 @@ const { isCurrentOrParentUrl } = useCurrentUrl();
 <template>
     <div class="px-4 py-6">
         <Heading
-            title="Settings"
-            description="Manage your profile and account settings"
+            :title="t('settings.title')"
+            :description="t('settings.description')"
         />
 
         <div class="flex flex-col lg:flex-row lg:space-x-12">
             <aside class="w-full max-w-xl lg:w-48">
                 <nav
                     class="flex flex-col space-y-1 space-x-0"
-                    aria-label="Settings"
+                    :aria-label="t('settings.title')"
                 >
                     <Button
                         v-for="item in sidebarNavItems"
