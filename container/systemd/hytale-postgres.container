@@ -26,8 +26,8 @@ NoNewPrivileges=true
 User=postgres
 DropCapability=ALL
 ReadOnly=true
-Tmpfs=/tmp:rw,uid=999,gid=999,mode=1777
-Tmpfs=/var/run/postgresql:rw,uid=999,gid=999,mode=755
+Tmpfs=/tmp:rw,mode=1777
+Tmpfs=/var/run/postgresql:rw,mode=1777
 Secret=hytale-postgres-password,type=env,target=POSTGRES_PASSWORD
 Environment=POSTGRES_DB=hytale
 Environment=POSTGRES_USER=hytale

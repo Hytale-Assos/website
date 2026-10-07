@@ -18,8 +18,8 @@ NoNewPrivileges=true
 User=redis
 DropCapability=ALL
 ReadOnly=true
-Tmpfs=/tmp:rw,uid=999,gid=999,mode=1777
-Tmpfs=/data:rw,uid=999,gid=999,mode=755
+Tmpfs=/tmp:rw,mode=1777
+Tmpfs=/data:rw,mode=1777
 HealthCmd=redis-cli ping
 HealthInterval=5s
 HealthTimeout=3s
