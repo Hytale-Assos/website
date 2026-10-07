@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, setLayoutProps } from '@inertiajs/vue3';
 import { Download, Lock } from '@lucide/vue';
+import { watchEffect } from 'vue';
 import Heading from '@/components/Heading.vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useLocale } from '@/composables/useLocale';
 import { formatDateTime } from '@/lib/hytale';
 import { edit as editData, exportMethod as exportData } from '@/routes/data';
 
@@ -59,68 +61,74 @@ defineProps<{
     };
 }>();
 
-defineOptions({
-    layout: {
+const { t } = useLocale();
+
+watchEffect(() => {
+    setLayoutProps({
         breadcrumbs: [
             {
-                title: 'Data & privacy',
+                title: t('settings.data.head'),
                 href: editData(),
             },
         ],
-    },
+    });
 });
 </script>
 
 <template>
-    <Head title="Data & privacy" />
+    <Head :title="t('settings.data.head')" />
 
-    <h1 class="sr-only">Data &amp; privacy</h1>
+    <h1 class="sr-only">{{ t('settings.data.head') }}</h1>
 
     <div class="flex flex-col space-y-6">
         <Heading
             variant="small"
-            title="Data & privacy"
-            description="Everything the website stores about you"
+            :title="t('settings.data.title')"
+            :description="t('settings.data.description')"
         />
 
         <Alert>
             <Lock class="size-4" />
             <AlertTitle>
-                All data that can identify you is private and encrypted
+                {{ t('settings.data.alert.title') }}
             </AlertTitle>
             <AlertDescription>
-                Your name, email address, and identification details are stored
-                encrypted. Only you can see this page. Data held by the game
-                core API is not included.
+                {{ t('settings.data.alert.description') }}
             </AlertDescription>
         </Alert>
 
         <Card>
             <CardHeader>
-                <CardTitle>Account</CardTitle>
-                <CardDescription>Your account details</CardDescription>
+                <CardTitle>{{ t('settings.data.account') }}</CardTitle>
+                <CardDescription>{{
+                    t('settings.data.account.desc')
+                }}</CardDescription>
             </CardHeader>
             <CardContent class="space-y-4">
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm">Name</span>
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.name')
+                    }}</span>
                     <span class="text-sm">{{ sections.account.name }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm">Email</span>
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.email')
+                    }}</span>
                     <span class="text-sm">{{ sections.account.email }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm"
-                        >School email</span
-                    >
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.schoolEmail')
+                    }}</span>
                     <span class="text-sm">{{
                         sections.account.school_email ?? '—'
                     }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm"
-                        >Member since</span
-                    >
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.memberSince')
+                    }}</span>
                     <span class="text-sm">{{
                         formatDateTime(sections.account.created_at)
                     }}</span>
@@ -130,36 +138,40 @@ defineOptions({
 
         <Card>
             <CardHeader>
-                <CardTitle>Identification</CardTitle>
+                <CardTitle>{{ t('settings.data.identification') }}</CardTitle>
                 <CardDescription>
-                    Your identification data, encrypted at rest
+                    {{ t('settings.data.identification.desc') }}
                 </CardDescription>
             </CardHeader>
             <CardContent class="space-y-4">
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm"
-                        >First name</span
-                    >
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.firstname')
+                    }}</span>
                     <span class="text-sm">{{
                         sections.identification.firstname ?? '—'
                     }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm">Last name</span>
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.lastname')
+                    }}</span>
                     <span class="text-sm">{{
                         sections.identification.lastname ?? '—'
                     }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm"
-                        >Grade level</span
-                    >
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.grade')
+                    }}</span>
                     <span class="text-sm">{{
                         sections.identification.grade_level ?? '—'
                     }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm">Status</span>
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.status')
+                    }}</span>
                     <Badge
                         v-if="sections.identification.status"
                         variant="secondary"
@@ -170,11 +182,13 @@ defineOptions({
                     <span v-else class="text-sm">—</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                    <span class="text-muted-foreground text-sm"
-                        >Public leaderboard</span
-                    >
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.public')
+                    }}</span>
                     <span class="text-sm">{{
-                        sections.identification.is_public ? 'Yes' : 'No'
+                        sections.identification.is_public
+                            ? t('common.yes')
+                            : t('common.no')
                     }}</span>
                 </div>
             </CardContent>
@@ -182,9 +196,9 @@ defineOptions({
 
         <Card>
             <CardHeader>
-                <CardTitle>Linked accounts</CardTitle>
+                <CardTitle>{{ t('settings.data.linked') }}</CardTitle>
                 <CardDescription>
-                    Third-party accounts linked to your profile
+                    {{ t('settings.data.linked.desc') }}
                 </CardDescription>
             </CardHeader>
             <CardContent class="space-y-4">
@@ -193,8 +207,8 @@ defineOptions({
                     <span class="text-sm">{{
                         sections.linked_accounts.discord.linked
                             ? (sections.linked_accounts.discord.nickname ??
-                              'Linked')
-                            : 'Not linked'
+                              t('settings.data.linkedLabel'))
+                            : t('settings.data.notLinked')
                     }}</span>
                 </div>
                 <div class="flex justify-between gap-4">
@@ -202,17 +216,17 @@ defineOptions({
                     <span class="text-sm">{{
                         sections.linked_accounts.hytale.linked
                             ? (sections.linked_accounts.hytale.nickname ??
-                              'Linked')
-                            : 'Not linked'
+                              t('settings.data.linkedLabel'))
+                            : t('settings.data.notLinked')
                     }}</span>
                 </div>
                 <div
                     v-if="sections.linked_accounts.hytale.verified_at"
                     class="flex justify-between gap-4"
                 >
-                    <span class="text-muted-foreground text-sm"
-                        >Hytale account verified</span
-                    >
+                    <span class="text-muted-foreground text-sm">{{
+                        t('settings.data.hytaleVerified')
+                    }}</span>
                     <span class="text-sm">{{
                         formatDateTime(
                             sections.linked_accounts.hytale.verified_at,
@@ -224,32 +238,34 @@ defineOptions({
 
         <Card>
             <CardHeader>
-                <CardTitle>Security</CardTitle>
+                <CardTitle>{{ t('settings.data.security') }}</CardTitle>
                 <CardDescription>
-                    Passkeys, two-factor authentication and active sessions
+                    {{ t('settings.data.security.desc') }}
                 </CardDescription>
             </CardHeader>
             <CardContent class="space-y-6">
                 <div class="space-y-4">
                     <div class="flex justify-between gap-4">
-                        <span class="text-muted-foreground text-sm"
-                            >Two-factor authentication</span
-                        >
+                        <span class="text-muted-foreground text-sm">{{
+                            t('settings.data.twoFactor')
+                        }}</span>
                         <Badge
                             v-if="sections.security.two_factor.enabled"
                             variant="secondary"
                         >
-                            Enabled
+                            {{ t('settings.data.enabled') }}
                         </Badge>
-                        <Badge v-else variant="outline"> Disabled </Badge>
+                        <Badge v-else variant="outline">
+                            {{ t('settings.data.disabled') }}
+                        </Badge>
                     </div>
                     <div
                         v-if="sections.security.two_factor.confirmed_at"
                         class="flex justify-between gap-4"
                     >
-                        <span class="text-muted-foreground text-sm"
-                            >Enabled since</span
-                        >
+                        <span class="text-muted-foreground text-sm">{{
+                            t('settings.data.enabledSince')
+                        }}</span>
                         <span class="text-sm">{{
                             formatDateTime(
                                 sections.security.two_factor.confirmed_at,
@@ -262,13 +278,17 @@ defineOptions({
 
                 <div class="space-y-4">
                     <p class="text-sm font-medium">
-                        Passkeys ({{ sections.security.passkeys.length }})
+                        {{
+                            t('settings.data.passkeys', {
+                                count: sections.security.passkeys.length,
+                            })
+                        }}
                     </p>
                     <p
                         v-if="sections.security.passkeys.length === 0"
                         class="text-muted-foreground text-sm"
                     >
-                        No passkeys registered.
+                        {{ t('settings.data.noPasskeys') }}
                     </p>
                     <div
                         v-for="passkey in sections.security.passkeys"
@@ -277,9 +297,14 @@ defineOptions({
                     >
                         <span class="text-sm">{{ passkey.name }}</span>
                         <span class="text-muted-foreground text-sm">
-                            Added {{ formatDateTime(passkey.created_at) }}, last
-                            used
-                            {{ formatDateTime(passkey.last_used_at) }}
+                            {{
+                                t('settings.data.passkeyAdded', {
+                                    date: formatDateTime(passkey.created_at),
+                                    lastUsed: formatDateTime(
+                                        passkey.last_used_at,
+                                    ),
+                                })
+                            }}
                         </span>
                     </div>
                 </div>
@@ -288,15 +313,17 @@ defineOptions({
 
                 <div class="space-y-4">
                     <p class="text-sm font-medium">
-                        Active sessions ({{
-                            sections.security.sessions.length
-                        }})
+                        {{
+                            t('settings.data.sessions', {
+                                count: sections.security.sessions.length,
+                            })
+                        }}
                     </p>
                     <p
                         v-if="sections.security.sessions.length === 0"
                         class="text-muted-foreground text-sm"
                     >
-                        No active sessions.
+                        {{ t('settings.data.noSessions') }}
                     </p>
                     <div
                         v-for="(session, index) in sections.security.sessions"
@@ -307,8 +334,11 @@ defineOptions({
                             session.ip_address ?? '—'
                         }}</span>
                         <span class="text-muted-foreground text-sm">
-                            {{ session.user_agent ?? 'Unknown device' }} —
-                            {{ formatDateTime(session.last_activity) }}
+                            {{
+                                session.user_agent ??
+                                t('settings.data.unknownDevice')
+                            }}
+                            — {{ formatDateTime(session.last_activity) }}
                         </span>
                     </div>
                 </div>
@@ -319,7 +349,7 @@ defineOptions({
             <Button as-child variant="outline" data-test="export-data-button">
                 <a :href="exportData.url()" download>
                     <Download class="size-4" />
-                    Export my data (JSON)
+                    {{ t('settings.data.export') }}
                 </a>
             </Button>
         </div>

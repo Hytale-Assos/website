@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { Head, setLayoutProps } from '@inertiajs/vue3';
+import { computed, ref, watchEffect } from 'vue';
 import { Construction, ExternalLink, Map as MapIcon } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
 import EmptyState from '@/components/dashboard/EmptyState.vue';
@@ -31,10 +31,10 @@ const selectedServer = computed(() =>
     props.servers.find((server) => server.id === selectedId.value),
 );
 
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Maps', href: mapsIndex() }],
-    },
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [{ title: t('nav.items.maps'), href: mapsIndex() }],
+    });
 });
 </script>
 

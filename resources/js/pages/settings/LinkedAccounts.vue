@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { Form, Head, usePage } from '@inertiajs/vue3';
+import { Form, Head, setLayoutProps, usePage } from '@inertiajs/vue3';
 import { BadgeCheck, BadgeX, Link2 } from '@lucide/vue';
-import { computed } from 'vue';
+import { computed, watchEffect } from 'vue';
 import LinkedAccountController from '@/actions/App/Http/Controllers/Settings/LinkedAccountController';
 import LinkedAccountOAuthController from '@/actions/App/Http/Controllers/Settings/LinkedAccountOAuthController';
 import Heading from '@/components/Heading.vue';
@@ -11,19 +11,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useLocale } from '@/composables/useLocale';
 import { edit } from '@/routes/accounts';
 import { redirect as redirectToProvider } from '@/routes/linked';
-
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Linked accounts settings',
-                href: edit(),
-            },
-        ],
-    },
-});
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
@@ -31,18 +21,31 @@ const isVerified = computed(() =>
     Boolean(user.value.hytale_account_verified_at),
 );
 const isDiscordLinked = computed(() => Boolean(user.value.discord_id));
+
+const { t } = useLocale();
+
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [
+            {
+                title: t('settings.accounts.head'),
+                href: edit(),
+            },
+        ],
+    });
+});
 </script>
 
 <template>
-    <Head title="Linked accounts settings" />
+    <Head :title="t('settings.accounts.head')" />
 
-    <h1 class="sr-only">Linked accounts settings</h1>
+    <h1 class="sr-only">{{ t('settings.accounts.head') }}</h1>
 
     <div class="space-y-6">
         <Heading
             variant="small"
-            title="Linked accounts"
-            description="Link your game accounts to your profile"
+            :title="t('settings.accounts.title')"
+            :description="t('settings.accounts.description')"
         />
 
         <Form
@@ -56,40 +59,41 @@ const isDiscordLinked = computed(() => Boolean(user.value.discord_id));
                         <div>
                             <p class="font-medium">Hytale</p>
                             <p class="text-muted-foreground text-sm">
-                                Your Hytale identity, used for servers,
-                                whitelist and points
+                                {{ t('settings.accounts.hytale.description') }}
                             </p>
                         </div>
                         <Badge v-if="isVerified" variant="secondary">
                             <BadgeCheck />
-                            Verified
+                            {{ t('settings.accounts.verified') }}
                         </Badge>
                         <Badge v-else variant="outline">
                             <BadgeX />
-                            Not verified
+                            {{ t('settings.accounts.notVerified') }}
                         </Badge>
                     </div>
 
                     <p v-if="!isVerified" class="text-muted-foreground text-sm">
-                        The Hytale account verification is not available yet.
-                        Enter your details yourself: they will be reviewed by
-                        the team and confirmed later through Hytale OAuth.
+                        {{ t('settings.accounts.hytale.unverifiedHint') }}
                     </p>
                     <p v-else class="text-muted-foreground text-sm">
-                        Your Hytale account has been confirmed through Hytale
-                        OAuth. These details are provided by Hytale and cannot
-                        be changed here.
+                        {{ t('settings.accounts.hytale.verifiedHint') }}
                     </p>
 
                     <div class="grid gap-2">
-                        <Label for="hytale_nickname">Hytale nickname</Label>
+                        <Label for="hytale_nickname">{{
+                            t('settings.accounts.hytale.nickname')
+                        }}</Label>
                         <Input
                             id="hytale_nickname"
                             class="mt-1 block w-full"
                             name="hytale_nickname"
                             :default-value="user.hytale_nickname ?? ''"
                             :disabled="isVerified"
-                            placeholder="Your in-game nickname"
+                            :placeholder="
+                                t(
+                                    'settings.accounts.hytale.nicknamePlaceholder',
+                                )
+                            "
                         />
                         <InputError
                             class="mt-2"
@@ -98,14 +102,18 @@ const isDiscordLinked = computed(() => Boolean(user.value.discord_id));
                     </div>
 
                     <div class="grid gap-2">
-                        <Label for="hytale_id">Hytale ID</Label>
+                        <Label for="hytale_id">{{
+                            t('settings.accounts.hytale.id')
+                        }}</Label>
                         <Input
                             id="hytale_id"
                             class="mt-1 block w-full"
                             name="hytale_id"
                             :default-value="user.hytale_id ?? ''"
                             :disabled="isVerified"
-                            placeholder="Your Hytale account UUID"
+                            :placeholder="
+                                t('settings.accounts.hytale.idPlaceholder')
+                            "
                         />
                         <InputError class="mt-2" :message="errors.hytale_id" />
                     </div>
@@ -115,7 +123,7 @@ const isDiscordLinked = computed(() => Boolean(user.value.discord_id));
                         :disabled="processing"
                         data-test="update-accounts-button"
                     >
-                        Save
+                        {{ t('common.save') }}
                     </Button>
                 </CardContent>
             </Card>
@@ -127,27 +135,27 @@ const isDiscordLinked = computed(() => Boolean(user.value.discord_id));
                     <div>
                         <p class="font-medium">Discord</p>
                         <p class="text-muted-foreground text-sm">
-                            Link your Discord account to your profile
+                            {{ t('settings.accounts.discord.description') }}
                         </p>
                     </div>
                     <Badge v-if="isDiscordLinked" variant="secondary">
                         <BadgeCheck />
-                        Linked
+                        {{ t('settings.accounts.linked') }}
                     </Badge>
                     <Badge v-else variant="outline">
                         <BadgeX />
-                        Not linked
+                        {{ t('settings.accounts.notLinked') }}
                     </Badge>
                 </div>
 
                 <p v-if="isDiscordLinked" class="text-muted-foreground text-sm">
-                    Linked as
+                    {{ t('settings.accounts.linkedAs') }}
                     <span class="text-foreground font-medium">{{
                         user.discord_nickname
                     }}</span>
                 </p>
                 <p v-else class="text-muted-foreground text-sm">
-                    Your Discord identity is provided by Discord OAuth.
+                    {{ t('settings.accounts.discord.hint') }}
                 </p>
 
                 <div class="flex items-center justify-between">
@@ -159,7 +167,7 @@ const isDiscordLinked = computed(() => Boolean(user.value.discord_id));
                     >
                         <a :href="redirectToProvider.url('discord')">
                             <Link2 />
-                            Link
+                            {{ t('settings.accounts.link') }}
                         </a>
                     </Button>
 
@@ -175,7 +183,7 @@ const isDiscordLinked = computed(() => Boolean(user.value.discord_id));
                             :disabled="processing"
                             data-test="unlink-discord-button"
                         >
-                            Unlink
+                            {{ t('settings.accounts.unlink') }}
                         </Button>
                     </Form>
                 </div>

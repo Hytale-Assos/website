@@ -15,49 +15,42 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { edit as editIdentity } from '@/routes/identity';
+import { useLocale } from '@/composables/useLocale';
 
 defineProps<{
     gradeLevels: { value: string; label: string }[];
 }>();
 
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Identity settings',
-                href: editIdentity(),
-            },
-        ],
-    },
-});
-
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 const isInternal = computed(() => Boolean(user.value?.is_internal));
 const gradeLevel = ref<string>(user.value?.grade_level ?? '');
+const { t } = useLocale();
 </script>
 
 <template>
-    <Head title="Identity settings" />
+    <Head :title="t('settings.identity.head')" />
 
-    <h1 class="sr-only">Identity settings</h1>
+    <h1 class="sr-only">{{ t('settings.identity.head') }}</h1>
 
     <div class="flex flex-col space-y-6">
         <div class="flex items-start justify-between gap-4">
             <Heading
                 variant="small"
-                title="Identity"
-                description="Your identification data, private and encrypted"
+                :title="t('settings.identity.title')"
+                :description="t('settings.identity.description')"
             />
             <Badge :variant="isInternal ? 'secondary' : 'outline'">
-                {{ isInternal ? 'Internal member' : 'External member' }}
+                {{
+                    isInternal
+                        ? t('settings.identity.internal')
+                        : t('settings.identity.external')
+                }}
             </Badge>
         </div>
 
         <p class="text-muted-foreground text-sm">
-            Your member status is set by your registration email and cannot be
-            changed here.
+            {{ t('settings.identity.statusHint') }}
         </p>
 
         <Form
@@ -66,7 +59,9 @@ const gradeLevel = ref<string>(user.value?.grade_level ?? '');
             v-slot="{ errors, processing }"
         >
             <div class="grid gap-2">
-                <Label for="firstname">First name</Label>
+                <Label for="firstname">{{
+                    t('settings.identity.firstname')
+                }}</Label>
                 <Input
                     id="firstname"
                     class="mt-1 block w-full"
@@ -74,13 +69,15 @@ const gradeLevel = ref<string>(user.value?.grade_level ?? '');
                     :default-value="user.firstname ?? ''"
                     :required="isInternal"
                     autocomplete="given-name"
-                    placeholder="First name"
+                    :placeholder="t('settings.identity.firstnamePlaceholder')"
                 />
                 <InputError class="mt-2" :message="errors.firstname" />
             </div>
 
             <div class="grid gap-2">
-                <Label for="lastname">Last name</Label>
+                <Label for="lastname">{{
+                    t('settings.identity.lastname')
+                }}</Label>
                 <Input
                     id="lastname"
                     class="mt-1 block w-full"
@@ -88,13 +85,15 @@ const gradeLevel = ref<string>(user.value?.grade_level ?? '');
                     :default-value="user.lastname ?? ''"
                     :required="isInternal"
                     autocomplete="family-name"
-                    placeholder="Last name"
+                    :placeholder="t('settings.identity.lastnamePlaceholder')"
                 />
                 <InputError class="mt-2" :message="errors.lastname" />
             </div>
 
             <div v-if="isInternal" class="grid gap-2">
-                <Label for="school_email">School email</Label>
+                <Label for="school_email">{{
+                    t('settings.identity.schoolEmail')
+                }}</Label>
                 <Input
                     id="school_email"
                     type="email"
@@ -103,21 +102,26 @@ const gradeLevel = ref<string>(user.value?.grade_level ?? '');
                     :default-value="user.school_email ?? ''"
                     required
                     autocomplete="off"
-                    placeholder="school email"
+                    :placeholder="t('settings.identity.schoolEmailPlaceholder')"
                 />
                 <p class="text-muted-foreground text-sm">
-                    Your school email anchors your internal status; it does not
-                    change it and is not used to sign in.
+                    {{ t('settings.identity.schoolEmailHint') }}
                 </p>
                 <InputError class="mt-2" :message="errors.school_email" />
             </div>
 
             <div v-if="isInternal" class="grid gap-2">
-                <Label for="grade_level">Grade level</Label>
+                <Label for="grade_level">{{
+                    t('settings.identity.grade')
+                }}</Label>
                 <input type="hidden" name="grade_level" :value="gradeLevel" />
                 <Select v-model="gradeLevel">
                     <SelectTrigger id="grade_level" class="mt-1 w-full">
-                        <SelectValue placeholder="Select your grade level" />
+                        <SelectValue
+                            :placeholder="
+                                t('settings.identity.gradePlaceholder')
+                            "
+                        />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem
@@ -136,7 +140,7 @@ const gradeLevel = ref<string>(user.value?.grade_level ?? '');
                 <Button
                     :disabled="processing"
                     data-test="update-identity-button"
-                    >Save</Button
+                    >{{ t('common.save') }}</Button
                 >
             </div>
         </Form>

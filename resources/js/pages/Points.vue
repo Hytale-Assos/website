@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
-import { computed } from 'vue';
-import { Award, Clock, Flame, RefreshCw, Target } from '@lucide/vue';
+import { Head, setLayoutProps } from '@inertiajs/vue3';
+import { computed, watchEffect } from 'vue';
+import { Award, Clock, Flame, Target } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
+import RefreshButton from '@/components/dashboard/RefreshButton.vue';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLocale } from '@/composables/useLocale';
 import { formatDateTime } from '@/lib/hytale';
@@ -36,6 +36,12 @@ const props = defineProps<{
 
 const { t } = useLocale();
 
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [{ title: t('nav.items.points'), href: pointsIndex() }],
+    });
+});
+
 const threshold = 2;
 
 const progress = computed(() => {
@@ -46,14 +52,6 @@ const progress = computed(() => {
     const hours = Math.min(props.points.hoursSinceLastReward, threshold);
 
     return Math.round((hours / threshold) * 100);
-});
-
-const refresh = () => router.reload();
-
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Points Open', href: pointsIndex() }],
-    },
 });
 </script>
 
@@ -69,10 +67,7 @@ defineOptions({
         require-hytale
     >
         <template #actions>
-            <Button variant="outline" size="sm" @click="refresh">
-                <RefreshCw class="size-4" />
-                {{ t('dash.refresh') }}
-            </Button>
+            <RefreshButton />
         </template>
 
         <div class="grid gap-4 sm:grid-cols-3">

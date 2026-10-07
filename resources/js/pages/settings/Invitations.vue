@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { Form, Head } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Form, Head, setLayoutProps } from '@inertiajs/vue3';
+import { computed, watchEffect } from 'vue';
 import InvitationController from '@/actions/App/Http/Controllers/Settings/InvitationController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useLocale } from '@/composables/useLocale';
 import { formatDateTime } from '@/lib/hytale';
 import { edit as editInvitations } from '@/routes/invitations';
 
@@ -18,17 +19,6 @@ type Invitation = {
     created_at: string | null;
     expires_at: string;
 };
-
-defineOptions({
-    layout: {
-        breadcrumbs: [
-            {
-                title: 'Invitations',
-                href: editInvitations(),
-            },
-        ],
-    },
-});
 
 const props = defineProps<{
     invitations: Invitation[];
@@ -43,24 +33,40 @@ const activeCount = computed(
                 invitation.status === 'pending',
         ).length,
 );
+
+const { t } = useLocale();
+
+watchEffect(() => {
+    setLayoutProps({
+        breadcrumbs: [
+            {
+                title: t('settings.invitations.title'),
+                href: editInvitations(),
+            },
+        ],
+    });
+});
 </script>
 
 <template>
-    <Head title="Invitations" />
+    <Head :title="t('settings.invitations.title')" />
 
-    <h1 class="sr-only">Invitations</h1>
+    <h1 class="sr-only">{{ t('settings.invitations.title') }}</h1>
 
     <div class="flex flex-col space-y-6">
         <Heading
             variant="small"
-            title="Invitations"
-            description="Invite external guests to create an account"
+            :title="t('settings.invitations.title')"
+            :description="t('settings.invitations.description')"
         />
 
         <p class="text-muted-foreground text-sm">
-            {{ activeCount }} of {{ limit }} active invitations. School email
-            addresses register on their own and cannot be invited. Pending
-            invitations expire after 7 days.
+            {{
+                t('settings.invitations.summary', {
+                    active: activeCount,
+                    limit,
+                })
+            }}
         </p>
 
         <Form
@@ -69,7 +75,7 @@ const activeCount = computed(
             v-slot="{ errors, processing }"
         >
             <div class="grid gap-2">
-                <Label for="email">Guest email</Label>
+                <Label for="email">{{ t('settings.invitations.email') }}</Label>
                 <Input
                     id="email"
                     type="email"
@@ -83,9 +89,9 @@ const activeCount = computed(
             </div>
 
             <div class="flex items-center gap-4">
-                <Button :disabled="processing" data-test="invite-button"
-                    >Invite</Button
-                >
+                <Button :disabled="processing" data-test="invite-button">{{
+                    t('settings.invitations.invite')
+                }}</Button>
             </div>
         </Form>
 
@@ -100,10 +106,17 @@ const activeCount = computed(
                         {{ invitation.email }}
                     </p>
                     <p class="text-muted-foreground text-sm">
-                        Invited {{ formatDateTime(invitation.created_at) }}
+                        {{
+                            t('settings.invitations.invited', {
+                                date: formatDateTime(invitation.created_at),
+                            })
+                        }}
                         <template v-if="invitation.status === 'pending'">
-                            · expires
-                            {{ formatDateTime(invitation.expires_at) }}
+                            {{
+                                t('settings.invitations.expires', {
+                                    date: formatDateTime(invitation.expires_at),
+                                })
+                            }}
                         </template>
                     </p>
                 </div>
@@ -112,21 +125,23 @@ const activeCount = computed(
                         v-if="invitation.status === 'accepted'"
                         variant="secondary"
                     >
-                        Accepted
+                        {{ t('settings.invitations.status.accepted') }}
                     </Badge>
                     <Badge
                         v-else-if="invitation.status === 'pending'"
                         variant="outline"
                     >
-                        Pending
+                        {{ t('settings.invitations.status.pending') }}
                     </Badge>
                     <Badge
                         v-else-if="invitation.status === 'revoked'"
                         variant="outline"
                     >
-                        Revoked
+                        {{ t('settings.invitations.status.revoked') }}
                     </Badge>
-                    <Badge v-else variant="outline"> Expired </Badge>
+                    <Badge v-else variant="outline">
+                        {{ t('settings.invitations.status.expired') }}
+                    </Badge>
 
                     <Form
                         v-if="invitation.status === 'pending'"
@@ -143,7 +158,7 @@ const activeCount = computed(
                             :disabled="revoking"
                             data-test="revoke-invitation-button"
                         >
-                            Revoke
+                            {{ t('settings.invitations.revoke') }}
                         </Button>
                     </Form>
                 </div>
@@ -151,7 +166,7 @@ const activeCount = computed(
         </div>
 
         <p v-else class="text-muted-foreground text-sm">
-            You have not invited anyone yet.
+            {{ t('settings.invitations.empty') }}
         </p>
     </div>
 </template>
