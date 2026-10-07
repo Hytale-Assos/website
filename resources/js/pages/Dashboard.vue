@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { Head, Link, router, setLayoutProps } from '@inertiajs/vue3';
+import { Head, Link, setLayoutProps } from '@inertiajs/vue3';
 import {
     ArrowRight,
     CalendarClock,
-    RefreshCw,
     Server,
     ShieldCheck,
     UserRound,
@@ -11,9 +10,9 @@ import {
 import { watchEffect } from 'vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
 import LinkAccountsPrompt from '@/components/dashboard/LinkAccountsPrompt.vue';
+import RefreshButton from '@/components/dashboard/RefreshButton.vue';
 import SessionsList from '@/components/dashboard/SessionsList.vue';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLocale } from '@/composables/useLocale';
 import { dashboard } from '@/routes';
@@ -36,8 +35,6 @@ defineProps<{
 }>();
 
 const { t } = useLocale();
-
-const refresh = () => router.reload();
 
 watchEffect(() => {
     setLayoutProps({
@@ -85,10 +82,7 @@ const cards = [
                     <UserRound class="size-3.5" />
                     {{ t('dash.account.connected') }}
                 </Badge>
-                <Button variant="outline" size="sm" @click="refresh">
-                    <RefreshCw class="size-4" />
-                    {{ t('dash.refresh') }}
-                </Button>
+                <RefreshButton />
             </div>
         </template>
 

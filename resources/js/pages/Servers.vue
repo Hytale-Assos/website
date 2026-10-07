@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { Head, router, setLayoutProps } from '@inertiajs/vue3';
 import { computed, ref, watchEffect } from 'vue';
-import { RefreshCw } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
+import RefreshButton from '@/components/dashboard/RefreshButton.vue';
 import ServersList from '@/components/dashboard/ServersList.vue';
-import { Button } from '@/components/ui/button';
 import { useLocale } from '@/composables/useLocale';
 import { index as serversIndex } from '@/routes/servers';
 import { store as whitelistStore } from '@/routes/whitelist';
@@ -47,8 +46,6 @@ const joinServer = (server: HytaleServer) => {
         },
     );
 };
-
-const refresh = () => router.reload();
 </script>
 
 <template>
@@ -63,10 +60,7 @@ const refresh = () => router.reload();
         require-hytale
     >
         <template #actions>
-            <Button variant="outline" size="sm" @click="refresh">
-                <RefreshCw class="size-4" />
-                {{ t('dash.refresh') }}
-            </Button>
+            <RefreshButton />
         </template>
 
         <ServersList

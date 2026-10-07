@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { Head, router, setLayoutProps } from '@inertiajs/vue3';
+import { Head, setLayoutProps } from '@inertiajs/vue3';
 import { watchEffect } from 'vue';
-import { RefreshCw } from '@lucide/vue';
 import MemberPage from '@/components/dashboard/MemberPage.vue';
+import RefreshButton from '@/components/dashboard/RefreshButton.vue';
 import SessionsList from '@/components/dashboard/SessionsList.vue';
-import { Button } from '@/components/ui/button';
 import { useLocale } from '@/composables/useLocale';
 import { index as sessionsIndex } from '@/routes/sessions';
 import type { HytaleServer, PlayerSession } from '@/types';
@@ -18,8 +17,6 @@ defineProps<{
 }>();
 
 const { t } = useLocale();
-
-const refresh = () => router.reload();
 
 watchEffect(() => {
     setLayoutProps({
@@ -42,10 +39,7 @@ watchEffect(() => {
         require-hytale
     >
         <template #actions>
-            <Button variant="outline" size="sm" @click="refresh">
-                <RefreshCw class="size-4" />
-                {{ t('dash.refresh') }}
-            </Button>
+            <RefreshButton />
         </template>
 
         <SessionsList :sessions="sessions" :servers="servers" />
