@@ -17,7 +17,11 @@ return [
     'discord' => [
         'client_id' => env('DISCORD_CLIENT_ID'),
         'client_secret' => env('DISCORD_CLIENT_SECRET'),
-        'redirect' => env('DISCORD_REDIRECT_URI'),
+        // A relative path is resolved against APP_URL at runtime. Env files
+        // read by podman/systemd do not expand ${APP_URL}, so a literal
+        // "${APP_URL}/..." would be sent to the provider as-is and rejected
+        // with "Not a well formed URL".
+        'redirect' => env('DISCORD_REDIRECT_URI', '/auth/discord/callback'),
     ],
 
     'postmark' => [
