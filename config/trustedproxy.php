@@ -12,14 +12,16 @@ return [
     | headers, Laravel keeps generating http:// URLs while the browser is on an
     | https:// page; the browser then treats Inertia's response as cross-origin
     | and hides its X-Inertia header, and the client reports a "plain JSON
-    | response was received" error.
+    | response was received" error. It also cannot recover the real client IP
+    | from X-Forwarded-For.
     |
-    | Set TRUSTED_PROXIES to a comma-separated list of IPs/CIDRs to narrow it
-    | down. When unset or empty, it defaults to "*" (trust the immediate proxy)
-    | in production and to none elsewhere, so development is unaffected.
+    | Set TRUSTED_PROXIES to a comma-separated list of IPs/CIDRs: the network
+    | shared with the reverse proxy (Traefik, for the production deployment).
+    | Never use "*": it trusts the left-most X-Forwarded-For entry, which any
+    | public client can spoof. When unset, no proxy is trusted.
     |
     */
 
-    'proxies' => env('TRUSTED_PROXIES') ?: (env('APP_ENV') === 'production' ? '*' : null),
+    'proxies' => env('TRUSTED_PROXIES') ?: null,
 
 ];
