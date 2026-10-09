@@ -12,6 +12,7 @@
 #       podman secret create hytale-website-hytale-api-key /home/hytale/hytale/secrets/hytale_api_key
 #       podman secret create hytale-website-hytale-api-hmac /home/hytale/hytale/secrets/hytale_api_hmac
 #       podman secret create hytale-website-discord-client-secret /home/hytale/hytale/secrets/discord_client_secret
+#       podman secret create hytale-website-hytale-client-secret /home/hytale/hytale/secrets/hytale_client_secret
 #       podman secret create hytale-website-mail-password /home/hytale/hytale/secrets/mail_password
 #     If a secret is missing, systemd fails to start the unit.
 #     Secrets are resolved at container creation: to rotate one,
@@ -57,6 +58,7 @@ Secret=hytale-website-db-password,type=env,target=DB_PASSWORD
 Secret=hytale-website-hytale-api-key,type=env,target=HYTALE_API_KEY
 Secret=hytale-website-hytale-api-hmac,type=env,target=HYTALE_API_HMAC_SECRET
 Secret=hytale-website-discord-client-secret,type=env,target=DISCORD_CLIENT_SECRET
+Secret=hytale-website-hytale-client-secret,type=env,target=HYTALE_CLIENT_SECRET
 Secret=hytale-website-mail-password,type=env,target=MAIL_PASSWORD
 EnvironmentFile=/home/hytale/hytale/env/website.env
 HealthCmd=curl -fsS http://127.0.0.1:8080/up
