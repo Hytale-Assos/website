@@ -116,6 +116,7 @@ export const messages: Record<Locale, Messages> = {
             'Rejoins un serveur pour être ajouté à sa whitelist.',
         'dash.servers.empty': 'Aucun serveur disponible pour le moment.',
         'dash.servers.join': 'Rejoindre',
+        'dash.servers.leave': 'Quitter',
         'dash.servers.joined': 'Tu es whitelisté',
         'dash.servers.visit': 'Visiter',
         'dash.servers.count': 'serveurs',
@@ -124,13 +125,6 @@ export const messages: Record<Locale, Messages> = {
         'dash.servers.copied': 'Adresse copiée',
         'dash.servers.enterInGame':
             'Colle cette adresse dans le jeu pour rejoindre le serveur.',
-
-        'dash.whitelist.title': 'Liste blanche',
-        'dash.whitelist.description':
-            'Les serveurs sur lesquels tu es autorisé à jouer.',
-        'dash.whitelist.empty': 'Tu n’es encore whitelisté sur aucun serveur.',
-        'dash.whitelist.leave': 'Quitter',
-        'dash.whitelist.since': 'Depuis',
 
         'dash.sessions.title': 'Mes sessions de jeu',
         'dash.sessions.description':
@@ -218,7 +212,6 @@ export const messages: Record<Locale, Messages> = {
 
         'nav.items.dashboard': 'Tableau de bord',
         'nav.items.servers': 'Serveurs',
-        'nav.items.whitelist': 'Liste blanche',
         'nav.items.sessions': 'Sessions',
         'nav.items.maps': 'Cartes',
         'nav.items.mods': 'Mods',
@@ -624,6 +617,7 @@ export const messages: Record<Locale, Messages> = {
             'Join a server to be added to its whitelist.',
         'dash.servers.empty': 'No server available yet.',
         'dash.servers.join': 'Join',
+        'dash.servers.leave': 'Leave',
         'dash.servers.joined': 'You are whitelisted',
         'dash.servers.visit': 'Visit',
         'dash.servers.count': 'servers',
@@ -632,12 +626,6 @@ export const messages: Record<Locale, Messages> = {
         'dash.servers.copied': 'Address copied',
         'dash.servers.enterInGame':
             'Paste this address in-game to join the server.',
-
-        'dash.whitelist.title': 'Whitelist',
-        'dash.whitelist.description': 'The servers you are allowed to play on.',
-        'dash.whitelist.empty': 'You are not whitelisted on any server yet.',
-        'dash.whitelist.leave': 'Leave',
-        'dash.whitelist.since': 'Since',
 
         'dash.sessions.title': 'My gaming sessions',
         'dash.sessions.description': 'Your connection history on servers.',
@@ -722,7 +710,6 @@ export const messages: Record<Locale, Messages> = {
 
         'nav.items.dashboard': 'Dashboard',
         'nav.items.servers': 'Servers',
-        'nav.items.whitelist': 'Whitelist',
         'nav.items.sessions': 'Sessions',
         'nav.items.maps': 'Maps',
         'nav.items.mods': 'Mods',

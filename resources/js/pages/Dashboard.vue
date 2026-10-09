@@ -18,7 +18,6 @@ import { useLocale } from '@/composables/useLocale';
 import { dashboard } from '@/routes';
 import { index as serversIndex } from '@/routes/servers';
 import { index as sessionsIndex } from '@/routes/sessions';
-import { index as whitelistIndex } from '@/routes/whitelist';
 import type { HytaleServer, PlayerSession } from '@/types';
 
 defineProps<{
@@ -53,7 +52,7 @@ const cards = [
         key: 'dash.tabs.whitelist',
         prop: 'whitelists',
         icon: ShieldCheck,
-        href: whitelistIndex,
+        href: serversIndex,
     },
     {
         key: 'dash.tabs.sessions',

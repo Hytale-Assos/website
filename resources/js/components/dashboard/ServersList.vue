@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { Server } from '@lucide/vue';
-import { computed } from 'vue';
-import ServerCard from '@/components/dashboard/ServerCard.vue';
 import EmptyState from '@/components/dashboard/EmptyState.vue';
+import ServerCard from '@/components/dashboard/ServerCard.vue';
 import { useLocale } from '@/composables/useLocale';
 import type { HytaleServer, WhitelistEntry } from '@/types';
 
@@ -15,13 +14,14 @@ const props = defineProps<{
 
 defineEmits<{
     join: [server: HytaleServer];
+    leave: [entry: WhitelistEntry];
 }>();
 
 const { t } = useLocale();
 
-const whitelistedServerIds = computed(
-    () => new Set(props.whitelists.map((entry) => entry.hytale_server_id)),
-);
+const entryFor = (serverId: string): WhitelistEntry | null =>
+    props.whitelists.find((entry) => entry.hytale_server_id === serverId) ??
+    null;
 </script>
 
 <template>
@@ -37,10 +37,14 @@ const whitelistedServerIds = computed(
                 v-for="server in servers"
                 :key="server.id"
                 :server="server"
-                :joined="whitelistedServerIds.has(server.id)"
+                :entry="entryFor(server.id)"
                 :can-join="canJoin"
-                :processing="processingId === server.id"
+                :processing="
+                    processingId === server.id ||
+                    processingId === entryFor(server.id)?.id
+                "
                 @join="$emit('join', $event)"
+                @leave="$emit('leave', $event)"
             />
         </div>
     </div>
