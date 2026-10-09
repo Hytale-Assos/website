@@ -288,16 +288,12 @@ export const messages: Record<Locale, Messages> = {
             'Liez vos comptes de jeu à votre profil',
         'settings.accounts.hytale.description':
             'Votre identité Hytale, utilisée pour les serveurs, la liste blanche et les points',
-        'settings.accounts.verified': 'Vérifié',
-        'settings.accounts.notVerified': 'Non vérifié',
-        'settings.accounts.hytale.unverifiedHint':
-            'La vérification du compte Hytale n’est pas encore disponible. Saisissez vos informations vous-même : elles seront examinées par l’équipe puis confirmées via Hytale OAuth.',
-        'settings.accounts.hytale.verifiedHint':
-            'Votre compte Hytale a été confirmé via Hytale OAuth. Ces informations proviennent de Hytale et ne peuvent pas être modifiées ici.',
-        'settings.accounts.hytale.nickname': 'Pseudo Hytale',
-        'settings.accounts.hytale.nicknamePlaceholder': 'Votre pseudo en jeu',
-        'settings.accounts.hytale.id': 'Identifiant Hytale',
-        'settings.accounts.hytale.idPlaceholder': 'UUID de votre compte Hytale',
+        'settings.accounts.hytale.hint':
+            'Liez votre compte Hytale pour récupérer votre identifiant de jeu utilisé par les serveurs.',
+        'settings.accounts.hytale.verify': 'Vérifier',
+        'settings.accounts.hytale.verifyTitle': 'Compte saisi manuellement',
+        'settings.accounts.hytale.verifyDescription':
+            'Ce compte a été renseigné à la main avant Hytale OAuth. Vérifiez-le pour que votre identifiant provienne directement de Hytale.',
         'settings.accounts.discord.description':
             'Liez votre compte Discord à votre profil',
         'settings.accounts.linked': 'Lié',
@@ -789,16 +785,12 @@ export const messages: Record<Locale, Messages> = {
             'Link your game accounts to your profile',
         'settings.accounts.hytale.description':
             'Your Hytale identity, used for servers, whitelist and points',
-        'settings.accounts.verified': 'Verified',
-        'settings.accounts.notVerified': 'Not verified',
-        'settings.accounts.hytale.unverifiedHint':
-            'The Hytale account verification is not available yet. Enter your details yourself: they will be reviewed by the team and confirmed later through Hytale OAuth.',
-        'settings.accounts.hytale.verifiedHint':
-            'Your Hytale account has been confirmed through Hytale OAuth. These details are provided by Hytale and cannot be changed here.',
-        'settings.accounts.hytale.nickname': 'Hytale nickname',
-        'settings.accounts.hytale.nicknamePlaceholder': 'Your in-game nickname',
-        'settings.accounts.hytale.id': 'Hytale ID',
-        'settings.accounts.hytale.idPlaceholder': 'Your Hytale account UUID',
+        'settings.accounts.hytale.hint':
+            'Link your Hytale account to retrieve the game identifier used by the servers.',
+        'settings.accounts.hytale.verify': 'Verify',
+        'settings.accounts.hytale.verifyTitle': 'Manually entered account',
+        'settings.accounts.hytale.verifyDescription':
+            'This account was entered by hand before Hytale OAuth. Verify it so your identifier comes straight from Hytale.',
         'settings.accounts.discord.description':
             'Link your Discord account to your profile',
         'settings.accounts.linked': 'Linked',

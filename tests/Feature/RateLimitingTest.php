@@ -9,18 +9,16 @@ use Illuminate\Support\Facades\RateLimiter;
 
 uses(RefreshDatabase::class);
 
-test('profile, identity, and account updates share one settings rate limit bucket', function () {
-    RateLimiter::for('settings', fn () => Limit::perMinute(2));
+test('profile and identity updates share one settings rate limit bucket', function () {
+    RateLimiter::for('settings', fn () => Limit::perMinute(1));
 
     $user = User::factory()->create();
 
     $first = $this->actingAs($user)->patch(route('profile.update'));
-    $second = $this->actingAs($user)->put(route('identity.update'));
 
     expect($first->status())->not->toBe(429);
-    expect($second->status())->not->toBe(429);
 
-    $this->actingAs($user)->put(route('accounts.update'))->assertTooManyRequests();
+    $this->actingAs($user)->put(route('identity.update'))->assertTooManyRequests();
 });
 
 test('the settings rate limit bucket is keyed to the signed-in user', function () {

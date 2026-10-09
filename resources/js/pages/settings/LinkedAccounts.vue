@@ -1,24 +1,28 @@
 <script setup lang="ts">
 import { Form, Head, setLayoutProps, usePage } from '@inertiajs/vue3';
-import { BadgeCheck, BadgeX, Link2 } from '@lucide/vue';
+import { BadgeCheck, BadgeX, Link2, ShieldAlert } from '@lucide/vue';
 import { computed, watchEffect } from 'vue';
-import LinkedAccountController from '@/actions/App/Http/Controllers/Settings/LinkedAccountController';
 import LinkedAccountOAuthController from '@/actions/App/Http/Controllers/Settings/LinkedAccountOAuthController';
 import Heading from '@/components/Heading.vue';
-import InputError from '@/components/InputError.vue';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useLocale } from '@/composables/useLocale';
 import { edit } from '@/routes/accounts';
 import { redirect as redirectToProvider } from '@/routes/linked';
 
 const page = usePage();
 const user = computed(() => page.props.auth.user);
-const isVerified = computed(() =>
+const isHytaleLinked = computed(() => Boolean(user.value.hytale_id));
+// Verification is internal: it only marks a Hytale-issued id (OAuth) as
+// opposed to a hand-entered one, so it is never surfaced as a badge. A linked
+// but unverified account is a legacy manual entry awaiting confirmation.
+const isHytaleVerified = computed(() =>
     Boolean(user.value.hytale_account_verified_at),
+);
+const needsHytaleVerification = computed(
+    () => isHytaleLinked.value && !isHytaleVerified.value,
 );
 const isDiscordLinked = computed(() => Boolean(user.value.discord_id));
 
@@ -48,86 +52,91 @@ watchEffect(() => {
             :description="t('settings.accounts.description')"
         />
 
-        <Form
-            v-bind="LinkedAccountController.update.form()"
-            class="space-y-6"
-            v-slot="{ errors, processing }"
-        >
-            <Card>
-                <CardContent class="space-y-6">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="font-medium">Hytale</p>
-                            <p class="text-muted-foreground text-sm">
-                                {{ t('settings.accounts.hytale.description') }}
-                            </p>
-                        </div>
-                        <Badge v-if="isVerified" variant="secondary">
-                            <BadgeCheck />
-                            {{ t('settings.accounts.verified') }}
-                        </Badge>
-                        <Badge v-else variant="outline">
-                            <BadgeX />
-                            {{ t('settings.accounts.notVerified') }}
-                        </Badge>
+        <Card>
+            <CardContent class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-medium">Hytale</p>
+                        <p class="text-muted-foreground text-sm">
+                            {{ t('settings.accounts.hytale.description') }}
+                        </p>
                     </div>
+                    <Badge v-if="isHytaleLinked" variant="secondary">
+                        <BadgeCheck />
+                        {{ t('settings.accounts.linked') }}
+                    </Badge>
+                    <Badge v-else variant="outline">
+                        <BadgeX />
+                        {{ t('settings.accounts.notLinked') }}
+                    </Badge>
+                </div>
 
-                    <p v-if="!isVerified" class="text-muted-foreground text-sm">
-                        {{ t('settings.accounts.hytale.unverifiedHint') }}
-                    </p>
-                    <p v-else class="text-muted-foreground text-sm">
-                        {{ t('settings.accounts.hytale.verifiedHint') }}
-                    </p>
+                <p v-if="isHytaleLinked" class="text-muted-foreground text-sm">
+                    {{ t('settings.accounts.linkedAs') }}
+                    <span class="text-foreground font-medium">{{
+                        user.hytale_nickname
+                    }}</span>
+                </p>
+                <p v-else class="text-muted-foreground text-sm">
+                    {{ t('settings.accounts.hytale.hint') }}
+                </p>
 
-                    <div class="grid gap-2">
-                        <Label for="hytale_nickname">{{
-                            t('settings.accounts.hytale.nickname')
-                        }}</Label>
-                        <Input
-                            id="hytale_nickname"
-                            class="mt-1 block w-full"
-                            name="hytale_nickname"
-                            :default-value="user.hytale_nickname ?? ''"
-                            :disabled="isVerified"
-                            :placeholder="
-                                t(
-                                    'settings.accounts.hytale.nicknamePlaceholder',
+                <Alert v-if="needsHytaleVerification">
+                    <ShieldAlert class="size-4" />
+                    <AlertTitle>
+                        {{ t('settings.accounts.hytale.verifyTitle') }}
+                    </AlertTitle>
+                    <AlertDescription>
+                        {{ t('settings.accounts.hytale.verifyDescription') }}
+                    </AlertDescription>
+                </Alert>
+
+                <div class="flex items-center gap-2">
+                    <Button
+                        v-if="!isHytaleLinked"
+                        as-child
+                        variant="outline"
+                        data-test="link-hytale-button"
+                    >
+                        <a :href="redirectToProvider.url('hytale')">
+                            <Link2 />
+                            {{ t('settings.accounts.link') }}
+                        </a>
+                    </Button>
+
+                    <template v-else>
+                        <Button
+                            v-if="needsHytaleVerification"
+                            as-child
+                            variant="outline"
+                            data-test="verify-hytale-button"
+                        >
+                            <a :href="redirectToProvider.url('hytale')">
+                                <Link2 />
+                                {{ t('settings.accounts.hytale.verify') }}
+                            </a>
+                        </Button>
+
+                        <Form
+                            v-bind="
+                                LinkedAccountOAuthController.destroy.form(
+                                    'hytale',
                                 )
                             "
-                        />
-                        <InputError
-                            class="mt-2"
-                            :message="errors.hytale_nickname"
-                        />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="hytale_id">{{
-                            t('settings.accounts.hytale.id')
-                        }}</Label>
-                        <Input
-                            id="hytale_id"
-                            class="mt-1 block w-full"
-                            name="hytale_id"
-                            :default-value="user.hytale_id ?? ''"
-                            :disabled="isVerified"
-                            :placeholder="
-                                t('settings.accounts.hytale.idPlaceholder')
-                            "
-                        />
-                        <InputError class="mt-2" :message="errors.hytale_id" />
-                    </div>
-
-                    <Button
-                        v-if="!isVerified"
-                        :disabled="processing"
-                        data-test="update-accounts-button"
-                    >
-                        {{ t('common.save') }}
-                    </Button>
-                </CardContent>
-            </Card>
-        </Form>
+                            v-slot="{ processing }"
+                        >
+                            <Button
+                                variant="outline"
+                                :disabled="processing"
+                                data-test="unlink-hytale-button"
+                            >
+                                {{ t('settings.accounts.unlink') }}
+                            </Button>
+                        </Form>
+                    </template>
+                </div>
+            </CardContent>
+        </Card>
 
         <Card>
             <CardContent class="space-y-4">

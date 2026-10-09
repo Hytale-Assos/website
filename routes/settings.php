@@ -36,9 +36,6 @@ Route::middleware(['auth'])->group(function () {
         ->name('invitations.destroy');
 
     Route::get('settings/accounts', [LinkedAccountController::class, 'edit'])->name('accounts.edit');
-    Route::put('settings/accounts', [LinkedAccountController::class, 'update'])
-        ->middleware('throttle:settings')
-        ->name('accounts.update');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
