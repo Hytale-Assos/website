@@ -10,8 +10,6 @@ use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class WhitelistController extends Controller
 {
@@ -21,20 +19,6 @@ class WhitelistController extends Controller
         private readonly HytaleData $hytale,
         private readonly HytaleApiClient $client,
     ) {}
-
-    /**
-     * Show the servers the member is whitelisted on.
-     */
-    public function index(Request $request): Response
-    {
-        $feed = $this->hytale->forMember($this->hytaleId($request));
-
-        return Inertia::render('Whitelist', $this->baseProps($request, [
-            'whitelists' => $feed->whitelists,
-            'servers' => $feed->servers,
-            'error' => $feed->error,
-        ]));
-    }
 
     /**
      * Add the current member to a server whitelist.

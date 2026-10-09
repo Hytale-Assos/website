@@ -6,7 +6,10 @@ import RefreshButton from '@/components/dashboard/RefreshButton.vue';
 import ServersList from '@/components/dashboard/ServersList.vue';
 import { useLocale } from '@/composables/useLocale';
 import { index as serversIndex } from '@/routes/servers';
-import { store as whitelistStore } from '@/routes/whitelist';
+import {
+    store as whitelistStore,
+    destroy as whitelistDestroy,
+} from '@/routes/whitelist';
 import type { HytaleServer, WhitelistEntry } from '@/types';
 
 const props = defineProps<{
@@ -46,6 +49,21 @@ const joinServer = (server: HytaleServer) => {
         },
     );
 };
+
+const leaveServer = (entry: WhitelistEntry) => {
+    if (processingId.value) {
+        return;
+    }
+
+    processingId.value = entry.id;
+
+    router.delete(whitelistDestroy.url(entry.id), {
+        preserveScroll: true,
+        onFinish: () => {
+            processingId.value = null;
+        },
+    });
+};
 </script>
 
 <template>
@@ -69,6 +87,7 @@ const joinServer = (server: HytaleServer) => {
             :can-join="canJoin"
             :processing-id="processingId"
             @join="joinServer"
+            @leave="leaveServer"
         />
     </MemberPage>
 </template>
