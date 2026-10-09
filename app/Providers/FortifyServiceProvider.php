@@ -13,6 +13,7 @@ use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
+use RuntimeException;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -32,6 +33,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->configureActions();
         $this->configureViews();
         $this->configureRateLimiting();
+        $this->configurePasskeys();
     }
 
     /**
@@ -90,11 +92,24 @@ class FortifyServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($throttleKey);
         });
-
         RateLimiter::for('passkeys', function (Request $request) {
             return Limit::perMinute(10)->by(
                 ($request->input('credential.id') ?: $request->session()->getId()).'|'.$request->ip(),
             );
         });
+    }
+
+    /**
+     * Refuse to boot in production without a dedicated passkeys user
+     * handle secret: Fortify would otherwise silently derive WebAuthn
+     * user handles from APP_KEY, coupling them to the encryption key.
+     */
+    private function configurePasskeys(): void
+    {
+        if ($this->app->isProduction() && ! config('fortify.passkeys.user_handle_secret')) {
+            throw new RuntimeException(
+                'PASSKEYS_USER_HANDLE_SECRET must be set in production (generate with: php -r "echo \'base64:\'.base64_encode(random_bytes(32)).PHP_EOL;")'
+            );
+        }
     }
 }

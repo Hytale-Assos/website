@@ -114,15 +114,30 @@ s'accommode d'une CSP restreinte) — traitée comme sujet séparé.
 `Referrer-Policy`, HSTS (recherche sur `app/`, `config/`, `bootstrap/` : rien).
 La terminaison TLS/proxy peut en fournir, mais rien ne le garantit ici.
 
-#### SEC-2 — `PASSKEYS_USER_HANDLE_SECRET` replie sur `APP_KEY` ⬜
+#### SEC-2 — `PASSKEYS_USER_HANDLE_SECRET` replie sur `APP_KEY` ✅ *(traité le 9 octobre 2026)*
 
-`config/fortify.php` : si la variable dédiée est absente, le secret des user
-handles WebAuthn tombe sur `APP_KEY`. Une fuite d'`APP_KEY` compromettrait
-alors simultanément le chiffrement au repos, les blind indexes **et** les
-passkeys.
+**Correction livrée** :
+- `config/fortify.php` : le repli explicite sur `APP_KEY` est supprimé
+  (`env('PASSKEYS_USER_HANDLE_SECRET')` seul).
+- `FortifyServiceProvider` : garde-fou — en production, l'application
+  **refuse de démarrer** (`RuntimeException`) si le secret dédié est absent,
+  au lieu de laisser Fortify retomber silencieusement sur `APP_KEY`.
+- Variable documentée dans `.env.example` (avec commande de génération) et
+  `container/website.env.example` ; renseignée dans le `.env` local et
+  `phpunit.xml`.
+- Secret Podman `hytale-website-passkeys-user-handle` câblé dans
+  `container/systemd/hytale-website.container`.
+- Couvert par `tests/Feature/PasskeysSecretTest.php`.
 
-- **Remédiation** : définir un secret dédié en production ; documenter la clé
-  dans `.env.example` et `container/website.env.example`.
+**Action déploiement requise** : provisionner
+`podman secret create hytale-website-passkeys-user-handle ...` sur l'hôte
+avant le prochain déploiement, sinon l'unité ne démarre plus (comportement
+voulu).
+
+*Constat initial :* `config/fortify.php` — si la variable dédiée est absente,
+le secret des user handles WebAuthn tombe sur `APP_KEY`. Une fuite d'`APP_KEY`
+compromettrait alors simultanément le chiffrement au repos, les blind indexes
+**et** les passkeys.
 
 ### 3.3 🟡 Constats mineurs
 
@@ -198,7 +213,7 @@ passkeys.
 | Priorité | Éléments | Nature |
 | --- | --- | --- |
 | P1 | SEC-1 (en-têtes HTTP) ✅ — reste la CSP en sujet séparé | Sécurité — durcissement |
-| P2 | SEC-2 (secret passkeys dédié), SEC-4 (fillable), SEC-5 (hidden hashes) | Sécurité — réduction de surface |
+| P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable), SEC-5 (hidden hashes) | Sécurité — réduction de surface |
 | P3 | SEC-3 (throttle register), SEC-6 (timeout mot de passe) | Sécurité — réglages |
 | P4 | QUA-1 (README), QUA-3 (résidus starter), QUA-4 (sqlite) | Nettoyage |
 | P5 | QUA-2 (traductions mortes), QUA-6 (placeholders), SEC-8 (audits deps) | Hygiène régulière |
