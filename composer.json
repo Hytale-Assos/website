@@ -17,7 +17,8 @@
         "laravel/socialite": "^5.31",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "socialiteproviders/discord": "^4.2"
+        "socialiteproviders/discord": "^4.2",
+        "socialiteproviders/hytale": "@dev"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -44,6 +45,11 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": [{
+        "name": "hytale-provider",
+        "type": "path",
+        "url": "../Providers/src/Hytale"
+    }],
     "scripts": {
         "setup": [
             "composer install",

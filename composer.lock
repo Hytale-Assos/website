@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0b84c606f9407ee9c49d31fb52d718e",
+    "content-hash": "58f4370fc5f11f73b8a612c1b1c76ea4",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -4492,6 +4492,50 @@
                 "source": "https://github.com/socialiteproviders/providers"
             },
             "time": "2023-07-24T23:28:47+00:00"
+        },
+        {
+            "name": "socialiteproviders/hytale",
+            "version": "dev-feat/hytale-provider",
+            "dist": {
+                "type": "path",
+                "url": "../Providers/src/Hytale",
+                "reference": "cd2efe47ff539c2c601a655455430916d79f55b7"
+            },
+            "require": {
+                "php": "^8.3",
+                "socialiteproviders/manager": "^4.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SocialiteProviders\\Hytale\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "FortyTwo-Dev",
+                    "email": "the.fortytwo_dev@proton.me"
+                }
+            ],
+            "description": "Hytale OAuth Provider for Laravel Socialite",
+            "keywords": [
+                "hytale",
+                "laravel",
+                "oauth",
+                "provider",
+                "socialite"
+            ],
+            "support": {
+                "issues": "https://github.com/socialiteproviders/providers/issues",
+                "source": "https://github.com/socialiteproviders/providers",
+                "docs": "https://socialiteproviders.com/hytale"
+            },
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "socialiteproviders/manager",
@@ -12071,7 +12115,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "socialiteproviders/hytale": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

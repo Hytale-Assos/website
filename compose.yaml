@@ -19,6 +19,11 @@ services:
             IGNITION_LOCAL_SITES_PATH: '${PWD}'
         volumes:
             - '.:/var/www/html'
+            # Dev-only: mounts the local SocialiteProviders/Providers checkout
+            # so the hytale provider path repository resolves inside Sail.
+            # Remove together with the path repository once the provider ships
+            # on Packagist; it must never reach the CI or the image build.
+            - '../Providers:/var/www/Providers'
         networks:
             - sail
         depends_on:
