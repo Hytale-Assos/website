@@ -85,8 +85,8 @@ export const messages: Record<Locale, Messages> = {
         'dash.title': 'Tableau de bord',
         'dash.description':
             'Retrouve tes serveurs, ta whitelist et tes sessions Hytale.',
+        'dash.tabs.points': 'Points Open',
         'dash.tabs.servers': 'Serveurs',
-        'dash.tabs.whitelist': 'Liste blanche',
         'dash.tabs.sessions': 'Mes sessions',
         'dash.tabs.account': 'Mon compte',
         'dash.error.title': 'API Hytale injoignable',
@@ -586,8 +586,8 @@ export const messages: Record<Locale, Messages> = {
         'dash.title': 'Dashboard',
         'dash.description':
             'Find your servers, your whitelist and your Hytale sessions.',
+        'dash.tabs.points': 'Open Points',
         'dash.tabs.servers': 'Servers',
-        'dash.tabs.whitelist': 'Whitelist',
         'dash.tabs.sessions': 'My sessions',
         'dash.tabs.account': 'My account',
         'dash.error.title': 'Hytale API unreachable',

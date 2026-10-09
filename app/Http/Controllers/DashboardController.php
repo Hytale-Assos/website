@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\SharesHytaleProps;
 use App\Hytale\HytaleData;
+use App\Hytale\Points\PointsService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,6 +15,7 @@ class DashboardController extends Controller
 
     public function __construct(
         private readonly HytaleData $hytale,
+        private readonly PointsService $points,
     ) {}
 
     /**
@@ -21,17 +23,20 @@ class DashboardController extends Controller
      */
     public function index(Request $request): Response
     {
-        $feed = $this->hytale->forMember($this->hytaleId($request));
+        $hytaleId = $this->hytaleId($request);
+
+        $feed = $this->hytale->forMember($hytaleId);
+        $points = $this->points->forMember($hytaleId);
 
         return Inertia::render('Dashboard', $this->baseProps($request, [
             'counts' => [
+                'points' => (float) ($points['points']['points'] ?? 0),
                 'servers' => count($feed->servers),
-                'whitelists' => count($feed->whitelists),
                 'sessions' => count($feed->sessions),
             ],
             'recentSessions' => array_slice($feed->sessions, 0, 3),
             'servers' => $feed->servers,
-            'error' => $feed->error,
+            'error' => $feed->error ?? $points['error'],
         ]));
     }
 }
