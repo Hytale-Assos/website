@@ -48,7 +48,7 @@ class WhitelistController extends Controller
         $hytaleId = $this->hytaleId($request);
 
         if ($hytaleId === null) {
-            return $this->fail(__('Connect your Hytale account first.'));
+            return $this->fail($this->missingHytaleAccountMessage($request));
         }
 
         try {
@@ -94,5 +94,15 @@ class WhitelistController extends Controller
         Toast::error($message);
 
         return back()->withErrors(['whitelist' => $message]);
+    }
+
+    /**
+     * The message shown when no verified Hytale id can be sent to the core.
+     */
+    private function missingHytaleAccountMessage(Request $request): string
+    {
+        return $this->requiresHytaleVerification($request)
+            ? __('Verify your Hytale account before joining a whitelist.')
+            : __('Connect your Hytale account first.');
     }
 }

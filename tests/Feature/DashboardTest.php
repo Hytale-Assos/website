@@ -23,7 +23,7 @@ it('renders the dashboard with an error instead of crashing when the core is dow
 
     Http::fake(fn () => throw new ConnectionException('cURL error 7'));
 
-    $user = User::factory()->create(['hytale_id' => 'f70e3709-5014-44d2-95ef-124f7696252d']);
+    $user = User::factory()->withHytaleAccount('f70e3709-5014-44d2-95ef-124f7696252d', verified: true)->create();
 
     $response = $this->actingAs($user)->get(route('dashboard'));
 
@@ -51,7 +51,7 @@ it('shows the dashboard to authenticated verified users', function () {
 });
 
 it('returns the seeded servers from the fake api', function () {
-    $user = User::factory()->create(['hytale_id' => '11111111-1111-7111-8111-111111111111']);
+    $user = User::factory()->withHytaleAccount('11111111-1111-7111-8111-111111111111', verified: true)->create();
 
     $response = $this->actingAs($user)->get(route('servers.index'));
 
@@ -65,7 +65,7 @@ it('returns the seeded servers from the fake api', function () {
 });
 
 it('shows the whitelist page', function () {
-    $user = User::factory()->create(['hytale_id' => '44444444-4444-7444-8444-444444444444']);
+    $user = User::factory()->withHytaleAccount('44444444-4444-7444-8444-444444444444', verified: true)->create();
 
     $this->actingAs($user)
         ->get(route('whitelist.index'))
@@ -78,7 +78,7 @@ it('shows the whitelist page', function () {
 });
 
 it('shows the sessions page', function () {
-    $user = User::factory()->create(['hytale_id' => '55555555-5555-7555-8555-555555555555']);
+    $user = User::factory()->withHytaleAccount('55555555-5555-7555-8555-555555555555', verified: true)->create();
 
     $this->actingAs($user)
         ->get(route('sessions.index'))
@@ -91,7 +91,7 @@ it('shows the sessions page', function () {
 });
 
 it('shows the maps placeholder page with servers', function () {
-    $user = User::factory()->create(['hytale_id' => '66666666-6666-7666-8666-666666666666']);
+    $user = User::factory()->withHytaleAccount('66666666-6666-7666-8666-666666666666', verified: true)->create();
 
     $this->actingAs($user)
         ->get(route('maps.index'))
@@ -112,7 +112,7 @@ it('shows the mods placeholder page', function () {
 });
 
 it('shows the points page with a computed balance', function () {
-    $user = User::factory()->create(['hytale_id' => '11111111-1111-7111-8111-111111111111']);
+    $user = User::factory()->withHytaleAccount('11111111-1111-7111-8111-111111111111', verified: true)->create();
 
     $this->actingAs($user)
         ->get(route('points.index'))
@@ -139,7 +139,7 @@ it('prevents joining when no hytale account is linked', function () {
 });
 
 it('adds the member to a whitelist when hytale account is linked', function () {
-    $user = User::factory()->create(['hytale_id' => '22222222-2222-7222-8222-222222222222']);
+    $user = User::factory()->withHytaleAccount('22222222-2222-7222-8222-222222222222', verified: true)->create();
     $hytale = app(HytaleApiClient::class);
     $server = $hytale->servers()->items[0];
 
@@ -156,7 +156,7 @@ it('adds the member to a whitelist when hytale account is linked', function () {
 });
 
 it('removes a whitelist entry', function () {
-    $user = User::factory()->create(['hytale_id' => '33333333-3333-7333-8333-333333333333']);
+    $user = User::factory()->withHytaleAccount('33333333-3333-7333-8333-333333333333', verified: true)->create();
     $hytale = app(HytaleApiClient::class);
     $server = $hytale->servers()->items[0];
     $entry = $hytale->addToWhitelist($server->id, $user->hytale_id);

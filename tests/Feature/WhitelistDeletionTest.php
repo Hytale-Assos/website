@@ -11,7 +11,7 @@ uses(RefreshDatabase::class);
 
 test('a member with a linked hytale account can delete their own whitelist entry', function () {
     $hytaleId = Str::uuid()->toString();
-    $member = User::factory()->create(['hytale_id' => $hytaleId]);
+    $member = User::factory()->withHytaleAccount($hytaleId, verified: true)->create();
 
     $client = app(HytaleApiClient::class);
     $serverId = $client->servers()->items[0]->id;
@@ -35,8 +35,8 @@ test('a member with a linked hytale account can delete their own whitelist entry
 
 test("a member cannot delete another member's whitelist entry", function () {
     $ownerHytaleId = Str::uuid()->toString();
-    User::factory()->create(['hytale_id' => $ownerHytaleId]);
-    $intruder = User::factory()->create(['hytale_id' => Str::uuid()->toString()]);
+    User::factory()->withHytaleAccount($ownerHytaleId, verified: true)->create();
+    $intruder = User::factory()->withHytaleAccount(verified: true)->create();
 
     $client = app(HytaleApiClient::class);
     $serverId = $client->servers()->items[0]->id;
@@ -59,7 +59,7 @@ test("a member cannot delete another member's whitelist entry", function () {
 
 test('a member without a linked hytale account cannot delete a whitelist entry', function () {
     $ownerHytaleId = Str::uuid()->toString();
-    User::factory()->create(['hytale_id' => $ownerHytaleId]);
+    User::factory()->withHytaleAccount($ownerHytaleId, verified: true)->create();
     $unlinked = User::factory()->create();
 
     $client = app(HytaleApiClient::class);
@@ -83,7 +83,7 @@ test('a member without a linked hytale account cannot delete a whitelist entry',
 
 test('deleting an owned whitelist entry fails with a user-facing error when the hytale core is unreachable', function () {
     $hytaleId = Str::uuid()->toString();
-    $member = User::factory()->create(['hytale_id' => $hytaleId]);
+    $member = User::factory()->withHytaleAccount($hytaleId, verified: true)->create();
 
     $client = app(HytaleApiClient::class);
     $serverId = $client->servers()->items[0]->id;

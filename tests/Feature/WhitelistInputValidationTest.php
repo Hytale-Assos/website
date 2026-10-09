@@ -3,12 +3,11 @@
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
 
 test('joining a whitelist with a server id that is not a valid uuid is rejected', function (string $hytaleServerId) {
-    $member = User::factory()->create(['hytale_id' => (string) Str::uuid()]);
+    $member = User::factory()->withHytaleAccount(verified: true)->create();
 
     $response = $this
         ->actingAs($member)
@@ -29,7 +28,7 @@ test('joining a whitelist with a well-formed uuid server id adds the member', fu
     $client = app(HytaleApiClient::class);
 
     $serverId = $client->servers()->items[0]->id;
-    $member = User::factory()->create(['hytale_id' => (string) Str::uuid()]);
+    $member = User::factory()->withHytaleAccount(verified: true)->create();
 
     $response = $this
         ->actingAs($member)
@@ -48,7 +47,7 @@ test('deleting a whitelist entry whose id is not a valid uuid returns 404 and to
     $client = app(HytaleApiClient::class);
 
     $serverId = $client->servers()->items[0]->id;
-    $member = User::factory()->create(['hytale_id' => (string) Str::uuid()]);
+    $member = User::factory()->withHytaleAccount(verified: true)->create();
 
     $client->addToWhitelist($serverId, $member->hytale_id);
 
@@ -67,7 +66,7 @@ test('deleting a whitelist entry with a well-formed uuid removes the entry', fun
     $client = app(HytaleApiClient::class);
 
     $serverId = $client->servers()->items[0]->id;
-    $member = User::factory()->create(['hytale_id' => (string) Str::uuid()]);
+    $member = User::factory()->withHytaleAccount(verified: true)->create();
 
     $client->addToWhitelist($serverId, $member->hytale_id);
 

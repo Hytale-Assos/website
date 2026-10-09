@@ -58,4 +58,18 @@ class UserFactory extends Factory
             'two_factor_confirmed_at' => now(),
         ]);
     }
+
+    /**
+     * Give the member a Hytale account. By default the account is left
+     * unconfirmed, mirroring an identity entered by hand; pass
+     * `verified: true` for an account confirmed through Hytale OAuth.
+     */
+    public function withHytaleAccount(?string $hytaleId = null, bool $verified = false): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'hytale_id' => $hytaleId ?? (string) Str::uuid(),
+            'hytale_nickname' => 'hytaleplayer',
+            'hytale_account_verified_at' => $verified ? now() : null,
+        ]);
+    }
 }
