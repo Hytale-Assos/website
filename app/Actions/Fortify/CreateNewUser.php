@@ -50,9 +50,15 @@ class CreateNewUser implements CreatesNewUsers
             'email' => $input['email'],
             'password' => $input['password'],
             'school_email' => $isInternal ? $input['email'] : null,
+        ]);
+
+        // The member status flags are excluded from the model's fillable
+        // list: they are privilege markers derived from the registration
+        // email and must never be mass-assignable.
+        $user->forceFill([
             'is_internal' => $isInternal,
             'is_external' => ! $isInternal,
-        ]);
+        ])->save();
 
         $invitation?->consume($user);
 

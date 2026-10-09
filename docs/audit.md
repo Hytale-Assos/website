@@ -144,7 +144,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | # | Statut | Constat | Détail / remédiation |
 | --- | --- | --- | --- |
 | SEC-3 | ⬜ | Pas de throttle explicite sur `POST /register` | `config/fortify.php` ne limite que `login`, `two-factor`, `passkeys`. Probing d'emails / requêtes en masse possibles. Ajouter un limiter Fortify ou un middleware `throttle`. |
-| SEC-4 | ⬜ | Drapeaux `is_internal` / `is_external` / `is_public` dans le `$fillable` de `User` | Aucun chemin actuel ne les alimente depuis une entrée utilisateur, mais toute évolution à base de tableau large ouvrirait une élévation de privilège par mass assignment. Retirer du fillable, utiliser `forceFill` aux endroits volontaires (`CreateNewUser`). |
+| SEC-4 | ✅ | Drapeaux `is_internal` / `is_external` dans le `$fillable` de `User` | **Traitée le 9 octobre 2026.** Les drapeaux de privilège sont retirés du fillable et posés par `forceFill` dans `CreateNewUser` (le statut dérive uniquement du domaine email). `is_public` reste fillable : c'est une préférence utilisateur (visibilité classement) validée `boolean` par `ProfileUpdateRequest`, pas un privilège — choix documenté dans `User.php`. Couvert par `tests/Feature/MemberStatusProtectionTest.php` (statut non forgeable à l'inscription ni via le profil). |
 | SEC-5 | ⬜ | Colonnes `*_hash` (blind indexes) exposées via la prop partagée `auth.user` | Non listées dans `#[Hidden]` du modèle `User`. Risque faible (données propres de l'utilisateur), mais les masquer est plus propre. |
 | SEC-6 | ⬜ | `AUTH_PASSWORD_TIMEOUT` de 3 h | La page sécurité est derrière `RequirePassword` (bien), mais 3 h est permissif sur poste partagé. Ajuster selon contexte. |
 | SEC-7 | ⬜ | Mot de passe CI trivial et ports exposés en dev | `.github/workflows/tests.yml` (`POSTGRES_PASSWORD: password`) — acceptable car CI éphémère ; `compose.yaml` expose PG 5432 / Redis 6379 côté hôte — standard Sail, à ne pas reproduire en prod. |
@@ -213,7 +213,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | Priorité | Éléments | Nature |
 | --- | --- | --- |
 | P1 | SEC-1 (en-têtes HTTP) ✅ — reste la CSP en sujet séparé | Sécurité — durcissement |
-| P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable), SEC-5 (hidden hashes) | Sécurité — réduction de surface |
+| P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable) ✅, SEC-5 (hidden hashes) | Sécurité — réduction de surface |
 | P3 | SEC-3 (throttle register), SEC-6 (timeout mot de passe) | Sécurité — réglages |
 | P4 | QUA-1 (README), QUA-3 (résidus starter), QUA-4 (sqlite) | Nettoyage |
 | P5 | QUA-2 (traductions mortes), QUA-6 (placeholders), SEC-8 (audits deps) | Hygiène régulière |

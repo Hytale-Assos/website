@@ -49,7 +49,11 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'school_email', 'school_email_hash', 'firstname', 'lastname', 'grade_level', 'is_internal', 'is_external', 'is_public'])]
+// is_public stays fillable: it is a user-controlled leaderboard visibility
+// preference validated by ProfileUpdateRequest. The is_internal/is_external
+// privilege flags stay OUT of the fillable list so they can never be
+// mass-assigned; CreateNewUser sets them explicitly from the email domain.
+#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'school_email', 'school_email_hash', 'firstname', 'lastname', 'grade_level', 'is_public'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
