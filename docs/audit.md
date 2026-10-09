@@ -143,7 +143,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 
 | # | Statut | Constat | Détail / remédiation |
 | --- | --- | --- | --- |
-| SEC-3 | ⬜ | Pas de throttle explicite sur `POST /register` | `config/fortify.php` ne limite que `login`, `two-factor`, `passkeys`. Probing d'emails / requêtes en masse possibles. Ajouter un limiter Fortify ou un middleware `throttle`. |
+| SEC-3 | ✅ | Pas de throttle explicite sur `POST /register` | **Traitée le 9 octobre 2026.** Limiteurs dédiés dans `FortifyServiceProvider` : `registration` (5/min/IP) sur `register.store` et `password-email` (6/min par couple email+IP) sur `password.email`, attachés aux routes Fortify après leur enregistrement (avec `refreshNameLookups()` — la table de lookup n'est pas encore à jour dans le callback `booted`). Couvert par `tests/Feature/Auth/GuestEndpointThrottlingTest.php` (429 après épuisement, isolation des buckets). |
 | SEC-4 | ✅ | Drapeaux `is_internal` / `is_external` dans le `$fillable` de `User` | **Traitée le 9 octobre 2026.** Les drapeaux de privilège sont retirés du fillable et posés par `forceFill` dans `CreateNewUser` (le statut dérive uniquement du domaine email). `is_public` reste fillable : c'est une préférence utilisateur (visibilité classement) validée `boolean` par `ProfileUpdateRequest`, pas un privilège — choix documenté dans `User.php`. Couvert par `tests/Feature/MemberStatusProtectionTest.php` (statut non forgeable à l'inscription ni via le profil). |
 | SEC-5 | ✅ | Colonnes `*_hash` (blind indexes) exposées via la prop partagée `auth.user` | **Traitée le 9 octobre 2026.** Les quatre colonnes de hachage (`email_hash`, `discord_id_hash`, `hytale_id_hash`, `school_email_hash`) sont ajoutées au `#[Hidden]` de `User` (`Invitation` masquait déjà `email_hash`) — les blind indexes ne quittent plus jamais le serveur. Couvert par `tests/Feature/HashColumnsHiddenTest.php`, incluant une vérification générique « aucune clé `_hash` » résistante à l'ajout futur de colonnes. |
 | SEC-6 | ✅ | `AUTH_PASSWORD_TIMEOUT` de 3 h | **Traitée le 9 octobre 2026.** Fenêtre ramenée à **1 h** : défaut `config/auth.php` passé à 3600 s, variable documentée dans `.env.example`. Couvert par `tests/Feature/PasswordConfirmationTimeoutTest.php` (borne ≤ 3600 s épinglée). |
@@ -214,7 +214,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | --- | --- | --- |
 | P1 | SEC-1 (en-têtes HTTP) ✅ — reste la CSP en sujet séparé | Sécurité — durcissement |
 | P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable) ✅, SEC-5 (hidden hashes) ✅ | Sécurité — réduction de surface |
-| P3 | SEC-3 (throttle register), SEC-6 (timeout mot de passe) | Sécurité — réglages |
+| P3 | SEC-3 (throttle register) ✅, SEC-6 (timeout mot de passe) ✅ | Sécurité — réglages |
 | P4 | QUA-1 (README), QUA-3 (résidus starter), QUA-4 (sqlite) | Nettoyage |
 | P5 | QUA-2 (traductions mortes), QUA-6 (placeholders), SEC-8 (audits deps) | Hygiène régulière |
 
