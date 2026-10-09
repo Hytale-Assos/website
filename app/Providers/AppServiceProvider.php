@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use SocialiteProviders\Discord\Provider as DiscordProvider;
+use SocialiteProviders\Hytale\Provider as HytaleProvider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
 
 class AppServiceProvider extends ServiceProvider
@@ -44,6 +45,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(function (SocialiteWasCalled $event): void {
             $event->extendSocialite('discord', DiscordProvider::class);
+            $event->extendSocialite('hytale', HytaleProvider::class);
         });
 
         $this->configureRateLimiting();

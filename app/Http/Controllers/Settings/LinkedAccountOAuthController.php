@@ -8,8 +8,10 @@ use App\Support\IdHasher;
 use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\AbstractProvider as SocialiteProvider;
 use Symfony\Component\HttpFoundation\RedirectResponse as SymfonyRedirectResponse;
 use Throwable;
 
@@ -20,13 +22,28 @@ class LinkedAccountOAuthController extends Controller
      * columns their OAuth identity is stored in. When the provider id column
      * is encrypted, a deterministic hash column carries its uniqueness.
      *
-     * @var array<string, array{id_column: string, hash_column: string|null, nickname_column: string}>
+     * `scopes` lists the provider-specific scopes the link flow requests on
+     * top of the driver defaults. `verified_column` names the column that
+     * marks accounts confirmed by the provider rather than self-declared;
+     * it is deliberately not fillable, so it is force-filled on link and
+     * cleared on unlink.
+     *
+     * @var array<string, array{id_column: string, hash_column: string|null, nickname_column: string, verified_column: string|null, scopes: list<string>}>
      */
     private const PROVIDERS = [
         'discord' => [
             'id_column' => 'discord_id',
             'hash_column' => 'discord_id_hash',
             'nickname_column' => 'discord_nickname',
+            'verified_column' => null,
+            'scopes' => [],
+        ],
+        'hytale' => [
+            'id_column' => 'hytale_id',
+            'hash_column' => 'hytale_id_hash',
+            'nickname_column' => 'hytale_nickname',
+            'verified_column' => 'hytale_account_verified_at',
+            'scopes' => ['hytale:profile'],
         ],
     ];
 
@@ -37,7 +54,15 @@ class LinkedAccountOAuthController extends Controller
     {
         $this->ensureProviderIsSupported($provider);
 
-        return Socialite::driver($provider)->redirect();
+        $driver = Socialite::driver($provider);
+
+        $scopes = self::PROVIDERS[$provider]['scopes'];
+
+        if ($scopes !== [] && $driver instanceof SocialiteProvider) {
+            $driver->scopes($scopes);
+        }
+
+        return $driver->redirect();
     }
 
     /**
@@ -46,6 +71,21 @@ class LinkedAccountOAuthController extends Controller
     public function callback(Request $request, string $provider): RedirectResponse
     {
         $this->ensureProviderIsSupported($provider);
+
+        // Authorization failures are delivered back on the redirect URI as
+        // error query parameters (a declined consent, an invalid scope),
+        // before any code can be exchanged.
+        if ($request->query('error') !== null) {
+            Log::warning('OAuth authorization error on the link callback.', [
+                'provider' => $provider,
+                'error' => $request->query('error'),
+                'error_description' => $request->query('error_description'),
+            ]);
+
+            Toast::error(__('The :provider account could not be linked. Please try again.', ['provider' => $provider]));
+
+            return to_route('accounts.edit');
+        }
 
         try {
             $oauthUser = Socialite::driver($provider)->user();
@@ -57,9 +97,20 @@ class LinkedAccountOAuthController extends Controller
             return to_route('accounts.edit');
         }
 
-        [$idColumn, $hashColumn, $nicknameColumn] = $this->providerColumns($provider);
+        $providerId = $this->providerIdentity($oauthUser, $provider);
 
-        $providerId = $oauthUser->getId();
+        if ($providerId === null) {
+            Log::warning('OAuth user carries no linkable identity.', [
+                'provider' => $provider,
+                'claims' => method_exists($oauthUser, 'getRaw') ? array_keys($oauthUser->getRaw() ?? []) : null,
+            ]);
+
+            Toast::error(__('The :provider account could not be linked. Please try again.', ['provider' => $provider]));
+
+            return to_route('accounts.edit');
+        }
+
+        [$idColumn, $hashColumn, $nicknameColumn] = $this->providerColumns($provider);
 
         $lookupColumn = $hashColumn ?? $idColumn;
         $lookupValue = $hashColumn !== null ? IdHasher::hash($providerId) : $providerId;
@@ -80,7 +131,15 @@ class LinkedAccountOAuthController extends Controller
             $nicknameColumn => $oauthUser->getNickname() ?? $oauthUser->getName(),
         ];
 
-        $request->user()->fill($attributes)->save();
+        $user = $request->user()->fill($attributes);
+
+        $verifiedColumn = self::PROVIDERS[$provider]['verified_column'];
+
+        if ($verifiedColumn !== null) {
+            $user->forceFill([$verifiedColumn => now()]);
+        }
+
+        $user->save();
 
         Toast::success(__('Your :provider account has been linked.', ['provider' => Str::ucfirst($provider)]));
 
@@ -94,14 +153,22 @@ class LinkedAccountOAuthController extends Controller
     {
         $this->ensureProviderIsSupported($provider);
 
-        [$idColumn, $hashColumn, $nicknameColumn] = $this->providerColumns($provider);
+        [$idColumn, , $nicknameColumn] = $this->providerColumns($provider);
 
         $attributes = [
             $idColumn => null,
             $nicknameColumn => null,
         ];
 
-        $request->user()->fill($attributes)->save();
+        $user = $request->user()->fill($attributes);
+
+        $verifiedColumn = self::PROVIDERS[$provider]['verified_column'];
+
+        if ($verifiedColumn !== null) {
+            $user->forceFill([$verifiedColumn => null]);
+        }
+
+        $user->save();
 
         Toast::success(__('Your :provider account has been unlinked.', ['provider' => Str::ucfirst($provider)]));
 
@@ -116,6 +183,17 @@ class LinkedAccountOAuthController extends Controller
         if (! array_key_exists($provider, self::PROVIDERS)) {
             abort(404);
         }
+    }
+
+    /**
+     * The identity a provider contributes to the linked account. Discord
+     * contributes its OAuth id. Hytale contributes the game profile uuid
+     * picked at sign-in: its `sub` claim is an anonymous per-application
+     * identifier that would not match the game identity the site keys on.
+     */
+    private function providerIdentity(mixed $oauthUser, string $provider): ?string
+    {
+        return $provider === 'hytale' ? $oauthUser->uuid : $oauthUser->getId();
     }
 
     /**

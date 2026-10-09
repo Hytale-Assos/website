@@ -24,6 +24,14 @@ return [
         'redirect' => env('DISCORD_REDIRECT_URI', '/auth/discord/callback'),
     ],
 
+    'hytale' => [
+        'client_id' => env('HYTALE_CLIENT_ID'),
+        'client_secret' => env('HYTALE_CLIENT_SECRET'),
+        // Same APP_URL resolution as above. The URI must match one of the
+        // redirect URIs registered with the approved Hytale client.
+        'redirect' => env('HYTALE_REDIRECT_URI', '/auth/hytale/callback'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
