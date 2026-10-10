@@ -132,13 +132,18 @@ class FortifyServiceProvider extends ServiceProvider
     }
 
     /**
-     * Refuse to boot in production without a dedicated passkeys user
-     * handle secret: Fortify would otherwise silently derive WebAuthn
-     * user handles from APP_KEY, coupling them to the encryption key.
+     * Refuse to boot for a non-console production request without a
+     * dedicated passkeys user handle secret: Fortify would otherwise
+     * silently derive WebAuthn user handles from APP_KEY, coupling them
+     * to the encryption key. Console commands (package:discover during
+     * builds, migrations, queues) are intentionally allowed to boot so
+     * the secret does not need to be present in build-time tooling.
      */
     private function configurePasskeys(): void
     {
-        if ($this->app->isProduction() && ! config('fortify.passkeys.user_handle_secret')) {
+        if ($this->app->isProduction()
+            && ! $this->app->runningInConsole()
+            && ! config('fortify.passkeys.user_handle_secret')) {
             throw new RuntimeException(
                 'PASSKEYS_USER_HANDLE_SECRET must be set in production (generate with: php -r "echo \'base64:\'.base64_encode(random_bytes(32)).PHP_EOL;")'
             );

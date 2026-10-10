@@ -119,9 +119,11 @@ La terminaison TLS/proxy peut en fournir, mais rien ne le garantit ici.
 **Correction livrée** :
 - `config/fortify.php` : le repli explicite sur `APP_KEY` est supprimé
   (`env('PASSKEYS_USER_HANDLE_SECRET')` seul).
-- `FortifyServiceProvider` : garde-fou — en production, l'application
+- `FortifyServiceProvider` : garde-fou — en **runtime HTTP production**, l'application
   **refuse de démarrer** (`RuntimeException`) si le secret dédié est absent,
-  au lieu de laisser Fortify retomber silencieusement sur `APP_KEY`.
+  au lieu de laisser Fortify retomber silencieusement sur `APP_KEY`. Les
+  commandes console (`package:discover` pendant le build, migrations,
+  queues, etc.) sont volontairement exclues pour ne pas bloquer le tooling.
 - Variable documentée dans `.env.example` (avec commande de génération) et
   `container/website.env.example` ; renseignée dans le `.env` local et
   `phpunit.xml`.
