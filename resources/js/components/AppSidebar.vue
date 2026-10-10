@@ -2,7 +2,6 @@
 import { Link } from '@inertiajs/vue3';
 import {
     Award,
-    BookOpen,
     CalendarClock,
     FolderGit2,
     LayoutGrid,
@@ -71,13 +70,8 @@ const mainNavItems = computed<NavItem[]>(() => [
 const footerNavItems = computed<NavItem[]>(() => [
     {
         title: t('nav.items.repository'),
-        href: 'https://github.com/laravel/vue-starter-kit',
+        href: 'https://github.com/Hytale-Assos/website',
         icon: FolderGit2,
-    },
-    {
-        title: t('nav.items.documentation'),
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
     },
 ]);
 </script>

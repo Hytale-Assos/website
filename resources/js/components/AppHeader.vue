@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from '@lucide/vue';
+import { Folder, LayoutGrid, Menu, Search } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -66,13 +66,8 @@ const mainNavItems = computed<NavItem[]>(() => [
 const rightNavItems = computed<NavItem[]>(() => [
     {
         title: t('nav.items.repository'),
-        href: 'https://github.com/laravel/vue-starter-kit',
+        href: 'https://github.com/Hytale-Assos/website',
         icon: Folder,
-    },
-    {
-        title: t('nav.items.documentation'),
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
     },
 ]);
 </script>
