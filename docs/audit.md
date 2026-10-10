@@ -190,7 +190,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 
 | # | Sévérité | Statut | Constat | Fichier(s) |
 | --- | --- | --- | --- | --- |
-| QUA-1 | 🟠 | ⬜ | **README vide** (contient littéralement « test ») — aucune doc d'onboarding | `README.md` |
+| QUA-1 | 🟠 | ✅ | **README vide** (contient littéralement « test ») — aucune doc d'onboarding | **Traitée le 10 octobre 2026.** `README.md` réécrit (fiche de démarrage interne : stack, prérequis, démarrage rapide, commandes, configuration, liens vers la doc interne et les conventions). |
 | QUA-2 | 🟠 | ⬜ | ~300 lignes de traductions **mortes** (landing `hero.*`, `about.*`, `offer.*`, `event.*`, `join.*`, `footer.*`, fr+en) — aucune page ne les référence ; `/` redirige vers `login` | `resources/js/lang/index.ts` |
 | QUA-3 | 🟡 | ⬜ | Résidus du starter kit Vue : `ExampleTest` ×2, helper `something()` vide, expectation `toBeOne` inutilisée, commande `inspire`, `name: "laravel/vue-starter-kit"` | `tests/{Unit,Feature}/ExampleTest.php`, `tests/Pest.php`, `routes/console.php`, `composer.json` |
 | QUA-4 | 🟡 | ⬜ | `database/database.sqlite` versionné alors que la stack est PostgreSQL ; défaut `sqlite` dans la config | `database/database.sqlite`, `config/database.php` |
@@ -217,7 +217,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | P1 | SEC-1 (en-têtes HTTP) ✅ — reste la CSP en sujet séparé | Sécurité — durcissement |
 | P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable) ✅, SEC-5 (hidden hashes) ✅ | Sécurité — réduction de surface |
 | P3 | SEC-3 (throttle register) ✅, SEC-6 (timeout mot de passe) ✅ | Sécurité — réglages |
-| P4 | QUA-1 (README), QUA-3 (résidus starter), QUA-4 (sqlite) | Nettoyage |
+| P4 | QUA-1 (README) ✅, QUA-3 (résidus starter), QUA-4 (sqlite) | Nettoyage |
 | P5 | QUA-2 (traductions mortes), QUA-6 (placeholders), SEC-8 (audits deps) 🔶 | Hygiène régulière |
 
 > Règle de suivi : marquer ✅ chaque élément traité, avec la date et le
