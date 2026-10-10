@@ -37,15 +37,15 @@ vendor/bin/sail bun run dev
 
 ## Commandes utiles
 
-| Commande | Rôle |
-| --- | --- |
-| `vendor/bin/sail artisan test --compact` | Lancer la suite de tests (Pest) |
-| `composer lint` | Formater le PHP (Pint) |
-| `composer lint:check` | Vérifier le formatage PHP (sans corriger) |
-| `vendor/bin/sail bun run check` | Formater + linter le JS/TS/Vue |
-| `vendor/bin/sail bun run build` | Compiler les assets de production |
-| `composer types:check` | Analyse statique PHP (Larastan) |
-| `composer ci:check` | Contrôle complet (équivalent CI) |
+| Commande                                 | Rôle                                      |
+| ---------------------------------------- | ----------------------------------------- |
+| `vendor/bin/sail artisan test --compact` | Lancer la suite de tests (Pest)           |
+| `composer lint`                          | Formater le PHP (Pint)                    |
+| `composer lint:check`                    | Vérifier le formatage PHP (sans corriger) |
+| `vendor/bin/sail bun run check`          | Formater + linter le JS/TS/Vue            |
+| `vendor/bin/sail bun run build`          | Compiler les assets de production         |
+| `composer types:check`                   | Analyse statique PHP (Larastan)           |
+| `composer ci:check`                      | Contrôle complet (équivalent CI)          |
 
 Un **hook pre-commit** formate et lint automatiquement les fichiers modifiés (JS/Vue via Vite+, PHP via Pint). Il s'installe avec `composer setup` — ou manuellement : `bun x vp hooks enable`.
 
@@ -53,14 +53,14 @@ Un **hook pre-commit** formate et lint automatiquement les fichiers modifiés (J
 
 Toute la configuration passe par `.env` (modèle : `.env.example`). Valeurs clés :
 
-| Variable | Description |
-| --- | --- |
-| `SCHOOL_EMAIL_DOMAINS` | Domaines email des membres internes (séparés par des virgules). Vide = inscriptions sur invitation uniquement. |
-| `MEMBERS_INVITATION_LIMIT` | Nombre maximal d'invitations actives par membre interne. |
+| Variable                      | Description                                                                                                                         |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `SCHOOL_EMAIL_DOMAINS`        | Domaines email des membres internes (séparés par des virgules). Vide = inscriptions sur invitation uniquement.                      |
+| `MEMBERS_INVITATION_LIMIT`    | Nombre maximal d'invitations actives par membre interne.                                                                            |
 | `PASSKEYS_USER_HANDLE_SECRET` | Secret dédié aux passkeys. **Requis en production** (générer : `php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"`). |
-| `HYTALE_API_*` | Connexion à l'API core Hytale (`HYTALE_API_MOCK=true` active le mock en mémoire). |
-| `DISCORD_*` | Liaison de comptes Discord (OAuth). |
-| `MAIL_*` | Envoi d'emails (vérification, réinitialisation). `smtp` en production, `log` en dev. |
+| `HYTALE_API_*`                | Connexion à l'API core Hytale (`HYTALE_API_MOCK=true` active le mock en mémoire).                                                   |
+| `DISCORD_*`                   | Liaison de comptes Discord (OAuth).                                                                                                 |
+| `MAIL_*`                      | Envoi d'emails (vérification, réinitialisation). `smtp` en production, `log` en dev.                                                |
 
 ## Documentation interne
 
