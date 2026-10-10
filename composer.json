@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/vue-starter-kit",
+    "name": "hytale-assos/website",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Member portal for the Hytale Assos association.",
     "keywords": [
         "laravel",
         "framework"
