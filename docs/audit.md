@@ -150,7 +150,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | SEC-5 | ✅ | Colonnes `*_hash` (blind indexes) exposées via la prop partagée `auth.user` | **Traitée le 9 octobre 2026.** Les quatre colonnes de hachage (`email_hash`, `discord_id_hash`, `hytale_id_hash`, `school_email_hash`) sont ajoutées au `#[Hidden]` de `User` (`Invitation` masquait déjà `email_hash`) — les blind indexes ne quittent plus jamais le serveur. Couvert par `tests/Feature/HashColumnsHiddenTest.php`, incluant une vérification générique « aucune clé `_hash` » résistante à l'ajout futur de colonnes. |
 | SEC-6 | ✅ | `AUTH_PASSWORD_TIMEOUT` de 3 h | **Traitée le 9 octobre 2026.** Fenêtre ramenée à **1 h** : défaut `config/auth.php` passé à 3600 s, variable documentée dans `.env.example`. Couvert par `tests/Feature/PasswordConfirmationTimeoutTest.php` (borne ≤ 3600 s épinglée). |
 | SEC-7 | ⬜ | Mot de passe CI trivial et ports exposés en dev | `.github/workflows/tests.yml` (`POSTGRES_PASSWORD: password`) — acceptable car CI éphémère ; `compose.yaml` expose PG 5432 / Redis 6379 côté hôte — standard Sail, à ne pas reproduire en prod. |
-| SEC-8 | ⬜ | Audits de dépendances non exécutés lors de l'audit | Lancer `composer audit` et `bun audit` périodiquement ; Dependabot déjà configuré (`.github/dependabot.yml`). Vérifier aussi que l'image de prod est construite avec `composer install --no-dev` (exclure pail/sail/boost). |
+| SEC-8 | 🔶 | Audits de dépendances | **Traitée le 9 octobre 2026.** `composer audit` : 0 advisory. Image de prod conforme (`composer install --no-dev` — `container/Containerfile`). `bun audit` : 4 advisories **de build/dev uniquement** (jamais dans le bundle runtime). `source-map-js` corrigé via `bun audit fix` (lockfile). **Restent 2 advisories critiques** (dev tooling : `shell-quote` via `concurrently`, `tinypool` via `vite-plus`/`oxfmt`) qui exigent de bumper des dépendances dev — en attente d'approbation (règle : pas de changement de dépendances sans accord). |
 | SEC-9 | ⬜ | Pas de test fonctionnel passkeys/WebAuthn | Couverture déléguée à Fortify amont ; acceptable, à noter. |
 | SEC-10 | ⬜ | `laravel/chisel` ^0.1 en production | Package récent et peu répandu — garder sous surveillance des mises à jour. |
 
@@ -218,7 +218,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable) ✅, SEC-5 (hidden hashes) ✅ | Sécurité — réduction de surface |
 | P3 | SEC-3 (throttle register) ✅, SEC-6 (timeout mot de passe) ✅ | Sécurité — réglages |
 | P4 | QUA-1 (README), QUA-3 (résidus starter), QUA-4 (sqlite) | Nettoyage |
-| P5 | QUA-2 (traductions mortes), QUA-6 (placeholders), SEC-8 (audits deps) | Hygiène régulière |
+| P5 | QUA-2 (traductions mortes), QUA-6 (placeholders), SEC-8 (audits deps) 🔶 | Hygiène régulière |
 
 > Règle de suivi : marquer ✅ chaque élément traité, avec la date et le
 > commit/PR associé. Refaire un audit complet après la vague P1–P2.
