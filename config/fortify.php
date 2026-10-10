@@ -145,7 +145,10 @@ return [
     'passkeys' => [
         'relying_party_id' => parse_url(config('app.url'), PHP_URL_HOST),
         'allowed_origins' => [config('app.url')],
-        'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET', config('app.key')),
+        // Dedicated secret, required in production (enforced by
+        // FortifyServiceProvider): Fortify otherwise falls back to APP_KEY,
+        // which would couple WebAuthn user handles to the encryption key.
+        'user_handle_secret' => env('PASSKEYS_USER_HANDLE_SECRET'),
         'timeout' => 60000,
     ],
 

@@ -49,8 +49,15 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'school_email', 'school_email_hash', 'firstname', 'lastname', 'grade_level', 'is_internal', 'is_external', 'is_public'])]
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
+// is_public stays fillable: it is a user-controlled leaderboard visibility
+// preference validated by ProfileUpdateRequest. The is_internal/is_external
+// privilege flags stay OUT of the fillable list so they can never be
+// mass-assigned; CreateNewUser sets them explicitly from the email domain.
+#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'school_email', 'school_email_hash', 'firstname', 'lastname', 'grade_level', 'is_public'])]
+// The *_hash columns are blind indexes (deterministic HMAC keys for lookups
+// on encrypted data): they are derivation keys, never client data, so they
+// stay out of every serialization (Inertia props, JSON responses).
+#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'email_hash', 'discord_id_hash', 'hytale_id_hash', 'school_email_hash'])]
 class User extends Authenticatable implements PasskeyUser
 {
     /** @use HasFactory<UserFactory> */

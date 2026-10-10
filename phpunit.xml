@@ -34,5 +34,6 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="PASSKEYS_USER_HANDLE_SECRET" value="base64:cGFzc2tleXMtdGVzdGluZy11c2VyLWhhbmRsZS1zZWNyZXQ="/>
     </php>
 </phpunit>
