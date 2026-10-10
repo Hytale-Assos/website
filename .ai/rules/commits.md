@@ -66,6 +66,5 @@ Always write in English: commit messages (subject and body), branch names, and P
 - Never mix a refactor or chore with a feature commit. When a file straddles two logical changes, split it with `git add -p` and commit in dependency order.
 - `composer.lock` changes ship with the `composer.json` change that caused them.
 - Never commit secrets or `.env` values; new env keys go into `.env.example`.
-- Before committing PHP changes, run `vendor/bin/sail bin pint --dirty --format agent`.
 - Run the narrowest relevant test suite (`vendor/bin/sail artisan test --compact --filter=...`) before committing a behavior change.
 - Always re-run the complete test suite before pushing, never push on stale green.
