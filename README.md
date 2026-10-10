@@ -66,7 +66,8 @@ Toute la configuration passe par `.env` (modèle : `.env.example`). Valeurs clé
 
 - [`docs/api.md`](docs/api.md) — contrat de l'API core Hytale
 - [`docs/account-linking.md`](docs/account-linking.md) — liaison de comptes (Discord, Hytale)
-- [`docs/audit.md`](docs/audit.md) — rapport d'audit sécurité/qualité et suivi des remédiations
+- [`docs/audit.md`](docs/audit.md) — modèle de rapport d'audit sécurité/qualité (checklist incluse)
+- [`docs/audit-2026-10.md`](docs/audit-2026-10.md) — dernier rapport d'audit archivé
 
 ## Conventions
 
