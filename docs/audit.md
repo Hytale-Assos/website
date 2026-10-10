@@ -195,7 +195,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | QUA-3 | 🟡 | ✅ | Résidus du starter kit Vue : `ExampleTest` ×2, helper `something()` vide, expectation `toBeOne` inutilisée, commande `inspire`, `name: "laravel/vue-starter-kit"` | **Traitée le 10 octobre 2026.** `ExampleTest` ×2 supprimés (comportement `home → login` déjà couvert par `SecurityHeadersTest`), `tests/Pest.php` nettoyé (`toBeOne`, `something()`), `routes/console.php` supprimé (`inspire`) + référence retirée de `bootstrap/app.php`, `composer.json` renommé `hytale-assos/website` + description. |
 | QUA-4 | 🟡 | ✅ | `database/database.sqlite` versionné alors que la stack est PostgreSQL ; défaut `sqlite` dans la config | **Traitée le 10 octobre 2026.** Le fichier `.sqlite` était en réalité déjà ignoré (`database/.gitignore` : `*.sqlite*`), pas versionné. Défaut de connexion `config/database.php` passé de `sqlite` à `pgsql` (aligné sur la stack réelle). |
 | QUA-5 | 🟡 | ✅ | Pas de pre-commit hook (Pint / lint JS) malgré l'outillage présent — tout repose sur la CI | **Traitée le 10 octobre 2026.** Hook `vp staged` (toolchain `vite-plus`, sans dépendance ajoutée) : `staged` dans `vite.config.ts` (JS/TS/Vue → `vp check --fix`, PHP → `vendor/bin/pint`), hook projet `.vite-hooks/pre-commit`, activé via `vp hooks enable` et auto-installé par `composer setup`. |
-| QUA-6 | 🟡 | ⬜ | Pages placeholder `Maps` / `Mods` publiées dans la navigation | `app/Http/Controllers/{Map,Mod}Controller.php` |
+| QUA-6 | 🟡 | ✅ | Pages placeholder `Maps` / `Mods` publiées dans la navigation | **Traitée le 10 octobre 2026.** Pages conservées en tant que teaser, mais `MapController` ne fait plus d'appel API inutile (`forMember` retiré) et `Maps.vue` est un teaser pur (menu serveur et lien externe retirés). Liens starter kit corrigés : `repository` → `https://github.com/Hytale-Assos/website`, entrée `documentation` supprimée (sidebar + header). Tests de sécurité URL réorientés vers la page Serveurs (`ServerUrlSafetyTest`). |
 | QUA-7 | 🟡 | ⬜ | `HytaleData::forMember` : 3 appels séquentiels non paginés ; `WhitelistController` re-fetch la collection pour l'ownership — acceptable à cette échelle, à surveiller avec la croissance | `app/Hytale/HytaleData.php` |
 | QUA-8 | 🟡 | ⬜ | `RefreshDatabase` répété dans chaque fichier de test au lieu d'être factorisé | `tests/Pest.php` (ligne commentée) |
 
@@ -218,7 +218,7 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable) ✅, SEC-5 (hidden hashes) ✅ | Sécurité — réduction de surface |
 | P3 | SEC-3 (throttle register) ✅, SEC-6 (timeout mot de passe) ✅ | Sécurité — réglages |
 | P4 | QUA-1 (README) ✅, QUA-3 (résidus starter) ✅, QUA-4 (sqlite) ✅ | Nettoyage |
-| P5 | QUA-2 (traductions mortes) ✅, QUA-6 (placeholders), SEC-8 (audits deps) 🔶 | Hygiène régulière |
+| P5 | QUA-2 (traductions mortes) ✅, QUA-6 (placeholders) ✅, SEC-8 (audits deps) 🔶 | Hygiène régulière |
 
 > Règle de suivi : marquer ✅ chaque élément traité, avec la date et le
 > commit/PR associé. Refaire un audit complet après la vague P1–P2.
