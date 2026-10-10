@@ -191,9 +191,9 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | # | Sévérité | Statut | Constat | Fichier(s) |
 | --- | --- | --- | --- | --- |
 | QUA-1 | 🟠 | ✅ | **README vide** (contient littéralement « test ») — aucune doc d'onboarding | **Traitée le 10 octobre 2026.** `README.md` réécrit (fiche de démarrage interne : stack, prérequis, démarrage rapide, commandes, configuration, liens vers la doc interne et les conventions). |
-| QUA-2 | 🟠 | ⬜ | ~300 lignes de traductions **mortes** (landing `hero.*`, `about.*`, `offer.*`, `event.*`, `join.*`, `footer.*`, fr+en) — aucune page ne les référence ; `/` redirige vers `login` | `resources/js/lang/index.ts` |
-| QUA-3 | 🟡 | ⬜ | Résidus du starter kit Vue : `ExampleTest` ×2, helper `something()` vide, expectation `toBeOne` inutilisée, commande `inspire`, `name: "laravel/vue-starter-kit"` | `tests/{Unit,Feature}/ExampleTest.php`, `tests/Pest.php`, `routes/console.php`, `composer.json` |
-| QUA-4 | 🟡 | ⬜ | `database/database.sqlite` versionné alors que la stack est PostgreSQL ; défaut `sqlite` dans la config | `database/database.sqlite`, `config/database.php` |
+| QUA-2 | 🟠 | ✅ | ~300 lignes de traductions **mortes** (landing `hero.*`, `about.*`, `offer.*`, `event.*`, `join.*`, `footer.*`, fr+en) — aucune page ne les référence ; `/` redirige vers `login` | **Traitée le 10 octobre 2026.** Bloc landing supprimé dans `resources/js/lang/index.ts` : clés `nav.about/offer/event/join/login/register/dashboard/discord` + `hero.*`, `about.*`, `offer.*`, `event.*`, `join.*`, `footer.*` (fr et en). |
+| QUA-3 | 🟡 | ✅ | Résidus du starter kit Vue : `ExampleTest` ×2, helper `something()` vide, expectation `toBeOne` inutilisée, commande `inspire`, `name: "laravel/vue-starter-kit"` | **Traitée le 10 octobre 2026.** `ExampleTest` ×2 supprimés (comportement `home → login` déjà couvert par `SecurityHeadersTest`), `tests/Pest.php` nettoyé (`toBeOne`, `something()`), `routes/console.php` supprimé (`inspire`) + référence retirée de `bootstrap/app.php`, `composer.json` renommé `hytale-assos/website` + description. |
+| QUA-4 | 🟡 | ✅ | `database/database.sqlite` versionné alors que la stack est PostgreSQL ; défaut `sqlite` dans la config | **Traitée le 10 octobre 2026.** Le fichier `.sqlite` était en réalité déjà ignoré (`database/.gitignore` : `*.sqlite*`), pas versionné. Défaut de connexion `config/database.php` passé de `sqlite` à `pgsql` (aligné sur la stack réelle). |
 | QUA-5 | 🟡 | ✅ | Pas de pre-commit hook (Pint / lint JS) malgré l'outillage présent — tout repose sur la CI | **Traitée le 10 octobre 2026.** Hook `vp staged` (toolchain `vite-plus`, sans dépendance ajoutée) : `staged` dans `vite.config.ts` (JS/TS/Vue → `vp check --fix`, PHP → `vendor/bin/pint`), hook projet `.vite-hooks/pre-commit`, activé via `vp hooks enable` et auto-installé par `composer setup`. |
 | QUA-6 | 🟡 | ⬜ | Pages placeholder `Maps` / `Mods` publiées dans la navigation | `app/Http/Controllers/{Map,Mod}Controller.php` |
 | QUA-7 | 🟡 | ⬜ | `HytaleData::forMember` : 3 appels séquentiels non paginés ; `WhitelistController` re-fetch la collection pour l'ownership — acceptable à cette échelle, à surveiller avec la croissance | `app/Hytale/HytaleData.php` |
@@ -217,8 +217,8 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 | P1 | SEC-1 (en-têtes HTTP) ✅ — reste la CSP en sujet séparé | Sécurité — durcissement |
 | P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable) ✅, SEC-5 (hidden hashes) ✅ | Sécurité — réduction de surface |
 | P3 | SEC-3 (throttle register) ✅, SEC-6 (timeout mot de passe) ✅ | Sécurité — réglages |
-| P4 | QUA-1 (README) ✅, QUA-3 (résidus starter), QUA-4 (sqlite) | Nettoyage |
-| P5 | QUA-2 (traductions mortes), QUA-6 (placeholders), SEC-8 (audits deps) 🔶 | Hygiène régulière |
+| P4 | QUA-1 (README) ✅, QUA-3 (résidus starter) ✅, QUA-4 (sqlite) ✅ | Nettoyage |
+| P5 | QUA-2 (traductions mortes) ✅, QUA-6 (placeholders), SEC-8 (audits deps) 🔶 | Hygiène régulière |
 
 > Règle de suivi : marquer ✅ chaque élément traité, avec la date et le
 > commit/PR associé. Refaire un audit complet après la vague P1–P2.
