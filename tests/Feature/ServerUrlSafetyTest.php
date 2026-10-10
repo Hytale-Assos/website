@@ -2,10 +2,7 @@
 
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-
-uses(RefreshDatabase::class);
 
 test('a server registered with a normal url keeps its url intact in the servers page props', function (string $url) {
     $user = User::factory()->create();

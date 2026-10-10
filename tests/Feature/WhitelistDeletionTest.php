@@ -2,12 +2,9 @@
 
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-
-uses(RefreshDatabase::class);
 
 test('a member with a linked hytale account can delete their own whitelist entry', function () {
     $hytaleId = Str::uuid()->toString();

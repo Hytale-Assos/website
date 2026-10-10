@@ -1,9 +1,5 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
-
 test('registrations from the same IP return 429 once the registration limiter is exhausted', function () {
     config(['members.school_email_domains' => ['ecole.fr']]);
 

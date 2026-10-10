@@ -1,10 +1,7 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\TestCase;
-
-uses(RefreshDatabase::class);
 
 /**
  * Query /settings/profile the way an Inertia SPA client does: an outdated

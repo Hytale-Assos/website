@@ -1,9 +1,6 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
 
 test('registration with a school email cannot be forged into an external account with numeric flags', function () {
     config(['members.school_email_domains' => ['ecole.fr']]);

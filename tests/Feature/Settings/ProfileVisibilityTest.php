@@ -1,10 +1,7 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-
-uses(RefreshDatabase::class);
 
 test('is public flag can be updated with boolean-ish values', function (bool|int|string $value, bool $expected) {
     $user = User::factory()->create();

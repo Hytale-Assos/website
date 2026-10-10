@@ -1,11 +1,8 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
-
-uses(RefreshDatabase::class);
 
 test('identity page is displayed', function () {
     $user = User::factory()->create();

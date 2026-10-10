@@ -2,12 +2,9 @@
 
 use App\Models\Invitation;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Inertia\Testing\AssertableInertia as Assert;
-
-uses(RefreshDatabase::class);
 
 beforeEach(function () {
     config(['members.invitation_limit' => 100]);

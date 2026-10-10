@@ -2,10 +2,7 @@
 
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-
-uses(RefreshDatabase::class);
 
 /**
  * @return list<string>

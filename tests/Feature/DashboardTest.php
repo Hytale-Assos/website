@@ -3,11 +3,8 @@
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Hytale\Exceptions\HytaleApiException;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
-
-uses(RefreshDatabase::class);
 
 it('redirects guests to the login page', function () {
     $this->get(route('dashboard'))->assertRedirect(route('login'));

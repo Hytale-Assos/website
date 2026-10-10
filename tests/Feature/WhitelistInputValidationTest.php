@@ -2,10 +2,7 @@
 
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
-
-uses(RefreshDatabase::class);
 
 test('joining a whitelist with a server id that is not a valid uuid is rejected', function (string $hytaleServerId) {
     $member = User::factory()->create(['hytale_id' => (string) Str::uuid()]);
