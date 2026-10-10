@@ -7,14 +7,14 @@ use Inertia\Testing\AssertableInertia as Assert;
 
 uses(RefreshDatabase::class);
 
-test('a server registered with a normal url keeps its url intact in the maps page props', function (string $url) {
+test('a server registered with a normal url keeps its url intact in the servers page props', function (string $url) {
     $user = User::factory()->create();
 
     app(HytaleApiClient::class)->createServer(config('hytale.module_id'), 'Safe Server', $url);
 
     $response = $this
         ->actingAs($user)
-        ->get(route('maps.index'));
+        ->get(route('servers.index'));
 
     $props = [];
 
@@ -22,7 +22,7 @@ test('a server registered with a normal url keeps its url intact in the maps pag
         $props = data_get($page->toArray(), 'props');
 
         return $page
-            ->component('Maps')
+            ->component('Servers')
             ->has('servers');
     });
 
@@ -35,14 +35,14 @@ test('a server registered with a normal url keeps its url intact in the maps pag
     'https url' => ['https://play.example.com/server/1'],
 ]);
 
-test('a server registered with a dangerous scheme url appears with an empty url in the maps page props', function (string $dangerousUrl) {
+test('a server registered with a dangerous scheme url appears with an empty url in the servers page props', function (string $dangerousUrl) {
     $user = User::factory()->create();
 
     app(HytaleApiClient::class)->createServer(config('hytale.module_id'), 'Dangerous Server', $dangerousUrl);
 
     $response = $this
         ->actingAs($user)
-        ->get(route('maps.index'));
+        ->get(route('servers.index'));
 
     $props = [];
 
@@ -50,7 +50,7 @@ test('a server registered with a dangerous scheme url appears with an empty url 
         $props = data_get($page->toArray(), 'props');
 
         return $page
-            ->component('Maps')
+            ->component('Servers')
             ->has('servers');
     });
 
@@ -64,7 +64,7 @@ test('a server registered with a dangerous scheme url appears with an empty url 
     'data uri' => ['data:text/html;base64,SGVsbG8gd29ybGQ='],
 ]);
 
-test('the maps page still renders successfully when a server carries a dangerous url', function () {
+test('the servers page still renders successfully when a server carries a dangerous url', function () {
     $user = User::factory()->create();
 
     $client = app(HytaleApiClient::class);
@@ -73,7 +73,7 @@ test('the maps page still renders successfully when a server carries a dangerous
 
     $response = $this
         ->actingAs($user)
-        ->get(route('maps.index'));
+        ->get(route('servers.index'));
 
     $response->assertOk();
 
@@ -83,7 +83,7 @@ test('the maps page still renders successfully when a server carries a dangerous
         $props = data_get($page->toArray(), 'props');
 
         return $page
-            ->component('Maps')
+            ->component('Servers')
             ->has('servers');
     });
 
@@ -98,14 +98,14 @@ test('the maps page still renders successfully when a server carries a dangerous
     expect($dangerous['url'])->toBe('');
 });
 
-test('a server registered with an empty url shows an empty url in the maps page props without breaking the page', function () {
+test('a server registered with an empty url shows an empty url in the servers page props without breaking the page', function () {
     $user = User::factory()->create();
 
     app(HytaleApiClient::class)->createServer(config('hytale.module_id'), 'No Url Server', '');
 
     $response = $this
         ->actingAs($user)
-        ->get(route('maps.index'));
+        ->get(route('servers.index'));
 
     $response->assertOk();
 
@@ -115,7 +115,7 @@ test('a server registered with an empty url shows an empty url in the maps page 
         $props = data_get($page->toArray(), 'props');
 
         return $page
-            ->component('Maps')
+            ->component('Servers')
             ->has('servers');
     });
 

@@ -74,15 +74,10 @@ export const messages: Record<Locale, Messages> = {
         'dash.maps.title': 'Cartes',
         'dash.maps.description':
             'Visualise la carte des serveurs en temps réel.',
-        'dash.maps.selectServer': 'Choisir un serveur',
-        'dash.maps.serverPlaceholder': 'Sélectionne un serveur',
         'dash.maps.empty': 'La carte arrive bientôt',
         'dash.maps.comingSoon':
-            'Rendu de carte en temps réel (type BlueMap / Dynmap) prochainement disponible. Sélectionne un serveur pour préparer l’affichage.',
+            'Rendu de carte en temps réel (type BlueMap / Dynmap) prochainement disponible.',
         'dash.maps.badge': 'En développement',
-        'dash.maps.cta': 'Bientôt disponible',
-        'dash.maps.noServer': 'Aucun serveur disponible.',
-        'dash.maps.openExternal': 'Ouvrir la carte',
 
         'dash.mods.title': 'Mods',
         'dash.mods.description':
@@ -143,7 +138,6 @@ export const messages: Record<Locale, Messages> = {
         'nav.items.mods': 'Mods',
         'nav.items.points': 'Points Open',
         'nav.items.repository': 'Dépôt',
-        'nav.items.documentation': 'Documentation',
         'nav.menu': 'Menu de navigation',
 
         'settings.title': 'Paramètres',
@@ -499,15 +493,10 @@ export const messages: Record<Locale, Messages> = {
 
         'dash.maps.title': 'Maps',
         'dash.maps.description': 'View servers maps in real time.',
-        'dash.maps.selectServer': 'Choose a server',
-        'dash.maps.serverPlaceholder': 'Select a server',
         'dash.maps.empty': 'The map is coming soon',
         'dash.maps.comingSoon':
-            'Real-time map rendering (BlueMap / Dynmap style) available soon. Select a server to prepare the view.',
+            'Real-time map rendering (BlueMap / Dynmap style) available soon.',
         'dash.maps.badge': 'In development',
-        'dash.maps.cta': 'Coming soon',
-        'dash.maps.noServer': 'No server available.',
-        'dash.maps.openExternal': 'Open the map',
 
         'dash.mods.title': 'Mods',
         'dash.mods.description': 'The mods created by club members.',
@@ -567,7 +556,6 @@ export const messages: Record<Locale, Messages> = {
         'nav.items.mods': 'Mods',
         'nav.items.points': 'Open Points',
         'nav.items.repository': 'Repository',
-        'nav.items.documentation': 'Documentation',
         'nav.menu': 'Navigation menu',
 
         'settings.title': 'Settings',

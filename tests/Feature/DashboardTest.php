@@ -77,16 +77,13 @@ it('shows the sessions page', function () {
         );
 });
 
-it('shows the maps placeholder page with servers', function () {
-    $user = User::factory()->create(['hytale_id' => '66666666-6666-7666-8666-666666666666']);
+it('shows the maps placeholder page', function () {
+    $user = User::factory()->create();
 
     $this->actingAs($user)
         ->get(route('maps.index'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Maps')
-            ->has('servers', 2)
-        );
+        ->assertInertia(fn ($page) => $page->component('Maps'));
 });
 
 it('shows the mods placeholder page', function () {
