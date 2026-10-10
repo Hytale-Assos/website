@@ -1,12 +1,17 @@
-# Rapport d'audit — sécurité, qualité et gouvernance
+# Modèle de rapport d'audit — sécurité, qualité et gouvernance
 
-Date : 9 octobre 2026 · Périmètre : code applicatif, configuration, règles
-projet, conteneurisation, CI · Méthode : analyse statique en lecture seule.
+> À recopier pour chaque audit. Remplacer les `…`, attribuer un statut
+> (⬜ / 🔶 / ✅) et numéroter les constats (`SEC-1`, `QUA-1`…). Cocher la
+> checklist en fin de document au fil de la revue.
 
-> [!NOTE]
-> Ce document sert de feuille de route de remédiation : chaque constat
-> actionnable porte un statut (⬜ à traiter / ✅ traité) mis à jour au fil des
-> correctifs.
+Date : `…` · Périmètre : `…` · Méthode : `…`
+
+## Légende
+
+| Symbole | Signification |
+| --- | --- |
+| Statut `⬜` / `🔶` / `✅` | à traiter / partiel / traité |
+| Sévérité `🔴` / `🟠` / `🟡` | critique / important / mineur |
 
 ## Sommaire
 
@@ -22,18 +27,17 @@ projet, conteneurisation, CI · Méthode : analyse statique en lecture seule.
 
 | Aspect | Détail |
 | --- | --- |
-| Projet | Site membre de l'association « Hytale Assos » (pas de wiki ni de liste publique) |
-| Stack | Laravel 13.32 / PHP 8.5 · Inertia v3 + Vue 3.5 · Tailwind 4 · PostgreSQL |
-| Auth | Fortify (2FA + passkeys WebAuthn), Socialite/Discord, inscription fermée (email scolaire interne + invitations externes) |
-| Métier | Dashboard membre, serveurs, whitelist in-game, sessions de jeu, « Points Open », export RGPD — via l'API core Hytale externe (clé API + signature HMAC, voir `docs/api.md`) |
-| Tests | Pest — 36 fichiers, ~236 cas |
-| Qualité | Pint, Larastan niveau 7, CI GitHub (actions épinglées par SHA), script `ci:check` |
-| Déploiement | Podman/Quadlet rootless en prod (hardened), Sail en dev |
+| Projet | `…` |
+| Stack | `…` |
+| Auth | `…` |
+| Métier | `…` |
+| Tests | `…` |
+| Qualité | `…` |
+| Déploiement | `…` |
 
-Architecture notable : découpage « ports & adapters » autour de
-`HytaleApiClient` (transports Fake/HTTP/Cache interchangeables, décorateur de
-cache), DTOs typés, chiffrement des données personnelles au repos avec index
-aveugles HMAC (emails, IDs Discord/Hytale, noms, statuts).
+Architecture notable : `…`
+
+---
 
 ## 2. Gouvernance et règles projet
 
@@ -41,18 +45,15 @@ aveugles HMAC (emails, IDs Discord/Hytale, noms, statuts).
 
 | Fichier | Contenu |
 | --- | --- |
-| `AGENTS.md` | Règles Laravel Boost, Sail, Pest, Inertia, Wayfinder, Pint |
-| `.ai/rules/index.md` | Index des règles par globs de chemins |
-| `.ai/rules/commits.md` | Conventional Commits en anglais, branches `<type>/<slug>` depuis `develop`, commits atomiques, Pint + tests avant commit |
-| `.ai/rules/tests.md` | Tests écrits par un sous-agent impartial briefé par spec seule (interdiction de lire l'implémentation) |
-| `.ai/rules/containers.md` | Images épinglées par digest, runtime non-root durci, secrets Podman, networks pair-à-pair |
+| `AGENTS.md` | `…` |
+| `.ai/rules/index.md` | `…` |
+| `.ai/rules/commits.md` | `…` |
+| `.ai/rules/tests.md` | `…` |
+| `.ai/rules/containers.md` | `…` |
 
 ### Constat
 
-✅ Les règles sont **cohérentes avec la pratique réelle** : historique git
-conforme au format Conventional Commits, Containerfile conforme aux règles
-conteneurs, couverture de tests réelle. Aucun écart gouvernance/pratique
-détecté.
+`…` — cohérence entre les règles et la pratique réelle, écarts éventuels.
 
 ---
 
@@ -60,116 +61,34 @@ détecté.
 
 ### Verdict
 
-**Aucune faille critique.** La posture est nettement au-dessus de la moyenne ;
-les points à traiter relèvent du durcissement.
+`…` — synthèse globale : fautes critiques, posture, thème (durcissement vs correction).
 
 ### 3.1 Points forts (à préserver)
 
-- **Données personnelles chiffrées au repos** avec blind indexes HMAC-SHA256
-  clé `APP_KEY` : casts `EncryptedWithHash` / `EncryptedEmailWithHash`,
-  provider `HashedEloquentUserProvider`, broker de reset `HashedEmailTokenRepository`
-  (l'email n'est jamais stocké en clair dans les tokens de reset).
-- Politique de mot de passe forte en production : 12 caractères, mixte,
-  chiffres, symboles, règle `uncompromised` (`app/Providers/AppServiceProvider.php`).
-- 2FA avec confirmation **et** mot de passe (`config/fortify.php` :
-  `confirm => true, confirmPassword => true`) ; passkeys protégées par mot de passe.
-- **Invalidation des autres sessions** et rotation du remember token au
-  changement de mot de passe (`SecurityController`), couvert par
-  `tests/Feature/PasswordSessionInvalidationTest.php`.
-- Rate limiting granulaire par endpoint d'écriture : login 5/min, 2FA 5/min,
-  passkeys 10/min, invitations 10/min, whitelist 10/min, export RGPD 6/min,
-  OAuth 10/min, mot de passe 6/min, settings 30/min.
-- Validation systématique par Form Requests — **aucun `$request->all()`** ;
-  mises à jour via `$request->validated()`.
-- Autorisation : `InvitationPolicy`, vérification de propriété avant
-  suppression d'une entrée de whitelist.
-- Flux Socialite/Discord stateful (protection CSRF par `state`), provider en
-  liste blanche, détection de collision de liaison.
-- Trusted proxies configurés avec garde-fous documentés et testés
-  (`config/trustedproxy.php`, `tests/Feature/TrustedProxyTest.php`).
-- `DB::prohibitDestructiveCommands` en production.
-- **Aucun secret commité** : `.env` jamais présent dans l'historique git
-  (vérifié), `.gitignore` complet, secrets de prod = secrets Podman.
-- Outils sensibles (pail, boost, sail, larastan) confinés en `require-dev`.
-- XSS : un seul `v-html` (`resources/js/components/TwoFactorSetupModal.vue`)
-  sur du SVG généré côté serveur par Fortify — sûr.
-- `public/` propre : aucun dump, aucun PHP superflu, pas de symlink storage.
-- Tests de sécurité réellement présents (18 fichiers couvrant auth, rate
-  limiting, confidentialité, injection d'URL serveur, fuite de props Inertia…).
+- `…`
 
-### 3.2 🟠 Constats importants
+### 3.2 🔴🟠 Constats critiques / importants
 
-#### SEC-1 — Absence d'en-têtes de sécurité HTTP ✅ *(traité le 9 octobre 2026)*
+Chaque constat important mérite sa propre sous-section :
 
-**Correction livrée** : middleware `App\Http\Middleware\AddSecurityHeaders`
-ajoutant `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` et
-`Referrer-Policy: strict-origin-when-cross-origin` à toutes les réponses de la
-pile `web`, enregistré dans `bootstrap/app.php`, couvert par
-`tests/Feature/SecurityHeadersTest.php` (page publique + redirection).
-**Reste à faire** : une CSP compatible Inertia/Vite (le `v-html` 2FA
-s'accommode d'une CSP restreinte) — traitée comme sujet séparé.
+```markdown
+#### SEC-x — <titre> <statut>
 
-*Constat initial :* aucun en-tête de sécurité côté application : pas de CSP,
-`X-Content-Type-Options`, `X-Frame-Options` / `frame-ancestors`,
-`Referrer-Policy`, HSTS (recherche sur `app/`, `config/`, `bootstrap/` : rien).
-La terminaison TLS/proxy peut en fournir, mais rien ne le garantit ici.
+**Correction livrée** : `…`
+**Reste à faire** : `…`
 
-#### SEC-2 — `PASSKEYS_USER_HANDLE_SECRET` replie sur `APP_KEY` ✅ *(traité le 9 octobre 2026)*
-
-**Correction livrée** :
-- `config/fortify.php` : le repli explicite sur `APP_KEY` est supprimé
-  (`env('PASSKEYS_USER_HANDLE_SECRET')` seul).
-- `FortifyServiceProvider` : garde-fou — en **runtime HTTP production**, l'application
-  **refuse de démarrer** (`RuntimeException`) si le secret dédié est absent,
-  au lieu de laisser Fortify retomber silencieusement sur `APP_KEY`. Les
-  commandes console (`package:discover` pendant le build, migrations,
-  queues, etc.) sont volontairement exclues pour ne pas bloquer le tooling.
-- Variable documentée dans `.env.example` (avec commande de génération) et
-  `container/website.env.example` ; renseignée dans le `.env` local et
-  `phpunit.xml`.
-- Secret Podman `hytale-website-passkeys-user-handle` câblé dans
-  `container/systemd/hytale-website.container`.
-- Couvert par `tests/Feature/PasskeysSecretTest.php`.
-
-**Action déploiement requise** : provisionner
-`podman secret create hytale-website-passkeys-user-handle ...` sur l'hôte
-avant le prochain déploiement, sinon l'unité ne démarre plus (comportement
-voulu).
-
-*Constat initial :* `config/fortify.php` — si la variable dédiée est absente,
-le secret des user handles WebAuthn tombe sur `APP_KEY`. Une fuite d'`APP_KEY`
-compromettrait alors simultanément le chiffrement au repos, les blind indexes
-**et** les passkeys.
+*Constat initial :* `…`
+```
 
 ### 3.3 🟡 Constats mineurs
 
 | # | Statut | Constat | Détail / remédiation |
 | --- | --- | --- | --- |
-| SEC-3 | ✅ | Pas de throttle explicite sur `POST /register` | **Traitée le 9 octobre 2026.** Limiteurs dédiés dans `FortifyServiceProvider` : `registration` (5/min/IP) sur `register.store` et `password-email` (6/min par couple email+IP) sur `password.email`, attachés aux routes Fortify après leur enregistrement (avec `refreshNameLookups()` — la table de lookup n'est pas encore à jour dans le callback `booted`). Couvert par `tests/Feature/Auth/GuestEndpointThrottlingTest.php` (429 après épuisement, isolation des buckets). |
-| SEC-4 | ✅ | Drapeaux `is_internal` / `is_external` dans le `$fillable` de `User` | **Traitée le 9 octobre 2026.** Les drapeaux de privilège sont retirés du fillable et posés par `forceFill` dans `CreateNewUser` (le statut dérive uniquement du domaine email). `is_public` reste fillable : c'est une préférence utilisateur (visibilité classement) validée `boolean` par `ProfileUpdateRequest`, pas un privilège — choix documenté dans `User.php`. Couvert par `tests/Feature/MemberStatusProtectionTest.php` (statut non forgeable à l'inscription ni via le profil). |
-| SEC-5 | ✅ | Colonnes `*_hash` (blind indexes) exposées via la prop partagée `auth.user` | **Traitée le 9 octobre 2026.** Les quatre colonnes de hachage (`email_hash`, `discord_id_hash`, `hytale_id_hash`, `school_email_hash`) sont ajoutées au `#[Hidden]` de `User` (`Invitation` masquait déjà `email_hash`) — les blind indexes ne quittent plus jamais le serveur. Couvert par `tests/Feature/HashColumnsHiddenTest.php`, incluant une vérification générique « aucune clé `_hash` » résistante à l'ajout futur de colonnes. |
-| SEC-6 | ✅ | `AUTH_PASSWORD_TIMEOUT` de 3 h | **Traitée le 9 octobre 2026.** Fenêtre ramenée à **1 h** : défaut `config/auth.php` passé à 3600 s, variable documentée dans `.env.example`. Couvert par `tests/Feature/PasswordConfirmationTimeoutTest.php` (borne ≤ 3600 s épinglée). |
-| SEC-7 | ⬜ | Mot de passe CI trivial et ports exposés en dev | `.github/workflows/tests.yml` (`POSTGRES_PASSWORD: password`) — acceptable car CI éphémère ; `compose.yaml` expose PG 5432 / Redis 6379 côté hôte — standard Sail, à ne pas reproduire en prod. |
-| SEC-8 | 🔶 | Audits de dépendances | **Traitée le 9 octobre 2026.** `composer audit` : 0 advisory. Image de prod conforme (`composer install --no-dev` — `container/Containerfile`). `bun audit` : 4 advisories **de build/dev uniquement** (jamais dans le bundle runtime). Corrigées : `source-map-js` (lockfile) et `shell-quote` via `concurrently@10.0.6`. **Reste 2 advisories critiques** (`tinypool` via `vite-plus` > `oxfmt`) : le bump de `vite-plus` exige une migration d'alias Vite (`vp migrate`) trop invasive, annulé — à laisser à Dependabot / une future montée propre de `vite-plus`. |
-| SEC-9 | ⬜ | Pas de test fonctionnel passkeys/WebAuthn | Couverture déléguée à Fortify amont ; acceptable, à noter. |
-| SEC-10 | ⬜ | `laravel/chisel` ^0.1 en production | Package récent et peu répandu — garder sous surveillance des mises à jour. |
+| SEC-`n` | ⬜ | `…` | `…` |
 
 ### 3.4 Points vérifiés sans anomalie
 
-- Routes applicatives : toutes sous `auth` (+ `verified` où requis) ; seules
-  `GET /` (redirect login), `/.well-known/passkey-endpoints` et `/up` sont
-  publiques — toutes anodines.
-- Aucun secret en dur dans le code ; tout passe par `env()`.
-- CSRF : stack `web` Laravel par défaut ; cookies session `http_only`,
-  `same_site=lax`, `secure` piloté par env ; cookies `appearance` /
-  `sidebar_state` exclus du chiffrement (valeurs cosmétiques).
-- Pas de `config/cors.php` → pas de CORS ouvert ; pas de `routes/api.php`.
-- Pas de debugbar / telescope / horizon en dépendances.
-- Signature HMAC sortante propre (`app/Hytale/Support/ApiSigner.php` :
-  hex HMAC-SHA256 sur `timestamp.body`, tolérance d'horloge configurable).
-- `APP_DEBUG` par défaut `false`, forcé par env.
-- Fichiers générés Wayfinder git-ignorés.
-- Env de test isolé (`phpunit.xml` : base dédiée, `BCRYPT_ROUNDS=4`, mock Hytale).
+- `…`
 
 ---
 
@@ -177,36 +96,17 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 
 ### 4.1 Points forts
 
-- PHP moderne exemplaire : promotion de constructeurs, `readonly`, enums,
-  attributs `#[Fillable]` / `#[Hidden]`, types explicites, array-shapes.
-- Domaine Hytale bien délimité (`app/Hytale/` : contrat unique, transports
-  interchangeables, DTOs) ; docs de compromis *in situ* d'excellente facture.
-- Wayfinder utilisé partout côté front (aucune URL en dur), conventions
-  homogènes, TypeScript strict (`vue-tsc`), i18n maison fr/en typé.
-- CI épinglée par SHA, pipeline `ci:check` reproductible en local.
-- Docs techniques utiles : `docs/api.md` (contrat core), `docs/account-linking.md`.
+- `…`
 
 ### 4.2 Constats à traiter
 
 | # | Sévérité | Statut | Constat | Fichier(s) |
 | --- | --- | --- | --- | --- |
-| QUA-1 | 🟠 | ✅ | **README vide** (contient littéralement « test ») — aucune doc d'onboarding | **Traitée le 10 octobre 2026.** `README.md` réécrit (fiche de démarrage interne : stack, prérequis, démarrage rapide, commandes, configuration, liens vers la doc interne et les conventions). |
-| QUA-2 | 🟠 | ✅ | ~300 lignes de traductions **mortes** (landing `hero.*`, `about.*`, `offer.*`, `event.*`, `join.*`, `footer.*`, fr+en) — aucune page ne les référence ; `/` redirige vers `login` | **Traitée le 10 octobre 2026.** Bloc landing supprimé dans `resources/js/lang/index.ts` : clés `nav.about/offer/event/join/login/register/dashboard/discord` + `hero.*`, `about.*`, `offer.*`, `event.*`, `join.*`, `footer.*` (fr et en). |
-| QUA-3 | 🟡 | ✅ | Résidus du starter kit Vue : `ExampleTest` ×2, helper `something()` vide, expectation `toBeOne` inutilisée, commande `inspire`, `name: "laravel/vue-starter-kit"` | **Traitée le 10 octobre 2026.** `ExampleTest` ×2 supprimés (comportement `home → login` déjà couvert par `SecurityHeadersTest`), `tests/Pest.php` nettoyé (`toBeOne`, `something()`), `routes/console.php` supprimé (`inspire`) + référence retirée de `bootstrap/app.php`, `composer.json` renommé `hytale-assos/website` + description. |
-| QUA-4 | 🟡 | ✅ | `database/database.sqlite` versionné alors que la stack est PostgreSQL ; défaut `sqlite` dans la config | **Traitée le 10 octobre 2026.** Le fichier `.sqlite` était en réalité déjà ignoré (`database/.gitignore` : `*.sqlite*`), pas versionné. Défaut de connexion `config/database.php` passé de `sqlite` à `pgsql` (aligné sur la stack réelle). |
-| QUA-5 | 🟡 | ✅ | Pas de pre-commit hook (Pint / lint JS) malgré l'outillage présent — tout repose sur la CI | **Traitée le 10 octobre 2026.** Hook `vp staged` (toolchain `vite-plus`, sans dépendance ajoutée) : `staged` dans `vite.config.ts` (JS/TS/Vue → `vp check --fix`, PHP → `vendor/bin/pint`), hook projet `.vite-hooks/pre-commit`, activé via `vp hooks enable` et auto-installé par `composer setup`. |
-| QUA-6 | 🟡 | ✅ | Pages placeholder `Maps` / `Mods` publiées dans la navigation | **Traitée le 10 octobre 2026.** Pages conservées en tant que teaser, mais `MapController` ne fait plus d'appel API inutile (`forMember` retiré) et `Maps.vue` est un teaser pur (menu serveur et lien externe retirés). Liens starter kit corrigés : `repository` → `https://github.com/Hytale-Assos/website`, entrée `documentation` supprimée (sidebar + header). Tests de sécurité URL réorientés vers la page Serveurs (`ServerUrlSafetyTest`). |
-| QUA-7 | 🟡 | ✅ | `HytaleData::forMember` : 3 appels séquentiels non paginés ; `WhitelistController` re-fetch la collection pour l'ownership — acceptable à cette échelle, à surveiller avec la croissance | **Traitée le 10 octobre 2026.** `forMember` pagine désormais les trois collections (serveurs, whitelist, sessions) via un helper partagé borné (`MAX_PAGES = 25`), identique au pattern de `PointsService` : arrêt sur page vide, total annoncé non fiable, plafond anti-tempête. Couvert par `tests/Unit/HytaleDataPaginationTest.php` (sous-agent impartial). Le re-fetch dans `WhitelistController` reste un point de vigilance à faible échelle. |
-| QUA-8 | 🟡 | ✅ | `RefreshDatabase` répété dans chaque fichier de test au lieu d'être factorisé | **Traitée le 10 octobre 2026.** `RefreshDatabase` appliqué une fois pour toutes dans `tests/Pest.php` (`->use(RefreshDatabase::class)->in('Feature')`) ; les `uses(RefreshDatabase::class)` et imports ont été retirés des 28 fichiers de tests Feature. Le test unitaire `PersonalDataInventoryTest` conserve son propre `uses(TestCase::class, RefreshDatabase::class)` (hors du périmètre `Feature`). |
+| QUA-`n` | 🟡 | ⬜ | `…` | `…` |
 
 ### 4.3 Points d'information (aucune action requise)
 
-- Aucun test frontend (vitest/playwright absent) — couverture entièrement PHP.
-- i18n maison (détection navigateur + localStorage) — cohérent, à documenter
-  si le besoin grandit (`resources/js/composables/useLocale.ts`).
-- `HandleInertiaRequests` partage le modèle `User` complet (champs déchiffrés)
-  en prop `auth.user` — conforme à l'approche Inertia, à garder en tête si des
-  champs sensibles sont ajoutés (voir aussi SEC-5).
+- `…`
 
 ---
 
@@ -214,11 +114,44 @@ compromettrait alors simultanément le chiffrement au repos, les blind indexes
 
 | Priorité | Éléments | Nature |
 | --- | --- | --- |
-| P1 | SEC-1 (en-têtes HTTP) ✅ — reste la CSP en sujet séparé | Sécurité — durcissement |
-| P2 | SEC-2 (secret passkeys dédié) ✅, SEC-4 (fillable) ✅, SEC-5 (hidden hashes) ✅ | Sécurité — réduction de surface |
-| P3 | SEC-3 (throttle register) ✅, SEC-6 (timeout mot de passe) ✅ | Sécurité — réglages |
-| P4 | QUA-1 (README) ✅, QUA-3 (résidus starter) ✅, QUA-4 (sqlite) ✅ | Nettoyage |
-| P5 | QUA-2 (traductions mortes) ✅, QUA-6 (placeholders) ✅, QUA-7 (pagination) ✅, SEC-8 (audits deps) 🔶 | Hygiène régulière |
+| P1 | `…` | Sécurité — durcissement |
+| P2 | `…` | Sécurité — réduction de surface |
+| P3 | `…` | Sécurité — réglages |
+| P4 | `…` | Nettoyage |
+| P5 | `…` | Hygiène régulière |
 
-> Règle de suivi : marquer ✅ chaque élément traité, avec la date et le
+> Règle de suivi : marquer ✅ chaque élément traité avec la date et le
 > commit/PR associé. Refaire un audit complet après la vague P1–P2.
+
+---
+
+## Annexe — Checklist des dimensions à auditer
+
+### Sécurité
+
+- [ ] **Secrets** : `.env`/`.env.*` ignorés et absents de l'historique git ; aucun secret en dur (`grep` `password`/`secret`/`token`/`api_key`) ; secrets prod via un gestionnaire de secrets.
+- [ ] **Routes** : protection `auth` / `verified`, endpoints sensibles exposés, routes publiques volontaires documentées.
+- [ ] **Validation & mass assignment** : Form Requests utilisés, aucun `$request->all()`, `$fillable`/`$guarded` explicites, drapeaux de privilège hors du fillable.
+- [ ] **Auth** : 2FA / passkeys (confirmation + mot de passe), vérification d'email, politique de mot de passe, rate limiters (login, 2FA, passkeys, register, reset), flux OAuth stateful + liste blanche + détection de collision.
+- [ ] **CSRF / XSS / headers** : middleware CSRF, usages de `v-html` (XSS), en-têtes HTTP (CSP, `nosniff`, `frame-ancestors`, `Referrer-Policy`, HSTS), cookies (`http_only`, `same_site`, `secure`).
+- [ ] **Configuration** : `APP_DEBUG`, CORS, session (`encrypt`/`secure`), trusted proxies, filesystems, `DB::prohibitDestructiveCommands`.
+- [ ] **Dépendances** : `composer audit`, `bun audit`, packages sensibles, image prod en `--no-dev`, outils dev confinés en `require-dev`.
+- [ ] **Tests de sécurité** : auth, rate limiting, confidentialité, injection, fuite de props.
+- [ ] **Fichiers publics** : aucun dump / PHP superflu / symlink `storage`.
+- [ ] **bootstrap/app.php** : middleware, redirections, rendu JSON des exceptions.
+
+### Qualité / architecture / maintenance
+
+- [ ] **Architecture & structure** : couches, providers, domaines bien délimités.
+- [ ] **Modèles & migrations** : casts, relations, index, contraintes.
+- [ ] **Contrôleurs & services** : responsabilités, réutilisation, pas de logique métier dans les vues.
+- [ ] **Frontend** : composants réutilisables, Wayfinder (aucune URL en dur), types TS, i18n.
+- [ ] **Tests** : couverture, organisation Pest, factories, tests des chemins à risque.
+- [ ] **Outillage** : Pint, PHPStan/Larastan, CI, pre-commit hooks.
+- [ ] **Hygiène** : code mort, `TODO`/`FIXME`, résidus de starter kit, configs non standard.
+
+### Gouvernance
+
+- [ ] Règles `.ai/rules/` cohérentes avec la pratique réelle.
+- [ ] Historique git conforme au format de commit défini.
+- [ ] Conteneurisation conforme aux règles (`container/`).
