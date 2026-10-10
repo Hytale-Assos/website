@@ -3,12 +3,9 @@
 use App\Models\User;
 use App\Support\IdHasher;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
-uses(RefreshDatabase::class);
 
 /**
  * Raw database row, bypassing Eloquent casts (no decryption).

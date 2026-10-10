@@ -3,11 +3,8 @@
 use App\Models\Invitation;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
-
-uses(RefreshDatabase::class);
 
 test('profile, identity, and account updates share one settings rate limit bucket', function () {
     RateLimiter::for('settings', fn () => Limit::perMinute(2));

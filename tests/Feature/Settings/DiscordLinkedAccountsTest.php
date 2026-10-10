@@ -3,7 +3,6 @@
 use App\Models\User;
 use App\Support\IdHasher;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -12,8 +11,6 @@ use Illuminate\Testing\TestResponse;
 use Laravel\Socialite\Contracts\Provider as SocialiteProvider;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\InvalidStateException;
-
-uses(RefreshDatabase::class);
 
 function mockDiscordOAuthRedirect(): void
 {
