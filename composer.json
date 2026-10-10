@@ -51,6 +51,7 @@
             "@php artisan key:generate",
             "@php artisan migrate --force",
             "bun install",
+            "bun x vp hooks enable",
             "bun run build"
         ],
         "dev": [

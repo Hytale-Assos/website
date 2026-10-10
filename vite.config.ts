@@ -81,4 +81,8 @@ export default defineConfig({
             entryPoint: 'resources/css/app.css',
         },
     },
+    staged: {
+        '*.{js,ts,vue}': 'vp check --fix',
+        '*.php': 'vendor/bin/pint',
+    },
 });
