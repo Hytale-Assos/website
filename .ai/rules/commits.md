@@ -15,6 +15,8 @@ This repository uses [Conventional Commits](https://www.conventionalcommits.org/
 
 Example: `feat(points): add Points Open page computed from play sessions`
 
+Never sign commit messages with co-author trailers (e.g., `Co-Authored-By:`) or any generated-by attribution: commits must not be credited to tools or assistants.
+
 ## Language
 
 Always write in English: commit messages (subject and body), branch names, and PR titles and descriptions. Never mix French or other languages into them, even for internal or WIP commits.
