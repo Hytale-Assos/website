@@ -37,6 +37,7 @@ it('exposes exactly the application metrics in the prometheus text exposition fo
     $response = $this->get(route('prometheus.default'));
 
     $expected = [
+        'app_maintenance_mode',
         'app_users_total',
         'app_users_verified',
         'app_users_internal',
@@ -88,4 +89,42 @@ it('allows all IPs when the allowlist is empty', function () {
     config(['prometheus.allowed_ips' => []]);
 
     $this->get(route('prometheus.default'))->assertOk();
+});
+
+it('reports app_maintenance_mode 0 when the application is not in maintenance mode', function () {
+    $response = $this->get(route('prometheus.default'));
+
+    expect(prometheusMetricValue($response, 'app_maintenance_mode'))->toBe('0');
+});
+
+it('serves the metrics endpoint and reports app_maintenance_mode 1 while in maintenance mode', function () {
+    $this->artisan('down');
+
+    try {
+        $response = $this->get(route('prometheus.default'));
+
+        expect(prometheusMetricValue($response, 'app_maintenance_mode'))->toBe('1');
+    } finally {
+        $this->artisan('up');
+    }
+});
+
+it('still blocks other pages while the metrics endpoint is exempted from maintenance mode', function () {
+    $this->artisan('down');
+
+    try {
+        $this->get(route('prometheus.default'))->assertOk();
+        $this->get('/login')->assertStatus(503);
+    } finally {
+        $this->artisan('up');
+    }
+});
+
+it('reports app_maintenance_mode 0 again once maintenance mode is lifted', function () {
+    $this->artisan('down');
+    $this->artisan('up');
+
+    $response = $this->get(route('prometheus.default'));
+
+    expect(prometheusMetricValue($response, 'app_maintenance_mode'))->toBe('0');
 });
