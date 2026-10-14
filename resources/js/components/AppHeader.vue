@@ -86,6 +86,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                 class="mr-2 h-9 w-9"
                             >
                                 <Menu class="h-5 w-5" />
+                                <span class="sr-only">{{ t('nav.menu') }}</span>
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" class="w-[300px] p-6">
@@ -195,6 +196,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                             <Search
                                 class="size-5 opacity-80 group-hover:opacity-100"
                             />
+                            <span class="sr-only">{{ t('nav.search') }}</span>
                         </Button>
 
                         <div class="hidden space-x-1 lg:flex">

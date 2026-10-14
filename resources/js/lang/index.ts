@@ -139,6 +139,7 @@ export const messages: Record<Locale, Messages> = {
         'nav.items.points': 'Points Open',
         'nav.items.repository': 'Dépôt',
         'nav.menu': 'Menu de navigation',
+        'nav.search': 'Recherche',
 
         'settings.title': 'Paramètres',
         'settings.description':
@@ -572,6 +573,7 @@ export const messages: Record<Locale, Messages> = {
         'nav.items.points': 'Open Points',
         'nav.items.repository': 'Repository',
         'nav.menu': 'Navigation menu',
+        'nav.search': 'Search',
 
         'settings.title': 'Settings',
         'settings.description': 'Manage your profile and account settings',
