@@ -38,6 +38,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('throttle:settings')
         ->name('identity.update');
 
+    // Signed confirmation link for a school email change: proves the
+    // member controls the new address before it anchors their identity.
+    Route::get('settings/identity/school-email/verify/{id}/{hash}', [IdentityController::class, 'verifySchoolEmail'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('school-email.verify');
+
     Route::get('settings/invitations', [InvitationController::class, 'edit'])->name('invitations.edit');
     Route::post('settings/invitations', [InvitationController::class, 'store'])
         ->middleware('throttle:invitations')

@@ -188,7 +188,15 @@ export const messages: Record<Locale, Messages> = {
         'settings.identity.schoolEmail': 'Email scolaire',
         'settings.identity.schoolEmailPlaceholder': 'email scolaire',
         'settings.identity.schoolEmailHint':
-            'Votre email scolaire fixe votre statut interne ; il ne le modifie pas et ne sert pas à se connecter.',
+            'Votre email scolaire fixe votre statut interne ; il ne le modifie pas et ne sert pas à se connecter. Il est fixé à l’inscription et ne peut être changé qu’en confirmant un lien envoyé à la nouvelle adresse.',
+        'settings.identity.newSchoolEmail': 'Nouvelle adresse scolaire',
+        'settings.identity.newSchoolEmailPlaceholder':
+            'nouvelle adresse @domaine-ecole',
+        'settings.identity.newSchoolEmailHint':
+            'Pour changer d’adresse scolaire : un lien de confirmation vous sera envoyé à cette nouvelle adresse. Sans confirmation, l’adresse actuelle reste inchangée.',
+        'settings.identity.currentPassword': 'Mot de passe actuel',
+        'settings.identity.currentPasswordHint':
+            'Confirmez votre mot de passe pour demander le changement d’adresse scolaire.',
         'settings.identity.grade': 'Niveau',
         'settings.identity.gradePlaceholder': 'Sélectionnez votre niveau',
 
@@ -622,7 +630,15 @@ export const messages: Record<Locale, Messages> = {
         'settings.identity.schoolEmail': 'School email',
         'settings.identity.schoolEmailPlaceholder': 'school email',
         'settings.identity.schoolEmailHint':
-            'Your school email anchors your internal status; it does not change it and is not used to sign in.',
+            'Your school email anchors your internal status; it does not change it and is not used to sign in. It is set at registration and can only be changed by confirming a link sent to the new address.',
+        'settings.identity.newSchoolEmail': 'New school email address',
+        'settings.identity.newSchoolEmailPlaceholder':
+            'new @school-domain address',
+        'settings.identity.newSchoolEmailHint':
+            'To change your school email: a confirmation link will be sent to this new address. Until confirmed, your current address stays unchanged.',
+        'settings.identity.currentPassword': 'Current password',
+        'settings.identity.currentPasswordHint':
+            'Confirm your password to request the school email change.',
         'settings.identity.grade': 'Grade level',
         'settings.identity.gradePlaceholder': 'Select your grade level',
 

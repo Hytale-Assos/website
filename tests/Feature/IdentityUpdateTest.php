@@ -38,7 +38,10 @@ test('guests are redirected to the login page when updating their identity', fun
 
 test('an internal member can save their identity data', function () {
     config(['members.school_email_domains' => ['ecole.fr']]);
-    $user = User::factory()->create(['is_internal' => true]);
+    $user = User::factory()->create([
+        'is_internal' => true,
+        'school_email' => 'grace@ecole.fr',
+    ]);
 
     $response = $this
         ->actingAs($user)
@@ -46,7 +49,6 @@ test('an internal member can save their identity data', function () {
             'firstname' => 'Grace',
             'lastname' => 'Hopper',
             'grade_level' => '1i',
-            'school_email' => 'grace@ecole.fr',
         ]);
 
     $response
@@ -102,7 +104,6 @@ test('each identity field is required for internal members', function (string $m
         'firstname' => 'Ada',
         'lastname' => 'Lovelace',
         'grade_level' => '2i',
-        'school_email' => 'ada@ecole.fr',
     ];
     unset($payload[$missingField]);
 
@@ -122,7 +123,6 @@ test('each identity field is required for internal members', function (string $m
     'firstname' => ['firstname'],
     'lastname' => ['lastname'],
     'grade_level' => ['grade_level'],
-    'school_email' => ['school_email'],
 ]);
 
 test('an invalid grade level is rejected and nothing is persisted', function (string $gradeLevel) {
@@ -158,95 +158,6 @@ test('an invalid grade level is rejected and nothing is persisted', function (st
     'nonexistent grade' => ['3i'],
     'empty string' => [''],
 ]);
-
-test('school email must be a valid address on a configured school domain', function (string $schoolEmail) {
-    config(['members.school_email_domains' => ['ecole.fr']]);
-    $user = User::factory()->create([
-        'is_internal' => true,
-        'firstname' => 'Grace',
-        'lastname' => 'Hopper',
-        'grade_level' => '1i',
-    ]);
-
-    $response = $this
-        ->actingAs($user)
-        ->put(route('identity.update'), [
-            'firstname' => 'Ada',
-            'lastname' => 'Lovelace',
-            'grade_level' => '2i',
-            'school_email' => $schoolEmail,
-        ]);
-
-    $response->assertSessionHasErrors('school_email');
-
-    $user->refresh();
-
-    expect($user->firstname)->toBe('Grace');
-    expect($user->lastname)->toBe('Hopper');
-    expect($user->grade_level)->toBe('1i');
-    expect($user->school_email)->toBeNull();
-})->with([
-    'not an email address' => ['banana'],
-    'unknown domain' => ['grace@mail.com'],
-    'different school domain' => ['grace@ecole.com'],
-]);
-
-test('school email already used by another member is rejected', function () {
-    config(['members.school_email_domains' => ['ecole.fr']]);
-    User::factory()->create(['is_internal' => true, 'school_email' => 'taken@ecole.fr']);
-    $user = User::factory()->create([
-        'is_internal' => true,
-        'firstname' => 'Grace',
-        'lastname' => 'Hopper',
-        'grade_level' => '1i',
-    ]);
-
-    $response = $this
-        ->actingAs($user)
-        ->put(route('identity.update'), [
-            'firstname' => 'Ada',
-            'lastname' => 'Lovelace',
-            'grade_level' => '2i',
-            'school_email' => 'taken@ecole.fr',
-        ]);
-
-    $response->assertSessionHasErrors('school_email');
-
-    $user->refresh();
-
-    expect($user->school_email)->toBeNull();
-    expect($user->firstname)->toBe('Grace');
-});
-
-test('a member can resubmit their own school email unchanged', function () {
-    config(['members.school_email_domains' => ['ecole.fr']]);
-    $user = User::factory()->create([
-        'is_internal' => true,
-        'firstname' => 'Grace',
-        'lastname' => 'Hopper',
-        'grade_level' => '1i',
-        'school_email' => 'grace@ecole.fr',
-    ]);
-
-    $response = $this
-        ->actingAs($user)
-        ->put(route('identity.update'), [
-            'firstname' => 'Ada',
-            'lastname' => 'Lovelace',
-            'grade_level' => '2A',
-            'school_email' => 'grace@ecole.fr',
-        ]);
-
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect(route('identity.update'));
-
-    $user->refresh();
-
-    expect($user->school_email)->toBe('grace@ecole.fr');
-    expect($user->firstname)->toBe('Ada');
-    expect($user->grade_level)->toBe('2A');
-});
 
 test('firstname and lastname longer than 255 characters are rejected', function (string $field) {
     config(['members.school_email_domains' => ['ecole.fr']]);
@@ -381,7 +292,11 @@ test('member status flags cannot be changed through the endpoint', function (arr
 
 test('identity data and school email are stored encrypted while the model returns plain values', function () {
     config(['members.school_email_domains' => ['ecole.fr']]);
-    $user = User::factory()->create(['is_internal' => true, 'is_external' => false]);
+    $user = User::factory()->create([
+        'is_internal' => true,
+        'is_external' => false,
+        'school_email' => 'grace@ecole.fr',
+    ]);
 
     $this
         ->actingAs($user)
@@ -389,7 +304,6 @@ test('identity data and school email are stored encrypted while the model return
             'firstname' => 'Grace',
             'lastname' => 'Hopper',
             'grade_level' => '1i',
-            'school_email' => 'grace@ecole.fr',
         ])
         ->assertSessionHasNoErrors();
 

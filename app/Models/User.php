@@ -39,6 +39,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property Carbon|null $hytale_account_verified_at
  * @property string|null $school_email
  * @property string|null $school_email_hash
+ * @property string|null $pending_school_email
+ * @property string|null $pending_school_email_hash
  * @property string|null $firstname
  * @property string|null $lastname
  * @property string|null $grade_level
@@ -54,11 +56,11 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 // preference validated by ProfileUpdateRequest. The is_internal/is_external
 // privilege flags stay OUT of the fillable list so they can never be
 // mass-assigned; CreateNewUser sets them explicitly from the email domain.
-#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'school_email', 'school_email_hash', 'firstname', 'lastname', 'grade_level', 'is_public'])]
+#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'school_email', 'school_email_hash', 'pending_school_email', 'pending_school_email_hash', 'firstname', 'lastname', 'grade_level', 'is_public'])]
 // The *_hash columns are blind indexes (deterministic HMAC keys for lookups
 // on encrypted data): they are derivation keys, never client data, so they
 // stay out of every serialization (Inertia props, JSON responses).
-#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'email_hash', 'discord_id_hash', 'hytale_id_hash', 'school_email_hash'])]
+#[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'email_hash', 'discord_id_hash', 'hytale_id_hash', 'school_email_hash', 'pending_school_email_hash'])]
 class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
@@ -109,6 +111,7 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
             'hytale_id' => EncryptedWithHash::class.':hytale_id_hash',
             'hytale_nickname' => 'encrypted',
             'school_email' => EncryptedEmailWithHash::class.':school_email_hash',
+            'pending_school_email' => EncryptedEmailWithHash::class.':pending_school_email_hash',
             'firstname' => 'encrypted',
             'lastname' => 'encrypted',
             'grade_level' => 'encrypted',
