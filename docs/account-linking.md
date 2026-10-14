@@ -58,8 +58,9 @@ Le cast custom `App\Casts\EncryptedWithHash` (déclaré en chaîne
 `EncryptedWithHash::class.':<colonne>_hash'` dans `User::casts()`)
 encapsule toute la logique pour les colonnes id chiffrées :
 
-- **écriture** : chiffre la valeur (`Crypt::encryptString`, AES via
-  `APP_KEY`) et remplit le hash SHA-256 déterministe de la colonne
+- **écriture** : normalise la valeur (minuscules, trim — les identifiants
+  sont insensibles à la casse), chiffre la valeur (`Crypt::encryptString`,
+  AES via `APP_KEY`) et remplit le hash SHA-256 déterministe de la colonne
   compagnon — quel que soit le code appelant (formulaire, factory,
   seeder, flux OAuth) ; écrire `null` vide les deux colonnes
 - **lecture** : déchiffre via le cast
@@ -81,10 +82,21 @@ deviennent indéchiffrables. En cas de rotation de clé, renseigner
 
 ## Hytale — spécificités
 
-- `users.hytale_id_hash` : SHA-256 de l'UUID, indexée unique. La
-  validation de la saisie manuelle (`LinkedAccountUpdateRequest`)
-  vérifie l'unicité via ce hash (une valeur chiffrée ne peut pas être
-  requêtée).
+- `users.hytale_id_hash` : HMAC-SHA256 clé de l'UUID **normalisé**
+  (minuscules, trim — `IdHasher` normalise son entrée) : deux saisies du
+  même UUID en casses différentes ne peuvent pas coexister. La validation
+  de la saisie manuelle (`LinkedAccountUpdateRequest`) vérifie l'unicité
+  via ce hash (une valeur chiffrée ne peut pas être requêtée).
+- Chaque changement d'`hytale_id` laisse une trace dans les journaux
+  (ancien et nouvel identifiant) : l'identité étant auto-déclarée jusqu'à
+  l'arrivée de l'OAuth Hytale, c'est la piste de modération en cas
+  d'usurpation d'identité.
+- **Risque transitoire assumé** : tant que la phase 2 (OAuth) n'est pas
+  déployée, l'identité Hytale repose sur la déclaration du membre et la
+  modération de l'équipe ; les écritures whitelist restent ouvertes aux
+  identités non vérifiées pour ne pas bloquer les joueurs légitimes. Le
+  gel côté serveur arrive avec la vérification OAuth (branche
+  `feat/hytale-oauth`, en attente du provider Socialite).
 - Le futur OAuth Hytale remplira exactement ces colonnes et positionnera
   `hytale_account_verified_at` — aucun schéma supplémentaire à prévoir.
 

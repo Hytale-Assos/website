@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -62,6 +63,24 @@ class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasUuids, Notifiable, PasskeyAuthenticatable, SoftDeletes, TwoFactorAuthenticatable;
+
+    /**
+     * The Hytale identity is self-declared until the OAuth verification
+     * flow lands: every change is journalized so the team can trace a
+     * claimed identity back to its previous value (moderation trail).
+     */
+    protected static function booted(): void
+    {
+        static::updated(function (User $user): void {
+            if ($user->wasChanged('hytale_id')) {
+                Log::info('Hytale identity changed.', [
+                    'user_id' => $user->id,
+                    'previous_hytale_id' => $user->getOriginal('hytale_id'),
+                    'hytale_id' => $user->hytale_id,
+                ]);
+            }
+        });
+    }
 
     /**
      * The invitations this member has sent.
