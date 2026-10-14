@@ -46,6 +46,8 @@ const submitLabel = computed(() =>
 function onOpenChange(next: boolean): void {
     open.value = next;
 
+    clearInterval(timer);
+
     if (next) {
         confirmation.value = '';
         secondsLeft.value = CONFIRMATION_SECONDS;
