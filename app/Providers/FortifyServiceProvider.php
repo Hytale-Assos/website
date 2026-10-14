@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
+use App\Http\Responses\NeutralFailedPasswordResetLinkResponse;
+use App\Http\Responses\NeutralFailedPasswordResetResponse;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -12,6 +14,8 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
+use Laravel\Fortify\Contracts\FailedPasswordResetLinkRequestResponse;
+use Laravel\Fortify\Contracts\FailedPasswordResetResponse;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 use RuntimeException;
@@ -23,7 +27,12 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Reset-link responses must not depend on whether the submitted
+        // email belongs to a member: a failed request is answered
+        // exactly like a successful one, and a wrong (email, token)
+        // pair reads as an invalid token, never as a missing user.
+        $this->app->bind(FailedPasswordResetLinkRequestResponse::class, NeutralFailedPasswordResetLinkResponse::class);
+        $this->app->bind(FailedPasswordResetResponse::class, NeutralFailedPasswordResetResponse::class);
     }
 
     /**
@@ -105,17 +114,28 @@ class FortifyServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('password-email', function (Request $request) {
-            return Limit::perMinute(6)->by(
-                Str::transliterate(Str::lower((string) $request->input('email'))).'|'.$request->ip(),
-            );
+            $email = $request->input('email');
+            $email = is_string($email) ? Str::lower($email) : '';
+
+            return [
+                // Per (email, IP): one address pair cannot be hammered
+                // with reset mails.
+                Limit::perMinute(6)->by(
+                    Str::transliterate($email).'|'.$request->ip(),
+                ),
+                // Per IP: probing many distinct addresses from a single
+                // IP to enumerate member emails hits this ceiling.
+                Limit::perMinute(20)->by($request->ip()),
+            ];
         });
     }
 
     /**
      * Fortify only throttles its login, two-factor, and passkeys
-     * endpoints: registration and password-reset requests would
-     * otherwise be unthrottled public endpoints (email probing,
-     * mass account creation, reset-mail spam).
+     * endpoints: registration, password-reset requests and the reset
+     * itself would otherwise be unthrottled public endpoints (email
+     * probing, mass account creation, reset-mail spam, unbounded
+     * bcrypt on the reset route).
      *
      * The name lookup table is not rebuilt yet when this booted
      * callback runs, so refresh it explicitly before resolving the
@@ -128,6 +148,7 @@ class FortifyServiceProvider extends ServiceProvider
 
             Route::getRoutes()->getByName('register.store')?->middleware('throttle:registration');
             Route::getRoutes()->getByName('password.email')?->middleware('throttle:password-email');
+            Route::getRoutes()->getByName('password.update')?->middleware('throttle:password');
         });
     }
 
