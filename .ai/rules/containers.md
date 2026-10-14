@@ -21,7 +21,7 @@ paths:
 - Keep the install layers cacheable in this order: `composer install` (from composer.json/lock), `bun install` (from package.json/bun.lock), then `COPY . .`.
 - `RUN rm -rf node_modules` at the end of the build stage. `.dockerignore` does not filter `COPY --from=`, so the runtime copies whatever the build stage still contains.
 - The runtime is unprivileged: create a dedicated user, remove capabilities from the frankenphp binary, `COPY --chown` the app tree, then `chmod -R ug+rwX storage bootstrap/cache` (capital X: directories and already-executable files only).
-- `CMD` must pass `--config /etc/caddy/Caddyfile` explicitly: `frankenphp run` without it looks for a Caddyfile in the working directory and starts with an empty config.
+- `CMD` runs the database migrations first, then the web server (`php artisan migrate --force && exec frankenphp run`): a freshly deployed image never serves on a stale schema, and a failed migration stops the boot. `--config /etc/caddy/Caddyfile` must stay explicit: `frankenphp run` without it looks for a Caddyfile in the working directory and starts with an empty config.
 - Defaults live in `ENV`: `APP_ENV=production`, `APP_DEBUG=false`, `INERTIA_SSR_ENABLED=false`, `LOG_CHANNEL=stderr`, `SERVER_NAME=":8080"` (unprivileged port, published by the host as `80:8080`). Never bake secrets or a `.env` into the image.
 
 ## .dockerignore
@@ -48,4 +48,4 @@ Before pushing a Containerfile change: build the image, then smoke-test it: run 
 
 ## CI workflow
 
-`.github/workflows/build.yml` builds the image on every pull request targeting `develop` and on every push to `develop` (verification only, no publish), and builds and pushes to `ghcr.io/hytale-assos/website` on every push to `main` with two tags: `latest` and `sha-<short commit>`. Pin GitHub Actions by commit SHA with the version in a comment. The registry namespace is lowercase.
+`.github/workflows/build.yml` builds the image on every pull request targeting `develop` or `main` and on every push to `develop` (verification only, no publish, read-only token). Publishing to `ghcr.io/hytale-assos/website` happens only as a `workflow_run` reaction to the `tests` workflow completing on `main` with success, building exactly the commit the tests ran on, with two tags: `latest` and `sha-<short commit>`; only the publish job carries `packages: write`. Pin GitHub Actions by commit SHA with the version in a comment. Both workflows declare `concurrency` (stale runs are cancelled) and `timeout-minutes`. The registry namespace is lowercase.
