@@ -18,9 +18,22 @@ class PrometheusServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->registerApplicationMetrics();
         $this->registerUserMetrics();
         $this->registerInvitationMetrics();
         $this->registerSessionMetrics();
+    }
+
+    /**
+     * Application state gauges. The maintenance gauge distinguishes a
+     * planned `artisan down` from an outage in alerting; the metrics
+     * endpoint is exempted from the maintenance mode in bootstrap/app.php
+     * so it stays scrappable while the rest of the site returns 503.
+     */
+    protected function registerApplicationMetrics(): void
+    {
+        Prometheus::addGauge('Maintenance mode', fn (): int => $this->app->isDownForMaintenance() ? 1 : 0)
+            ->helpText('1 when the application is in maintenance mode (artisan down), 0 otherwise');
     }
 
     /**
