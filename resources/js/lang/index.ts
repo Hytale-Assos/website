@@ -188,7 +188,7 @@ export const messages: Record<Locale, Messages> = {
         'settings.identity.schoolEmail': 'Email scolaire',
         'settings.identity.schoolEmailPlaceholder': 'email scolaire',
         'settings.identity.schoolEmailHint':
-            'Votre email scolaire fixe votre statut interne ; il ne le modifie pas et ne sert pas à se connecter. Il est fixé à l’inscription et ne peut être changé qu’en confirmant un lien envoyé à la nouvelle adresse.',
+            'Votre email scolaire fixe votre statut interne ; il ne le modifie pas et ne sert pas à se connecter. Il est défini à l’inscription et ne peut être modifié qu’en cliquant sur le lien de confirmation envoyé à la nouvelle adresse.',
         'settings.identity.newSchoolEmail': 'Nouvelle adresse scolaire',
         'settings.identity.newSchoolEmailPlaceholder':
             'nouvelle adresse @domaine-ecole',
@@ -639,7 +639,7 @@ export const messages: Record<Locale, Messages> = {
         'settings.identity.schoolEmail': 'School email',
         'settings.identity.schoolEmailPlaceholder': 'school email',
         'settings.identity.schoolEmailHint':
-            'Your school email anchors your internal status; it does not change it and is not used to sign in. It is set at registration and can only be changed by confirming a link sent to the new address.',
+            'Your school email anchors your internal status; it does not change it and is not used to sign in. It is set at registration and can only be changed by clicking the confirmation link sent to the new address.',
         'settings.identity.newSchoolEmail': 'New school email address',
         'settings.identity.newSchoolEmailPlaceholder':
             'new @school-domain address',
