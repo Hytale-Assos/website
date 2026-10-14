@@ -39,6 +39,7 @@ test('changing the email address clears the verified status and sends a new veri
     $response = $this->actingAs($user)->patch('/settings/profile', [
         'name' => $user->name,
         'email' => 'new-address@ecole.fr',
+        'current_password' => 'password',
     ]);
 
     $response->assertSessionHasNoErrors();
