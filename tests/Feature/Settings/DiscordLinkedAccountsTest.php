@@ -192,7 +192,6 @@ test('discord account already linked to another user is refused', function () {
     // so a linked user must carry the deterministic hash of their discord id.
     $otherUser = User::factory()->create([
         'discord_id' => '1234567890123456789',
-        'discord_id_hash' => IdHasher::hash('1234567890123456789'),
         'discord_nickname' => 'otheruser',
     ]);
 
@@ -222,7 +221,6 @@ test('discord account already linked to another user is refused', function () {
 test('discord_id_hash carries the one-discord-account-per-user constraint', function () {
     User::factory()->create([
         'discord_id' => '1234567890123456789',
-        'discord_id_hash' => IdHasher::hash('1234567890123456789'),
     ]);
 
     expect(function () {
@@ -231,7 +229,6 @@ test('discord_id_hash carries the one-discord-account-per-user constraint', func
             'name' => 'Second User',
             'email' => 'second-user@example.com',
             'password' => 'irrelevant',
-            'discord_id_hash' => IdHasher::hash('1234567890123456789'),
         ]);
     })->toThrow(QueryException::class);
 });
@@ -253,7 +250,6 @@ test('users without a linked discord account have a null discord_id_hash', funct
 test('an oauth failure leaves the user unchanged and redirects with an error message', function () {
     $user = User::factory()->create([
         'discord_id' => '9876543210987654321',
-        'discord_id_hash' => IdHasher::hash('9876543210987654321'),
         'discord_nickname' => 'alreadylinked',
     ]);
 
@@ -280,7 +276,6 @@ test('an oauth failure leaves the user unchanged and redirects with an error mes
 test('authenticated users can unlink their discord account', function () {
     $user = User::factory()->create([
         'discord_id' => '1234567890123456789',
-        'discord_id_hash' => IdHasher::hash('1234567890123456789'),
         'discord_nickname' => 'testuser',
     ]);
 

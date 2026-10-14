@@ -62,6 +62,16 @@ Toute la configuration passe par `.env` (modèle : `.env.example`). Valeurs clé
 | `DISCORD_*`                   | Liaison de comptes Discord (OAuth).                                                                                                 |
 | `MAIL_*`                      | Envoi d'emails (vérification, réinitialisation). `smtp` en production, `log` en dev.                                                |
 
+## Sécurité — compromis assumés
+
+L'inscription publique distingue « cette adresse a déjà un compte » de
+« cette adresse externe n'a pas d'invitation » : c'est un oracle
+d'existence à 5 essais/min/IP, assumé. Le neutraliser imposerait un flux
+« nous vous enverrons un email » qui casserait l'inscription instantanée
+des membres école. Les autres flux sensibles (réinitialisation de mot de
+passe, invitations) sont, eux, neutres : la même réponse est servie que
+l'adresse soit membre ou non.
+
 ## Documentation interne
 
 - [`docs/api.md`](docs/api.md) — contrat de l'API core Hytale
