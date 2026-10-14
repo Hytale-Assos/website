@@ -17,6 +17,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
 
+        // The metrics endpoint must stay scrappable during a maintenance
+        // window: its maintenance gauge is what tells the difference
+        // between a planned `artisan down` and an outage.
+        $middleware->preventRequestsDuringMaintenance(except: ['prometheus']);
+
         $middleware->web(append: [
             HandleAppearance::class,
             HandleInertiaRequests::class,
