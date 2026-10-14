@@ -150,6 +150,7 @@ export const messages: Record<Locale, Messages> = {
         'settings.nav.invitations': 'Invitations',
         'settings.nav.data': 'Données et confidentialité',
         'settings.nav.appearance': 'Apparence',
+        'settings.nav.accessibility': 'Accessibilité',
 
         'settings.profile.head': 'Réglages du profil',
         'settings.profile.title': 'Profil',
@@ -241,6 +242,11 @@ export const messages: Record<Locale, Messages> = {
         'settings.appearance.title': 'Réglages d’apparence',
         'settings.appearance.description':
             'Mettez à jour les paramètres d’apparence de votre compte',
+
+        'settings.accessibility.head': 'Accessibilité',
+        'settings.accessibility.title': 'Accessibilité',
+        'settings.accessibility.description':
+            'Ajustez la lecture du site à vos besoins',
         'appearance.light': 'Clair',
         'appearance.dark': 'Sombre',
         'appearance.system': 'Système',
@@ -567,6 +573,7 @@ export const messages: Record<Locale, Messages> = {
         'settings.nav.invitations': 'Invitations',
         'settings.nav.data': 'Data & privacy',
         'settings.nav.appearance': 'Appearance',
+        'settings.nav.accessibility': 'Accessibility',
 
         'settings.profile.head': 'Profile settings',
         'settings.profile.title': 'Profile',
@@ -656,6 +663,11 @@ export const messages: Record<Locale, Messages> = {
         'settings.appearance.title': 'Appearance settings',
         'settings.appearance.description':
             'Update the appearance settings for your account',
+
+        'settings.accessibility.head': 'Accessibility',
+        'settings.accessibility.title': 'Accessibility',
+        'settings.accessibility.description':
+            'Adjust the site to your reading needs',
         'appearance.light': 'Light',
         'appearance.dark': 'Dark',
         'appearance.system': 'System',
