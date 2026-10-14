@@ -16,6 +16,8 @@ import { send } from '@/routes/verification';
 const page = usePage();
 const user = computed(() => page.props.auth.user);
 const isPublic = ref(Boolean(user.value?.is_public));
+const email = ref(String(user.value?.email));
+const emailChanged = computed(() => email.value !== user.value?.email);
 const { t } = useLocale();
 </script>
 
@@ -54,15 +56,34 @@ const { t } = useLocale();
                 <Label for="email">{{ t('settings.profile.email') }}</Label>
                 <Input
                     id="email"
+                    v-model="email"
                     type="email"
                     class="mt-1 block w-full"
                     name="email"
-                    :default-value="user.email"
                     required
                     autocomplete="username"
                     :placeholder="t('settings.profile.email')"
                 />
                 <InputError class="mt-2" :message="errors.email" />
+            </div>
+
+            <div v-if="emailChanged" class="grid gap-2">
+                <Label for="current_password">{{
+                    t('settings.profile.currentPassword')
+                }}</Label>
+                <Input
+                    id="current_password"
+                    type="password"
+                    class="mt-1 block w-full"
+                    name="current_password"
+                    required
+                    autocomplete="current-password"
+                    :placeholder="t('settings.profile.currentPassword')"
+                />
+                <p class="text-muted-foreground text-sm">
+                    {{ t('settings.profile.currentPasswordHint') }}
+                </p>
+                <InputError class="mt-2" :message="errors.current_password" />
             </div>
 
             <div class="grid gap-2">

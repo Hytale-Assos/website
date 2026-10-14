@@ -160,6 +160,9 @@ export const messages: Record<Locale, Messages> = {
         'settings.profile.name': 'Nom',
         'settings.profile.namePlaceholder': 'Nom complet',
         'settings.profile.email': 'Adresse email',
+        'settings.profile.currentPassword': 'Mot de passe actuel',
+        'settings.profile.currentPasswordHint':
+            'Confirmez votre mot de passe pour valider le changement d’adresse email.',
         'settings.profile.public': 'Apparaître sur le classement public',
         'settings.profile.publicHint':
             'Seul votre pseudo de jeu peut apparaître publiquement. Votre nom, votre adresse email et vos données d’identification ne sont jamais affichés.',
@@ -592,6 +595,9 @@ export const messages: Record<Locale, Messages> = {
         'settings.profile.name': 'Name',
         'settings.profile.namePlaceholder': 'Full name',
         'settings.profile.email': 'Email address',
+        'settings.profile.currentPassword': 'Current password',
+        'settings.profile.currentPasswordHint':
+            'Confirm your password to approve the email address change.',
         'settings.profile.public': 'Appear on the public leaderboard',
         'settings.profile.publicHint':
             'Only your game nickname can appear publicly. Your name, email address, and identification data are never shown.',
