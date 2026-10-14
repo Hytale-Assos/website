@@ -30,12 +30,15 @@
 # Nothing writable survives a restart, nothing persists outside
 # PostgreSQL.
 #
-# Run migrations after pulling a new image:
+# Migrations are automatic: the image CMD runs `php artisan migrate
+# --force` before starting the web server, so every deployment and
+# every podman-auto-update restart lands on an up-to-date schema. The
+# manual migration command is kept as a fallback for troubleshooting:
 #   podman run --rm --network hytale-website-hytale-postgres \
 #     --env-file /home/hytale/hytale/env/website.env \
 #     --secret hytale-website-db-password,type=env,target=DB_PASSWORD \
 #     --secret hytale-website-app-key,type=env,target=APP_KEY \
-#     ghcr.io/hytale-assos/website:latest php artisan migrate --force
+#     ghcr.io/hytale-assos/website:latest php artisan migrate:status
 
 [Unit]
 Description=Hytale website (Laravel + FrankenPHP)

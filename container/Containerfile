@@ -65,4 +65,10 @@ USER ${APP_USER}
 
 EXPOSE 8080
 
-CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+# Migrations run at container start, before the web server: a freshly
+# deployed image can never serve on a stale schema (podman auto-update
+# restarts are covered too), and a failed migration stops the boot
+# instead of letting a half-deployed app answer requests. The web
+# server only starts once the schema is up to date; --config is kept
+# explicit (frankenphp looks for a Caddyfile in the workdir otherwise).
+CMD ["/bin/sh", "-c", "php artisan migrate --force && exec frankenphp run --config /etc/caddy/Caddyfile"]
