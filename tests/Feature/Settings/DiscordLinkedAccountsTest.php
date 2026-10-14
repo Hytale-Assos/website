@@ -82,7 +82,7 @@ test('authenticated users are redirected to the discord authorization page', fun
     expect($response->headers->get('Location'))->toStartWith('https://discord.com/api/oauth2/authorize');
 });
 
-test('users with an unverified email are also redirected to the discord authorization page', function () {
+test('users with an unverified email are redirected to the verification notice instead of the discord authorization page', function () {
     $user = User::factory()->create(['email_verified_at' => null]);
 
     mockDiscordOAuthRedirect();
@@ -91,9 +91,7 @@ test('users with an unverified email are also redirected to the discord authoriz
         ->actingAs($user)
         ->get('/auth/discord/redirect');
 
-    $response->assertRedirect();
-
-    expect($response->headers->get('Location'))->toStartWith('https://discord.com/api/oauth2/authorize');
+    $response->assertRedirect(route('verification.notice'));
 });
 
 test('unsupported providers are rejected with a 404', function (string $httpMethod, string $url) {

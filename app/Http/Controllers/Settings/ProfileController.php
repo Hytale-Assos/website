@@ -39,6 +39,13 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
+        // A changed email address must be proven again before the member
+        // regains access to the verified-only routes: send the new
+        // verification link right away.
+        if ($request->user()->wasChanged('email')) {
+            $request->user()->sendEmailVerificationNotification();
+        }
+
         Toast::success(__('Profile updated.'));
 
         return to_route('profile.edit');
