@@ -247,6 +247,11 @@ export const messages: Record<Locale, Messages> = {
         'settings.accessibility.title': 'Accessibilité',
         'settings.accessibility.description':
             'Ajustez la lecture du site à vos besoins',
+
+        'settings.accessibility.font.title': 'Taille de la police',
+        'settings.accessibility.font.description':
+            'Système suit la taille configurée dans votre navigateur ; les autres choix l’appliquent à tout le site.',
+        'accessibility.font.system': 'Système',
         'appearance.light': 'Clair',
         'appearance.dark': 'Sombre',
         'appearance.system': 'Système',
@@ -668,6 +673,11 @@ export const messages: Record<Locale, Messages> = {
         'settings.accessibility.title': 'Accessibility',
         'settings.accessibility.description':
             'Adjust the site to your reading needs',
+
+        'settings.accessibility.font.title': 'Font size',
+        'settings.accessibility.font.description':
+            'System follows the size configured in your browser; the other choices apply it across the whole site.',
+        'accessibility.font.system': 'System',
         'appearance.light': 'Light',
         'appearance.dark': 'Dark',
         'appearance.system': 'System',

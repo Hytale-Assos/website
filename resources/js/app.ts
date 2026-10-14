@@ -1,4 +1,5 @@
 import { createInertiaApp } from '@inertiajs/vue3';
+import { initializeFontSize } from '@/composables/useAccessibility';
 import { initializeTheme } from '@/composables/useAppearance';
 import AppLayout from '@/layouts/AppLayout.vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
@@ -26,6 +27,9 @@ void createInertiaApp({
 
 // This will set light / dark mode on page load...
 initializeTheme();
+
+// This will apply the stored font size on page load...
+initializeFontSize();
 
 // This will listen for flash toast data from the server...
 initializeFlashToast();
