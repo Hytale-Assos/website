@@ -25,6 +25,7 @@ const page = usePage();
 const user = computed(() => page.props.auth.user);
 const isInternal = computed(() => Boolean(user.value?.is_internal));
 const gradeLevel = ref<string>(user.value?.grade_level ?? '');
+const newSchoolEmail = ref('');
 const { t } = useLocale();
 </script>
 
@@ -97,17 +98,54 @@ const { t } = useLocale();
                 <Input
                     id="school_email"
                     type="email"
-                    class="mt-1 block w-full"
-                    name="school_email"
+                    class="mt-1 block w-full opacity-70"
                     :default-value="user.school_email ?? ''"
-                    required
+                    disabled
                     autocomplete="off"
-                    :placeholder="t('settings.identity.schoolEmailPlaceholder')"
                 />
                 <p class="text-muted-foreground text-sm">
                     {{ t('settings.identity.schoolEmailHint') }}
                 </p>
-                <InputError class="mt-2" :message="errors.school_email" />
+            </div>
+
+            <div v-if="isInternal" class="grid gap-2">
+                <Label for="new_school_email">{{
+                    t('settings.identity.newSchoolEmail')
+                }}</Label>
+                <Input
+                    id="new_school_email"
+                    v-model="newSchoolEmail"
+                    type="email"
+                    class="mt-1 block w-full"
+                    name="new_school_email"
+                    autocomplete="off"
+                    :placeholder="
+                        t('settings.identity.newSchoolEmailPlaceholder')
+                    "
+                />
+                <p class="text-muted-foreground text-sm">
+                    {{ t('settings.identity.newSchoolEmailHint') }}
+                </p>
+                <InputError class="mt-2" :message="errors.new_school_email" />
+            </div>
+
+            <div v-if="isInternal && newSchoolEmail" class="grid gap-2">
+                <Label for="current_password">{{
+                    t('settings.identity.currentPassword')
+                }}</Label>
+                <Input
+                    id="current_password"
+                    type="password"
+                    class="mt-1 block w-full"
+                    name="current_password"
+                    required
+                    autocomplete="current-password"
+                    :placeholder="t('settings.identity.currentPassword')"
+                />
+                <p class="text-muted-foreground text-sm">
+                    {{ t('settings.identity.currentPasswordHint') }}
+                </p>
+                <InputError class="mt-2" :message="errors.current_password" />
             </div>
 
             <div v-if="isInternal" class="grid gap-2">
