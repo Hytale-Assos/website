@@ -54,9 +54,12 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  */
 // is_public stays fillable: it is a user-controlled leaderboard visibility
 // preference validated by ProfileUpdateRequest. The is_internal/is_external
-// privilege flags stay OUT of the fillable list so they can never be
-// mass-assigned; CreateNewUser sets them explicitly from the email domain.
-#[Fillable(['name', 'email', 'email_hash', 'password', 'discord_id', 'discord_id_hash', 'hytale_id', 'hytale_id_hash', 'discord_nickname', 'hytale_nickname', 'school_email', 'school_email_hash', 'pending_school_email', 'pending_school_email_hash', 'firstname', 'lastname', 'grade_level', 'is_public'])]
+// privilege flags and every *_hash blind index stay OUT of the fillable
+// list so they can never be mass-assigned: the flags are set once by
+// CreateNewUser from the registration email, and the hash columns are
+// written only by the encrypted casts (writing one directly would
+// desynchronize the encrypted value and its lookup index).
+#[Fillable(['name', 'email', 'password', 'discord_id', 'hytale_id', 'discord_nickname', 'hytale_nickname', 'school_email', 'pending_school_email', 'firstname', 'lastname', 'grade_level', 'is_public'])]
 // The *_hash columns are blind indexes (deterministic HMAC keys for lookups
 // on encrypted data): they are derivation keys, never client data, so they
 // stay out of every serialization (Inertia props, JSON responses).

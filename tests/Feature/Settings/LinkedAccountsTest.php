@@ -93,7 +93,6 @@ test('existing hytale account fields can be cleared while the account is not ver
     $user = User::factory()->create([
         'hytale_nickname' => 'OldNick',
         'hytale_id' => '123e4567-e89b-42d3-a456-426614174000',
-        'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
     ]);
 
     $response = $this
@@ -122,7 +121,6 @@ test('existing hytale account fields can be changed while the account is not ver
     $user = User::factory()->create([
         'hytale_nickname' => 'OldNick',
         'hytale_id' => '123e4567-e89b-42d3-a456-426614174000',
-        'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
     ]);
 
     $response = $this
@@ -147,7 +145,6 @@ test('user can keep their own hytale id without conflict', function () {
     $user = User::factory()->create([
         'hytale_nickname' => 'SomeNick',
         'hytale_id' => '123e4567-e89b-42d3-a456-426614174000',
-        'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
     ]);
 
     $response = $this
@@ -172,7 +169,6 @@ test('hytale nickname longer than 255 characters is rejected', function () {
     $user = User::factory()->create([
         'hytale_nickname' => 'OldNick',
         'hytale_id' => '123e4567-e89b-42d3-a456-426614174000',
-        'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
     ]);
 
     $response = $this
@@ -195,7 +191,6 @@ test('hytale id that is not a valid uuid is rejected', function () {
     $user = User::factory()->create([
         'hytale_nickname' => 'OldNick',
         'hytale_id' => '123e4567-e89b-42d3-a456-426614174000',
-        'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
     ]);
 
     $response = $this
@@ -219,7 +214,6 @@ test('hytale id already used by another user is rejected', function () {
     // so the other user must carry the deterministic hash of their hytale id.
     User::factory()->create([
         'hytale_id' => '123e4567-e89b-42d3-a456-426614174000',
-        'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
     ]);
 
     $user = User::factory()->create([
@@ -270,7 +264,6 @@ test('hytale account fields cannot be modified once the account is verified', fu
     $user = User::factory()->create([
         'hytale_nickname' => 'VerifiedNick',
         'hytale_id' => '123e4567-e89b-42d3-a456-426614174000',
-        'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
     ]);
     $user->forceFill(['hytale_account_verified_at' => '2026-10-01 10:00:00'])->save();
 
@@ -357,7 +350,6 @@ test('users without a linked hytale account have a null hytale id hash', functio
 test('hytale_id_hash carries the one-hytale-account-per-user constraint', function () {
     User::factory()->create([
         'hytale_id' => '123e4567-e89b-42d3-a456-426614174000',
-        'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
     ]);
 
     expect(function () {
@@ -366,7 +358,6 @@ test('hytale_id_hash carries the one-hytale-account-per-user constraint', functi
             'name' => 'Second User',
             'email' => 'second-user@example.com',
             'password' => 'irrelevant',
-            'hytale_id_hash' => IdHasher::hash('123e4567-e89b-42d3-a456-426614174000'),
         ]);
     })->toThrow(QueryException::class);
 });

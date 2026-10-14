@@ -26,7 +26,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['inviter_user_id', 'email', 'email_hash', 'expires_at', 'accepted_at', 'accepted_user_id', 'revoked_at'])]
+#[Fillable(['inviter_user_id', 'email', 'expires_at', 'accepted_at', 'accepted_user_id', 'revoked_at'])]
 #[Hidden(['email_hash'])]
 class Invitation extends Model
 {

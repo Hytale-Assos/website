@@ -11,3 +11,7 @@ Brief it with expected behaviors (spec) only: user-facing outcomes, constraints,
 To let it match the project's test style without losing impartiality, the brief may list a small, explicit set of existing test files (paths only) it is allowed to open as style references — curate that list: only tests whose conventions and assertions you trust, never a whole directory, and never a file covering the very behavior under test (it would hand it the assertions). Open-ended "sibling tests" browsing stays forbidden.
 The subagent chooses its own assertions and structure, and runs its tests itself.
 If a test fails, fix the implementation rather than rewriting the test, unless the test contradicts the agreed spec.
+Close the subagent session as soon as its turn is over and its results are
+collected — when the branch carrying its tests is merged, nothing must remain
+open. Idle subagent sessions accumulate against the runtime's concurrent-agent
+cap and eventually block spawning new ones.
