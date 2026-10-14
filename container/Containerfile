@@ -48,6 +48,10 @@ RUN install-php-extensions opcache pdo_pgsql redis \
     && setcap -r /usr/local/bin/frankenphp \
     && chown -R ${APP_USER}:${APP_USER} /config/caddy /data/caddy
 
+# Do not advertise the exact PHP version on every response
+# (X-Powered-By header) nor in phpinfo() output.
+RUN printf 'expose_php = Off\n' > "${PHP_INI_DIR}/conf.d/99-no-php-version.ini"
+
 WORKDIR /app
 
 COPY --chown=${APP_USER}:${APP_USER} --from=build /app ./

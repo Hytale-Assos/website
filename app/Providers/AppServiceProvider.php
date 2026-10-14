@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use SocialiteProviders\Discord\Provider as DiscordProvider;
@@ -42,6 +43,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Every script and style tag the Vite plugin generates carries
+        // this per-request nonce, which the Content-Security-Policy of
+        // AddSecurityHeaders requires. Set early in boot, before any
+        // view renders.
+        Vite::useCspNonce();
+
         Event::listen(function (SocialiteWasCalled $event): void {
             $event->extendSocialite('discord', DiscordProvider::class);
         });
