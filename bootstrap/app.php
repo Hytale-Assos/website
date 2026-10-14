@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AddSecurityHeaders;
+use App\Http\Middleware\HandleAccessibility;
 use App\Http\Middleware\HandleAppearance;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
@@ -15,7 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+        $middleware->encryptCookies(except: ['appearance', 'sidebar_state', 'font_size', 'dyslexic_font']);
 
         // The metrics endpoint must stay scrappable during a maintenance
         // window: its maintenance gauge is what tells the difference
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->web(append: [
             HandleAppearance::class,
+            HandleAccessibility::class,
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
             AddSecurityHeaders::class,
