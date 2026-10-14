@@ -149,6 +149,13 @@ class FortifyServiceProvider extends ServiceProvider
             Route::getRoutes()->getByName('register.store')?->middleware('throttle:registration');
             Route::getRoutes()->getByName('password.email')?->middleware('throttle:password-email');
             Route::getRoutes()->getByName('password.update')?->middleware('throttle:password');
+
+            // Password-gated endpoints: an authenticated session must not
+            // be able to brute-force the member's password online (each
+            // attempt costs a bcrypt; a success unlocks 2FA, passkeys and
+            // password changes for an hour).
+            Route::getRoutes()->getByName('password.confirm.store')?->middleware('throttle:password');
+            Route::getRoutes()->getByName('two-factor.confirm')?->middleware('throttle:password');
         });
     }
 

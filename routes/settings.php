@@ -18,8 +18,12 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile.update');
 
     // Account deletion stays reachable before verification: a member whose
-    // registration email is wrong must still be able to close their account.
-    Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // registration email is wrong must still be able to close their
+    // account. It demands the current password: throttle the endpoint so
+    // a stolen session cannot brute-force it online.
+    Route::delete('settings/profile', [ProfileController::class, 'destroy'])
+        ->middleware('throttle:password')
+        ->name('profile.destroy');
 
     Route::get('settings/identity', [IdentityController::class, 'edit'])->name('identity.edit');
 
