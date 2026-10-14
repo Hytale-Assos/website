@@ -30,10 +30,13 @@
 # Nothing writable survives a restart, nothing persists outside
 # PostgreSQL.
 #
-# Migrations are automatic: the image CMD runs `php artisan migrate
-# --force` before starting the web server, so every deployment and
-# every podman-auto-update restart lands on an up-to-date schema. The
-# manual migration command is kept as a fallback for troubleshooting:
+# Migrations and framework caches are automatic: the image CMD runs
+# `php artisan migrate --force && php artisan optimize` before
+# starting the web server, so every deployment and every
+# podman-auto-update restart lands on an up-to-date schema with fresh
+# config/routes/events/views caches (built from this environment
+# file). The manual migration command is kept as a fallback for
+# troubleshooting:
 #   podman run --rm --network hytale-website-hytale-postgres \
 #     --env-file /home/hytale/hytale/env/website.env \
 #     --secret hytale-website-db-password,type=env,target=DB_PASSWORD \
