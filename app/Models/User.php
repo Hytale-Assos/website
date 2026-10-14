@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Casts\EncryptedBoolean;
 use App\Casts\EncryptedEmailWithHash;
 use App\Casts\EncryptedWithHash;
 use Database\Factories\UserFactory;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -58,7 +58,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 // on encrypted data): they are derivation keys, never client data, so they
 // stay out of every serialization (Inertia props, JSON responses).
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token', 'email_hash', 'discord_id_hash', 'hytale_id_hash', 'school_email_hash'])]
-class User extends Authenticatable implements PasskeyUser
+class User extends Authenticatable implements MustVerifyEmail, PasskeyUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, HasUuids, Notifiable, PasskeyAuthenticatable, SoftDeletes, TwoFactorAuthenticatable;

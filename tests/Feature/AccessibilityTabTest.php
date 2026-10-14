@@ -8,13 +8,12 @@ test('guests are redirected to login when accessing the accessibility settings p
     $response->assertRedirect(route('login'));
 });
 
-test('users with unverified email can access the accessibility settings page', function () {
+test('users with unverified email are redirected to the verification notice from the accessibility settings page', function () {
     $user = User::factory()->unverified()->create();
 
     $response = $this->actingAs($user)->get('/settings/accessibility');
 
-    $response->assertOk();
-    $response->assertInertia(fn ($page) => $page->component('settings/Accessibility'));
+    $response->assertRedirect(route('verification.notice'));
 });
 
 test('users with verified email can access the accessibility settings page', function () {
