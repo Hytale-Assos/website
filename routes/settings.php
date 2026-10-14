@@ -17,15 +17,22 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('throttle:settings')
         ->name('profile.update');
 
+    // Account deletion stays reachable before verification: a member whose
+    // registration email is wrong must still be able to close their account.
+    Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     Route::get('settings/identity', [IdentityController::class, 'edit'])->name('identity.edit');
-    Route::put('settings/identity', [IdentityController::class, 'update'])
-        ->middleware('throttle:settings')
-        ->name('identity.update');
 
     Route::get('settings/data', [DataPrivacyController::class, 'edit'])->name('data.edit');
     Route::get('settings/data/export', [DataPrivacyController::class, 'export'])
         ->middleware('throttle:data-export')
         ->name('data.export');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::put('settings/identity', [IdentityController::class, 'update'])
+        ->middleware('throttle:settings')
+        ->name('identity.update');
 
     Route::get('settings/invitations', [InvitationController::class, 'edit'])->name('invitations.edit');
     Route::post('settings/invitations', [InvitationController::class, 'store'])
@@ -39,10 +46,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('settings/accounts', [LinkedAccountController::class, 'update'])
         ->middleware('throttle:settings')
         ->name('accounts.update');
-});
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('settings/security', [SecurityController::class, 'edit'])
         ->middleware(RequirePassword::class)

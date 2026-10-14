@@ -25,14 +25,14 @@ test('linked accounts page is displayed for authenticated users', function () {
     $response->assertOk();
 });
 
-test('linked accounts page is displayed even when email is not verified', function () {
+test('linked accounts page is not displayed when email is not verified', function () {
     $user = User::factory()->create(['email_verified_at' => null]);
 
     $response = $this
         ->actingAs($user)
         ->get('/settings/accounts');
 
-    $response->assertOk();
+    $response->assertRedirect(route('verification.notice'));
 });
 
 test('guests are redirected to the login page from the linked accounts page', function () {

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 // (Discord today). The website is the OAuth client here. The route
 // names are the contract: the frontend uses the generated linked.*
 // functions and the provider application registers the callback URL.
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('auth/{provider}/redirect', [LinkedAccountOAuthController::class, 'redirect'])
         ->middleware('throttle:oauth')
         ->name('linked.redirect');
