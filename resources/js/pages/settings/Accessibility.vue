@@ -3,10 +3,13 @@ import { Head, setLayoutProps } from '@inertiajs/vue3';
 import { watchEffect } from 'vue';
 import FontSizeTabs from '@/components/FontSizeTabs.vue';
 import Heading from '@/components/Heading.vue';
+import { Switch } from '@/components/ui/switch';
+import { useAccessibility } from '@/composables/useAccessibility';
 import { useLocale } from '@/composables/useLocale';
 import { edit } from '@/routes/accessibility';
 
 const { t } = useLocale();
+const { dyslexicFont, updateDyslexicFont } = useAccessibility();
 
 watchEffect(() => {
     setLayoutProps({
@@ -32,5 +35,16 @@ watchEffect(() => {
             :description="t('settings.accessibility.font.description')"
         />
         <FontSizeTabs />
+
+        <Heading
+            variant="small"
+            :title="t('settings.accessibility.dyslexic.title')"
+            :description="t('settings.accessibility.dyslexic.description')"
+        />
+        <Switch
+            :model-value="dyslexicFont"
+            @update:model-value="updateDyslexicFont"
+            :aria-label="t('settings.accessibility.dyslexic.title')"
+        />
     </div>
 </template>

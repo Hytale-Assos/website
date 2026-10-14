@@ -252,6 +252,10 @@ export const messages: Record<Locale, Messages> = {
         'settings.accessibility.font.description':
             'Système suit la taille configurée dans votre navigateur ; les autres choix l’appliquent à tout le site.',
         'accessibility.font.system': 'Système',
+
+        'settings.accessibility.dyslexic.title': 'Police adaptée à la dyslexie',
+        'settings.accessibility.dyslexic.description':
+            'Remplace la police du site par OpenDyslexic, conçue pour faciliter la lecture des personnes dyslexiques.',
         'appearance.light': 'Clair',
         'appearance.dark': 'Sombre',
         'appearance.system': 'Système',
@@ -678,6 +682,10 @@ export const messages: Record<Locale, Messages> = {
         'settings.accessibility.font.description':
             'System follows the size configured in your browser; the other choices apply it across the whole site.',
         'accessibility.font.system': 'System',
+
+        'settings.accessibility.dyslexic.title': 'Dyslexia-friendly font',
+        'settings.accessibility.dyslexic.description':
+            'Replaces the site font with OpenDyslexic, designed to make reading easier for dyslexic readers.',
         'appearance.light': 'Light',
         'appearance.dark': 'Dark',
         'appearance.system': 'System',

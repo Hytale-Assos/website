@@ -6,6 +6,8 @@ export type FontSize = 'system' | 's' | 'm' | 'l' | 'xl' | 'xxl';
 export type UseAccessibilityReturn = {
     fontSize: Ref<FontSize>;
     updateFontSize: (value: FontSize) => void;
+    dyslexicFont: Ref<boolean>;
+    updateDyslexicFont: (enabled: boolean) => void;
 };
 
 const FONT_SIZE_SCALES: Record<Exclude<FontSize, 'system'>, number> = {
@@ -48,6 +50,26 @@ const setCookie = (name: string, value: string, days = 365) => {
 
 const fontSize = ref<FontSize>('system');
 
+export function applyDyslexicFont(enabled: boolean): void {
+    if (typeof document === 'undefined') {
+        return;
+    }
+
+    document.documentElement.classList.toggle('font-dyslexic', enabled);
+}
+
+const dyslexicFont = ref(false);
+
+export function initializeDyslexicFont(): void {
+    if (typeof window === 'undefined') {
+        return;
+    }
+
+    dyslexicFont.value = localStorage.getItem('dyslexic_font') === '1';
+
+    applyDyslexicFont(dyslexicFont.value);
+}
+
 export function initializeFontSize(): void {
     if (typeof window === 'undefined') {
         return;
@@ -83,8 +105,19 @@ export function useAccessibility(): UseAccessibilityReturn {
         applyFontSize(value);
     }
 
+    function updateDyslexicFont(enabled: boolean): void {
+        dyslexicFont.value = enabled;
+
+        localStorage.setItem('dyslexic_font', enabled ? '1' : '0');
+        setCookie('dyslexic_font', enabled ? '1' : '0');
+
+        applyDyslexicFont(enabled);
+    }
+
     return {
         fontSize,
         updateFontSize,
+        dyslexicFont,
+        updateDyslexicFont,
     };
 }
