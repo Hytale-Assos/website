@@ -6,11 +6,19 @@ use App\Support\IdHasher;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
 
 /**
  * Encrypts the attribute at rest and keeps a deterministic SHA-256 hash of
  * the value in sync in a companion column. The hash column carries the
  * uniqueness constraint, since encrypted values cannot be queried.
+ *
+ * The value is normalized to its canonical form (lowercase, trimmed)
+ * before encryption: identifiers are case-insensitive, so the stored
+ * value, its blind index, and everything derived from them (cache keys,
+ * payloads sent to the core) stay consistent whatever case the member
+ * originally typed. Every write path — manual form, OAuth callback,
+ * factory — goes through this cast and is therefore canonical.
  *
  * @implements CastsAttributes<string|null, string|null>
  */
@@ -42,9 +50,11 @@ class EncryptedWithHash implements CastsAttributes
             return [$key => null, $this->hashColumn => null];
         }
 
+        $value = Str::lower(trim((string) $value));
+
         return [
-            $key => Crypt::encryptString((string) $value),
-            $this->hashColumn => $this->hashValue((string) $value),
+            $key => Crypt::encryptString($value),
+            $this->hashColumn => $this->hashValue($value),
         ];
     }
 
