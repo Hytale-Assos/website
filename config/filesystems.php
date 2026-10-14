@@ -33,7 +33,11 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
+            // The application never serves files from the local disk:
+            // the framework's storage routes would expose private files
+            // (protected only by a signed URL derived from APP_KEY)
+            // for no feature at all. Keep them unregistered.
+            'serve' => false,
             'throw' => false,
             'report' => false,
         ],
