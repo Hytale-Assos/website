@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Settings\UnlinkAccountRequest;
 use App\Models\User;
+use App\Notifications\LinkedAccountUnlinked;
 use App\Support\IdHasher;
+use App\Support\LinkableProviders;
 use App\Support\Toast;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,21 +18,6 @@ use Throwable;
 
 class LinkedAccountOAuthController extends Controller
 {
-    /**
-     * Providers that can be linked to a user account, mapped to the user
-     * columns their OAuth identity is stored in. When the provider id column
-     * is encrypted, a deterministic hash column carries its uniqueness.
-     *
-     * @var array<string, array{id_column: string, hash_column: string|null, nickname_column: string}>
-     */
-    private const PROVIDERS = [
-        'discord' => [
-            'id_column' => 'discord_id',
-            'hash_column' => 'discord_id_hash',
-            'nickname_column' => 'discord_nickname',
-        ],
-    ];
-
     /**
      * Redirect the user to the provider's OAuth authorization page.
      */
@@ -57,7 +45,7 @@ class LinkedAccountOAuthController extends Controller
             return to_route('accounts.edit');
         }
 
-        [$idColumn, $hashColumn, $nicknameColumn] = $this->providerColumns($provider);
+        [$idColumn, $hashColumn, $nicknameColumn] = LinkableProviders::columns($provider);
 
         $providerId = $oauthUser->getId();
 
@@ -71,6 +59,17 @@ class LinkedAccountOAuthController extends Controller
 
         if ($alreadyLinked) {
             Toast::error(__('This :provider account is already linked to another user.', ['provider' => $provider]));
+
+            return to_route('accounts.edit');
+        }
+
+        // A member with a provider account already linked must swap it
+        // explicitly: the callback refuses to silently replace a proven
+        // identity with another one.
+        $currentId = $request->user()->{$idColumn};
+
+        if ($currentId !== null && $currentId !== $providerId) {
+            Toast::error(__('Your :provider account is already linked. Unlink it first to link a different one.', ['provider' => Str::ucfirst($provider)]));
 
             return to_route('accounts.edit');
         }
@@ -89,12 +88,14 @@ class LinkedAccountOAuthController extends Controller
 
     /**
      * Unlink the provider account from the current user.
+     *
+     * The request is re-authenticated with the current password (see
+     * UnlinkAccountRequest): a stolen session must not strip a proven
+     * identity in one click. The member is notified afterwards.
      */
-    public function destroy(Request $request, string $provider): RedirectResponse
+    public function destroy(UnlinkAccountRequest $request, string $provider): RedirectResponse
     {
-        $this->ensureProviderIsSupported($provider);
-
-        [$idColumn, $hashColumn, $nicknameColumn] = $this->providerColumns($provider);
+        [$idColumn, $hashColumn, $nicknameColumn] = LinkableProviders::columns($provider);
 
         $attributes = [
             $idColumn => null,
@@ -102,6 +103,8 @@ class LinkedAccountOAuthController extends Controller
         ];
 
         $request->user()->fill($attributes)->save();
+
+        $request->user()->notify(new LinkedAccountUnlinked(Str::ucfirst($provider)));
 
         Toast::success(__('Your :provider account has been unlinked.', ['provider' => Str::ucfirst($provider)]));
 
@@ -113,20 +116,8 @@ class LinkedAccountOAuthController extends Controller
      */
     private function ensureProviderIsSupported(string $provider): void
     {
-        if (! array_key_exists($provider, self::PROVIDERS)) {
+        if (! LinkableProviders::exists($provider)) {
             abort(404);
         }
-    }
-
-    /**
-     * Get the user columns storing the given provider's identity.
-     *
-     * @return array{0: string, 1: string|null, 2: string}
-     */
-    private function providerColumns(string $provider): array
-    {
-        $config = self::PROVIDERS[$provider];
-
-        return [$config['id_column'], $config['hash_column'], $config['nickname_column']];
     }
 }

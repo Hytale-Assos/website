@@ -14,5 +14,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('auth/{provider}/callback', [LinkedAccountOAuthController::class, 'callback'])
         ->middleware('throttle:oauth')
         ->name('linked.callback');
-    Route::delete('settings/accounts/{provider}', [LinkedAccountOAuthController::class, 'destroy'])->name('linked.unlink');
+    Route::delete('settings/accounts/{provider}', [LinkedAccountOAuthController::class, 'destroy'])
+        ->middleware('throttle:password')
+        ->name('linked.unlink');
 });

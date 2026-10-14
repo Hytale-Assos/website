@@ -286,7 +286,7 @@ test('authenticated users can unlink their discord account', function () {
 
     $response = $this
         ->actingAs($user)
-        ->delete('/settings/accounts/discord');
+        ->delete('/settings/accounts/discord', ['password' => 'password']);
 
     $response->assertRedirect('/settings/accounts');
 

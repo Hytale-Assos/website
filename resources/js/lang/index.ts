@@ -233,6 +233,9 @@ export const messages: Record<Locale, Messages> = {
             'Votre identité Discord est fournie par Discord OAuth.',
         'settings.accounts.link': 'Lier',
         'settings.accounts.unlink': 'Délier',
+        'settings.accounts.unlinkTitle': 'Délier votre compte {provider} ?',
+        'settings.accounts.unlinkText':
+            'Votre compte {provider} ne sera plus associé à votre profil. Saisissez votre mot de passe pour confirmer.',
 
         'settings.invitations.title': 'Invitations',
         'settings.invitations.description':
@@ -681,6 +684,9 @@ export const messages: Record<Locale, Messages> = {
             'Your Discord identity is provided by Discord OAuth.',
         'settings.accounts.link': 'Link',
         'settings.accounts.unlink': 'Unlink',
+        'settings.accounts.unlinkTitle': 'Unlink your {provider} account?',
+        'settings.accounts.unlinkText':
+            'Your {provider} account will no longer be linked to your profile. Enter your password to confirm.',
 
         'settings.invitations.title': 'Invitations',
         'settings.invitations.description':
