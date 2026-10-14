@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
-import { useTemplateRef } from 'vue';
+import { computed, onUnmounted, ref, useTemplateRef } from 'vue';
 import ProfileController from '@/actions/App/Http/Controllers/Settings/ProfileController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
@@ -16,11 +16,51 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLocale } from '@/composables/useLocale';
 
+const CONFIRMATION_SECONDS = 10;
+
 const passwordInput = useTemplateRef('passwordInput');
 const { t } = useLocale();
+
+const confirmPhrase = t('deleteUser.confirmPhrase');
+const open = ref(false);
+const secondsLeft = ref(0);
+const confirmation = ref('');
+let timer: ReturnType<typeof setInterval> | undefined;
+
+const canSubmit = computed(
+    () =>
+        secondsLeft.value === 0 &&
+        confirmation.value.trim().toLowerCase() === confirmPhrase.toLowerCase(),
+);
+
+const submitLabel = computed(() =>
+    secondsLeft.value > 0
+        ? t('deleteUser.waiting', { count: secondsLeft.value })
+        : t('deleteUser.title'),
+);
+
+function onOpenChange(next: boolean): void {
+    open.value = next;
+
+    if (next) {
+        confirmation.value = '';
+        secondsLeft.value = CONFIRMATION_SECONDS;
+
+        timer = setInterval(() => {
+            if (secondsLeft.value > 0) {
+                secondsLeft.value -= 1;
+            } else {
+                clearInterval(timer);
+            }
+        }, 1000);
+    }
+}
+
+onUnmounted(() => clearInterval(timer));
 </script>
 
 <template>
@@ -39,7 +79,7 @@ const { t } = useLocale();
                     {{ t('deleteUser.warningText') }}
                 </p>
             </div>
-            <Dialog>
+            <Dialog :open="open" @update:open="onOpenChange">
                 <DialogTrigger as-child>
                     <Button
                         variant="destructive"
@@ -65,7 +105,30 @@ const { t } = useLocale();
                             <DialogDescription>
                                 {{ t('deleteUser.confirmText') }}
                             </DialogDescription>
+                            <p
+                                class="text-sm font-medium text-red-600 dark:text-red-100"
+                            >
+                                {{ t('deleteUser.irreversible') }}
+                            </p>
                         </DialogHeader>
+
+                        <div class="grid gap-2">
+                            <Label for="confirmation">
+                                {{
+                                    t('deleteUser.confirmPhraseLabel', {
+                                        phrase: confirmPhrase,
+                                    })
+                                }}
+                            </Label>
+                            <Input
+                                id="confirmation"
+                                v-model="confirmation"
+                                name="confirmation"
+                                autocomplete="off"
+                                spellcheck="false"
+                                :placeholder="confirmPhrase"
+                            />
+                        </div>
 
                         <div class="grid gap-2">
                             <Label for="password" class="sr-only">{{
@@ -98,10 +161,10 @@ const { t } = useLocale();
                             <Button
                                 type="submit"
                                 variant="destructive"
-                                :disabled="processing"
+                                :disabled="processing || !canSubmit"
                                 data-test="confirm-delete-user-button"
                             >
-                                {{ t('deleteUser.title') }}
+                                {{ submitLabel }}
                             </Button>
                         </DialogFooter>
                     </Form>

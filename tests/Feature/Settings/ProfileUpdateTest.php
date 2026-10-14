@@ -65,7 +65,9 @@ test('user can delete their account', function () {
         ->assertRedirect(route('home'));
 
     $this->assertGuest();
-    expect($user->fresh()->trashed())->toBeTrue();
+    // GDPR erasure: the account is gone for real — not even a
+    // soft-deleted tombstone may remain.
+    expect(User::withTrashed()->find($user->id))->toBeNull();
 });
 
 test('correct password must be provided to delete account', function () {
