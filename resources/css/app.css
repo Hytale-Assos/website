@@ -89,6 +89,65 @@
     }
 }
 
+/*
+  OpenDyslexic (resources/fonts/LICENSE-OpenDyslexic.md), toggled from the
+  accessibility settings.
+*/
+@font-face {
+    font-family: 'OpenDyslexic';
+    src: url('../fonts/OpenDyslexic-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'OpenDyslexic';
+    src: url('../fonts/OpenDyslexic-Italic.woff') format('woff');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'OpenDyslexic';
+    src: url('../fonts/OpenDyslexic-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'OpenDyslexic';
+    src: url('../fonts/OpenDyslexic-BoldItalic.woff') format('woff');
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
+
+/*
+  The font stack is declared with `@theme inline`, so the .font-sans utility
+  inlines it (no var(--font-sans) to override) and the utilities layer above
+  redeclares the variable on body itself. The variable override covers the
+  preflight default on html; the font-family override covers body and every
+  element carrying the font-sans utility.
+*/
+html.font-dyslexic,
+html.font-dyslexic body {
+    --font-sans:
+        'OpenDyslexic', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+}
+
+html.font-dyslexic body,
+html.font-dyslexic .font-sans {
+    font-family:
+        'OpenDyslexic', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+}
+
 :root {
     --background: hsl(0 0% 100%);
     --foreground: hsl(0 0% 3.9%);
@@ -168,5 +227,18 @@
     }
     body {
         @apply bg-background text-foreground;
+    }
+
+    /* Honor the OS-level "reduce motion" preference: no site setting needed,
+       the browser exposes it through the prefers-reduced-motion media query. */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
     }
 }

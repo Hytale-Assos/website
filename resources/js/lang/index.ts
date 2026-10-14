@@ -139,6 +139,7 @@ export const messages: Record<Locale, Messages> = {
         'nav.items.points': 'Points Open',
         'nav.items.repository': 'Dépôt',
         'nav.menu': 'Menu de navigation',
+        'nav.search': 'Recherche',
 
         'settings.title': 'Paramètres',
         'settings.description':
@@ -150,6 +151,7 @@ export const messages: Record<Locale, Messages> = {
         'settings.nav.invitations': 'Invitations',
         'settings.nav.data': 'Données et confidentialité',
         'settings.nav.appearance': 'Apparence',
+        'settings.nav.accessibility': 'Accessibilité',
 
         'settings.profile.head': 'Réglages du profil',
         'settings.profile.title': 'Profil',
@@ -241,6 +243,20 @@ export const messages: Record<Locale, Messages> = {
         'settings.appearance.title': 'Réglages d’apparence',
         'settings.appearance.description':
             'Mettez à jour les paramètres d’apparence de votre compte',
+
+        'settings.accessibility.head': 'Accessibilité',
+        'settings.accessibility.title': 'Accessibilité',
+        'settings.accessibility.description':
+            'Ajustez la lecture du site à vos besoins',
+
+        'settings.accessibility.font.title': 'Taille de la police',
+        'settings.accessibility.font.description':
+            'Système suit la taille configurée dans votre navigateur ; les autres choix l’appliquent à tout le site.',
+        'accessibility.font.system': 'Système',
+
+        'settings.accessibility.dyslexic.title': 'Police adaptée à la dyslexie',
+        'settings.accessibility.dyslexic.description':
+            'Remplace la police du site par OpenDyslexic, conçue pour faciliter la lecture des personnes dyslexiques.',
         'appearance.light': 'Clair',
         'appearance.dark': 'Sombre',
         'appearance.system': 'Système',
@@ -557,6 +573,7 @@ export const messages: Record<Locale, Messages> = {
         'nav.items.points': 'Open Points',
         'nav.items.repository': 'Repository',
         'nav.menu': 'Navigation menu',
+        'nav.search': 'Search',
 
         'settings.title': 'Settings',
         'settings.description': 'Manage your profile and account settings',
@@ -567,6 +584,7 @@ export const messages: Record<Locale, Messages> = {
         'settings.nav.invitations': 'Invitations',
         'settings.nav.data': 'Data & privacy',
         'settings.nav.appearance': 'Appearance',
+        'settings.nav.accessibility': 'Accessibility',
 
         'settings.profile.head': 'Profile settings',
         'settings.profile.title': 'Profile',
@@ -656,6 +674,20 @@ export const messages: Record<Locale, Messages> = {
         'settings.appearance.title': 'Appearance settings',
         'settings.appearance.description':
             'Update the appearance settings for your account',
+
+        'settings.accessibility.head': 'Accessibility',
+        'settings.accessibility.title': 'Accessibility',
+        'settings.accessibility.description':
+            'Adjust the site to your reading needs',
+
+        'settings.accessibility.font.title': 'Font size',
+        'settings.accessibility.font.description':
+            'System follows the size configured in your browser; the other choices apply it across the whole site.',
+        'accessibility.font.system': 'System',
+
+        'settings.accessibility.dyslexic.title': 'Dyslexia-friendly font',
+        'settings.accessibility.dyslexic.description':
+            'Replaces the site font with OpenDyslexic, designed to make reading easier for dyslexic readers.',
         'appearance.light': 'Light',
         'appearance.dark': 'Dark',
         'appearance.system': 'System',
