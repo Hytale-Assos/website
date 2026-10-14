@@ -126,13 +126,23 @@
 }
 
 /*
-  The utilities layer above redeclares --font-sans on body itself, which
-  would otherwise win over the inherited html.font-dyslexic value for every
-  element inside body, so both selectors must be overridden here.
+  The font stack is declared with `@theme inline`, so the .font-sans utility
+  inlines it (no var(--font-sans) to override) and the utilities layer above
+  redeclares the variable on body itself. The variable override covers the
+  preflight default on html; the font-family override covers body and every
+  element carrying the font-sans utility.
 */
 html.font-dyslexic,
 html.font-dyslexic body {
     --font-sans:
+        'OpenDyslexic', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+}
+
+html.font-dyslexic body,
+html.font-dyslexic .font-sans {
+    font-family:
         'OpenDyslexic', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
