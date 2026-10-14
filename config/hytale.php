@@ -72,9 +72,14 @@ return [
     | the server and deterministic data is returned. Flip to false to talk to
     | the real API without changing any application code.
     |
+    | Defaults to false: a missing variable must never silently serve
+    | fictional data in production. The dev template sets it to true
+    | explicitly, and a non-console production boot with the mock enabled
+    | (or with missing credentials) is refused (HytaleServiceProvider).
+    |
     */
 
-    'mock' => (bool) env('HYTALE_API_MOCK', true),
+    'mock' => (bool) env('HYTALE_API_MOCK', false),
 
     /*
     |--------------------------------------------------------------------------

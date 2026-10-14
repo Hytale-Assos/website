@@ -9,11 +9,52 @@ use App\Hytale\Contracts\HytaleApiClient;
 use App\Hytale\Points\PointsCalculator;
 use App\Hytale\Support\ApiSigner;
 use Illuminate\Contracts\Cache\Factory as CacheFactory;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use RuntimeException;
 
 class HytaleServiceProvider extends ServiceProvider
 {
+    /**
+     * Bootstrap any application services.
+     */
+    public function boot(): void
+    {
+        $this->refuseMisconfiguredProduction();
+    }
+
+    /**
+     * Refuse to boot for a non-console production request with a client
+     * configuration that would serve fictional data: the in-memory mock
+     * left enabled, or the real client with missing credentials (every
+     * request would be signed with an empty secret). Console commands
+     * (package discovery during builds, migrations, queue workers) are
+     * intentionally allowed to boot so build-time tooling needs no
+     * secrets — the same exemption as the passkeys guard in
+     * FortifyServiceProvider.
+     */
+    private function refuseMisconfiguredProduction(): void
+    {
+        if (! $this->app->isProduction() || $this->app->runningInConsole()) {
+            return;
+        }
+
+        $config = $this->app->make(ConfigRepository::class)->get('hytale');
+
+        if ($config['mock']) {
+            throw new RuntimeException(
+                'HYTALE_API_MOCK must not be enabled in production: servers, play sessions and the whitelist would be fictional data. Set HYTALE_API_MOCK=false and provide the core credentials.'
+            );
+        }
+
+        if (empty($config['api_key']) || empty($config['hmac_secret'])) {
+            throw new RuntimeException(
+                'HYTALE_API_KEY and HYTALE_API_HMAC_SECRET must be set in production when the mock is disabled.'
+            );
+        }
+    }
+
     /**
      * Register the Hytale core API client.
      *
