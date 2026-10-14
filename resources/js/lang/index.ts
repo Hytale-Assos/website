@@ -325,6 +325,12 @@ export const messages: Record<Locale, Messages> = {
             'Voulez-vous vraiment supprimer votre compte ?',
         'deleteUser.confirmText':
             'Une fois votre compte supprimé, toutes ses ressources et données seront également définitivement supprimées. Saisissez votre mot de passe pour confirmer que vous souhaitez supprimer définitivement votre compte.',
+        'deleteUser.irreversible':
+            'Impossible de récupérer votre compte après cette action.',
+        'deleteUser.confirmPhraseLabel':
+            'Pour confirmer, recopiez la phrase : « {phrase} »',
+        'deleteUser.confirmPhrase': 'je confirme la suppression de mon compte',
+        'deleteUser.waiting': 'Confirmation possible dans {count} s',
         'deleteUser.password': 'Mot de passe',
 
         'twoFactor.title': 'Authentification à deux facteurs',
@@ -766,6 +772,12 @@ export const messages: Record<Locale, Messages> = {
             'Are you sure you want to delete your account?',
         'deleteUser.confirmText':
             'Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
+        'deleteUser.irreversible':
+            'Your account cannot be recovered after this action.',
+        'deleteUser.confirmPhraseLabel':
+            'To confirm, type the phrase: "{phrase}"',
+        'deleteUser.confirmPhrase': 'I confirm the deletion of my account',
+        'deleteUser.waiting': 'You can confirm in {count}s',
         'deleteUser.password': 'Password',
 
         'twoFactor.title': 'Two-factor authentication',

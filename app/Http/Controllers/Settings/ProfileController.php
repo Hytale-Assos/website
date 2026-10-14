@@ -75,14 +75,30 @@ class ProfileController extends Controller
 
     /**
      * Delete the user's profile.
+     *
+     * GDPR erasure: the account is removed for real — no tombstone, no
+     * retained personal data. Pending invitations sent by the member
+     * are revoked (a deleted inviter must not keep granting access),
+     * consumed invitations keep their row with the member's column
+     * set to null, every session of the account is purged, and the
+     * passkeys cascade away with the row.
      */
     public function destroy(ProfileDeleteRequest $request): RedirectResponse
     {
         $user = $request->user();
 
+        $user->invitations()
+            ->whereNull('accepted_at')
+            ->whereNull('revoked_at')
+            ->update(['revoked_at' => now()]);
+
         Auth::logout();
 
-        $user->delete();
+        DB::table('sessions')
+            ->where('user_id', $user->id)
+            ->delete();
+
+        $user->forceDelete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
