@@ -2,14 +2,12 @@
 import { Link } from '@inertiajs/vue3';
 import {
     Award,
-    BookOpen,
     CalendarClock,
     FolderGit2,
     LayoutGrid,
     Map as MapIcon,
     Package,
     Server,
-    ShieldCheck,
 } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
@@ -31,7 +29,6 @@ import { index as modsIndex } from '@/routes/mods';
 import { index as pointsIndex } from '@/routes/points';
 import { index as serversIndex } from '@/routes/servers';
 import { index as sessionsIndex } from '@/routes/sessions';
-import { index as whitelistIndex } from '@/routes/whitelist';
 import { useLocale } from '@/composables/useLocale';
 import type { NavItem } from '@/types';
 
@@ -47,11 +44,6 @@ const mainNavItems = computed<NavItem[]>(() => [
         title: t('nav.items.servers'),
         href: serversIndex(),
         icon: Server,
-    },
-    {
-        title: t('nav.items.whitelist'),
-        href: whitelistIndex(),
-        icon: ShieldCheck,
     },
     {
         title: t('nav.items.sessions'),
@@ -78,13 +70,8 @@ const mainNavItems = computed<NavItem[]>(() => [
 const footerNavItems = computed<NavItem[]>(() => [
     {
         title: t('nav.items.repository'),
-        href: 'https://github.com/laravel/vue-starter-kit',
+        href: 'https://github.com/Hytale-Assos/website',
         icon: FolderGit2,
-    },
-    {
-        title: t('nav.items.documentation'),
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
     },
 ]);
 </script>

@@ -1,24 +1,28 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core';
-import { Check, Copy, Gamepad2, Loader2, UserPlus } from '@lucide/vue';
+import { Check, Copy, Gamepad2, Loader2, Trash2, UserPlus } from '@lucide/vue';
+import { computed } from 'vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLocale } from '@/composables/useLocale';
-import type { HytaleServer } from '@/types';
+import type { HytaleServer, WhitelistEntry } from '@/types';
 
 const props = defineProps<{
     server: HytaleServer;
-    joined: boolean;
+    entry: WhitelistEntry | null;
     canJoin: boolean;
     processing?: boolean;
 }>();
 
 defineEmits<{
     join: [server: HytaleServer];
+    leave: [entry: WhitelistEntry];
 }>();
 
 const { t } = useLocale();
+
+const joined = computed(() => props.entry !== null);
 
 const { copy, copied } = useClipboard({ source: () => props.server.url });
 </script>
@@ -65,6 +69,19 @@ const { copy, copied } = useClipboard({ source: () => props.server.url });
                     <Loader2 v-if="processing" class="size-4 animate-spin" />
                     <UserPlus v-else class="size-4" />
                     {{ t('dash.servers.join') }}
+                </Button>
+
+                <Button
+                    v-else
+                    variant="outline"
+                    size="sm"
+                    class="text-muted-foreground hover:text-destructive"
+                    :disabled="processing"
+                    @click="entry && $emit('leave', entry)"
+                >
+                    <Loader2 v-if="processing" class="size-4 animate-spin" />
+                    <Trash2 v-else class="size-4" />
+                    {{ t('dash.servers.leave') }}
                 </Button>
 
                 <Button variant="outline" size="sm" @click="copy(server.url)">

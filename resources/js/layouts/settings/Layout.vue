@@ -8,6 +8,7 @@ import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { useLocale } from '@/composables/useLocale';
 import { toUrl } from '@/lib/utils';
 import { edit as editAccounts } from '@/routes/accounts';
+import { edit as editAccessibility } from '@/routes/accessibility';
 import { edit as editAppearance } from '@/routes/appearance';
 import { edit as editData } from '@/routes/data';
 import { edit as editIdentity } from '@/routes/identity';
@@ -55,6 +56,10 @@ const sidebarNavItems = computed<NavItem[]>(() => {
         {
             title: t('settings.nav.appearance'),
             href: editAppearance(),
+        },
+        {
+            title: t('settings.nav.accessibility'),
+            href: editAccessibility(),
         },
     );
 

@@ -48,6 +48,10 @@ RUN install-php-extensions opcache pdo_pgsql redis \
     && setcap -r /usr/local/bin/frankenphp \
     && chown -R ${APP_USER}:${APP_USER} /config/caddy /data/caddy
 
+# Do not advertise the exact PHP version on every response
+# (X-Powered-By header) nor in phpinfo() output.
+RUN printf 'expose_php = Off\n' > "${PHP_INI_DIR}/conf.d/99-no-php-version.ini"
+
 WORKDIR /app
 
 COPY --chown=${APP_USER}:${APP_USER} --from=build /app ./
@@ -65,4 +69,15 @@ USER ${APP_USER}
 
 EXPOSE 8080
 
-CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
+# Migrations and framework caches run at container start, before the
+# web server: a freshly deployed image can never serve on a stale
+# schema (podman auto-update restarts are covered too), and a failed
+# migration stops the boot instead of letting a half-deployed app
+# answer requests. `php artisan optimize` caches the config, routes,
+# events and compiled views into the tmpfs paths (bootstrap/cache and
+# storage/framework), so no per-request rebuild is paid; the caches
+# are rebuilt at every boot from the container's own environment. The
+# web server only starts once the schema and caches are ready;
+# --config is kept explicit (frankenphp looks for a Caddyfile in the
+# workdir otherwise).
+CMD ["/bin/sh", "-c", "php artisan migrate --force && php artisan optimize && exec frankenphp run --config /etc/caddy/Caddyfile"]

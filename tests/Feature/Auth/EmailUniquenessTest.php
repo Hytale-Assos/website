@@ -1,10 +1,7 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\Features;
-
-uses(RefreshDatabase::class);
 
 test('registration rejects an email that already belongs to an account', function () {
     $this->skipUnlessFortifyHas(Features::registration());

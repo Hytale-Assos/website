@@ -2,12 +2,9 @@
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
-
-uses(RefreshDatabase::class);
 
 test('a registered account keeps working while its personal data is not stored in clear', function () {
     $this->skipUnlessFortifyHas(Features::registration());

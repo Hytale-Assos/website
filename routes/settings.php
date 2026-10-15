@@ -17,15 +17,32 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('throttle:settings')
         ->name('profile.update');
 
+    // Account deletion stays reachable before verification: a member whose
+    // registration email is wrong must still be able to close their
+    // account. It demands the current password: throttle the endpoint so
+    // a stolen session cannot brute-force it online.
+    Route::delete('settings/profile', [ProfileController::class, 'destroy'])
+        ->middleware('throttle:password')
+        ->name('profile.destroy');
+
     Route::get('settings/identity', [IdentityController::class, 'edit'])->name('identity.edit');
-    Route::put('settings/identity', [IdentityController::class, 'update'])
-        ->middleware('throttle:settings')
-        ->name('identity.update');
 
     Route::get('settings/data', [DataPrivacyController::class, 'edit'])->name('data.edit');
     Route::get('settings/data/export', [DataPrivacyController::class, 'export'])
         ->middleware('throttle:data-export')
         ->name('data.export');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::put('settings/identity', [IdentityController::class, 'update'])
+        ->middleware('throttle:settings')
+        ->name('identity.update');
+
+    // Signed confirmation link for a school email change: proves the
+    // member controls the new address before it anchors their identity.
+    Route::get('settings/identity/school-email/verify/{id}/{hash}', [IdentityController::class, 'verifySchoolEmail'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('school-email.verify');
 
     Route::get('settings/invitations', [InvitationController::class, 'edit'])->name('invitations.edit');
     Route::post('settings/invitations', [InvitationController::class, 'store'])
@@ -39,10 +56,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('settings/accounts', [LinkedAccountController::class, 'update'])
         ->middleware('throttle:settings')
         ->name('accounts.update');
-});
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('settings/security', [SecurityController::class, 'edit'])
         ->middleware(RequirePassword::class)
@@ -53,6 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/Appearance')->name('appearance.edit');
+    Route::inertia('settings/accessibility', 'settings/Accessibility')->name('accessibility.edit');
 });
 
 Route::get('.well-known/passkey-endpoints', function () {

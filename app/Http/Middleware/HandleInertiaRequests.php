@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -42,9 +43,40 @@ class HandleInertiaRequests extends Middleware
                 'timezone' => config('app.timezone'),
             ],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user()
+                    ? $this->shareableUser($request->user())
+                    : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
+    }
+
+    /**
+     * The member data shared with every Inertia page: an explicit
+     * allowlist of the fields the frontend consumes, so no column ever
+     * leaks into page payloads by default. Internal identifiers,
+     * timestamps and pending claims stay server-side; a new model
+     * column has to be added here deliberately to reach the client.
+     *
+     * @return array<string, mixed>
+     */
+    private function shareableUser(User $user): array
+    {
+        return $user->only([
+            'name',
+            'email',
+            'email_verified_at',
+            'firstname',
+            'lastname',
+            'grade_level',
+            'school_email',
+            'is_internal',
+            'is_public',
+            'discord_id',
+            'discord_nickname',
+            'hytale_id',
+            'hytale_nickname',
+            'hytale_account_verified_at',
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
 
 /**
  * Deterministic, keyed hash of a non-email identifier (Hytale id, Discord
@@ -22,10 +23,14 @@ use Illuminate\Support\Facades\Config;
 class IdHasher
 {
     /**
-     * Compute the deterministic keyed hash of the identifier.
+     * Compute the deterministic keyed hash of the identifier. The value
+     * is normalized first: RFC 4122 UUIDs are case-insensitive, so
+     * without normalization the same Hytale identity submitted in a
+     * different case would produce a different blind index and slip
+     * past the uniqueness constraint (and diverge in cache keys).
      */
     public static function hash(string $value): string
     {
-        return hash_hmac('sha256', $value, (string) Config::get('app.key'));
+        return hash_hmac('sha256', Str::lower(trim($value)), (string) Config::get('app.key'));
     }
 }

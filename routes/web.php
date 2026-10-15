@@ -16,7 +16,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('servers', [ServerController::class, 'index'])->name('servers.index');
 
-    Route::get('whitelist', [WhitelistController::class, 'index'])->name('whitelist.index');
     Route::post('whitelist', [WhitelistController::class, 'store'])
         ->middleware('throttle:whitelist')
         ->name('whitelist.store');

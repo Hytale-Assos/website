@@ -1,10 +1,7 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-
-uses(RefreshDatabase::class);
 
 test('is public flag can be updated with boolean-ish values', function (bool|int|string $value, bool $expected) {
     $user = User::factory()->create();
@@ -13,7 +10,7 @@ test('is public flag can be updated with boolean-ish values', function (bool|int
         ->actingAs($user)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => $user->email,
             'is_public' => $value,
         ]);
 
@@ -38,7 +35,7 @@ test('is public flag is unchanged when omitted from the request', function () {
         ->actingAs($user)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => $user->email,
         ]);
 
     $response
@@ -56,7 +53,7 @@ test('is public flag must be a valid boolean', function (string $value) {
         ->from(route('profile.edit'))
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => $user->email,
             'is_public' => $value,
         ]);
 
@@ -77,7 +74,7 @@ test('is public flag is stored in clear in the database', function () {
         ->actingAs($user)
         ->patch(route('profile.update'), [
             'name' => 'Test User',
-            'email' => 'test@example.com',
+            'email' => $user->email,
             'is_public' => true,
         ])
         ->assertSessionHasNoErrors();

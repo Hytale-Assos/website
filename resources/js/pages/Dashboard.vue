@@ -2,9 +2,9 @@
 import { Head, Link, setLayoutProps } from '@inertiajs/vue3';
 import {
     ArrowRight,
+    Award,
     CalendarClock,
     Server,
-    ShieldCheck,
     UserRound,
 } from '@lucide/vue';
 import { watchEffect } from 'vue';
@@ -16,15 +16,15 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLocale } from '@/composables/useLocale';
 import { dashboard } from '@/routes';
+import { index as pointsIndex } from '@/routes/points';
 import { index as serversIndex } from '@/routes/servers';
 import { index as sessionsIndex } from '@/routes/sessions';
-import { index as whitelistIndex } from '@/routes/whitelist';
 import type { HytaleServer, PlayerSession } from '@/types';
 
-defineProps<{
+const props = defineProps<{
     counts: {
+        points: number;
         servers: number;
-        whitelists: number;
         sessions: number;
     };
     recentSessions: PlayerSession[];
@@ -44,16 +44,17 @@ watchEffect(() => {
 
 const cards = [
     {
+        key: 'dash.tabs.points',
+        prop: 'points',
+        icon: Award,
+        href: pointsIndex,
+        decimals: 1,
+    },
+    {
         key: 'dash.tabs.servers',
         prop: 'servers',
         icon: Server,
         href: serversIndex,
-    },
-    {
-        key: 'dash.tabs.whitelist',
-        prop: 'whitelists',
-        icon: ShieldCheck,
-        href: whitelistIndex,
     },
     {
         key: 'dash.tabs.sessions',
@@ -62,6 +63,12 @@ const cards = [
         href: sessionsIndex,
     },
 ] as const;
+
+const cardValue = (card: (typeof cards)[number]): string => {
+    const value = props.counts[card.prop];
+
+    return 'decimals' in card ? value.toFixed(card.decimals) : String(value);
+};
 </script>
 
 <template>
@@ -105,7 +112,7 @@ const cards = [
                                 {{ t(card.key) }}
                             </p>
                             <p class="mt-1 text-3xl font-bold tracking-tight">
-                                {{ counts[card.prop] }}
+                                {{ cardValue(card) }}
                             </p>
                         </div>
                         <ArrowRight

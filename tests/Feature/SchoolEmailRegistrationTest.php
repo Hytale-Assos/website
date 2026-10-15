@@ -2,11 +2,8 @@
 
 use App\Models\Invitation;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Laravel\Fortify\Features;
-
-uses(RefreshDatabase::class);
 
 test('registering with an email on a configured school domain creates an internal account holding the school email', function () {
     $this->skipUnlessFortifyHas(Features::registration());

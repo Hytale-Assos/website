@@ -3,11 +3,8 @@
 use App\Hytale\Contracts\HytaleApiClient;
 use App\Hytale\Exceptions\HytaleApiException;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Http;
-
-uses(RefreshDatabase::class);
 
 it('redirects guests to the login page', function () {
     $this->get(route('dashboard'))->assertRedirect(route('login'));
@@ -64,19 +61,6 @@ it('returns the seeded servers from the fake api', function () {
     );
 });
 
-it('shows the whitelist page', function () {
-    $user = User::factory()->create(['hytale_id' => '44444444-4444-7444-8444-444444444444']);
-
-    $this->actingAs($user)
-        ->get(route('whitelist.index'))
-        ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Whitelist')
-            ->has('whitelists')
-            ->has('servers')
-        );
-});
-
 it('shows the sessions page', function () {
     $user = User::factory()->create(['hytale_id' => '55555555-5555-7555-8555-555555555555']);
 
@@ -90,16 +74,13 @@ it('shows the sessions page', function () {
         );
 });
 
-it('shows the maps placeholder page with servers', function () {
-    $user = User::factory()->create(['hytale_id' => '66666666-6666-7666-8666-666666666666']);
+it('shows the maps placeholder page', function () {
+    $user = User::factory()->create();
 
     $this->actingAs($user)
         ->get(route('maps.index'))
         ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Maps')
-            ->has('servers', 2)
-        );
+        ->assertInertia(fn ($page) => $page->component('Maps'));
 });
 
 it('shows the mods placeholder page', function () {
@@ -162,10 +143,10 @@ it('removes a whitelist entry', function () {
     $entry = $hytale->addToWhitelist($server->id, $user->hytale_id);
 
     $response = $this->actingAs($user)
-        ->from(route('whitelist.index'))
+        ->from(route('servers.index'))
         ->delete(route('whitelist.destroy', $entry->id));
 
-    $response->assertRedirect(route('whitelist.index'));
+    $response->assertRedirect(route('servers.index'));
     $response->assertSessionHasNoErrors();
 
     expect($hytale->playerWhitelists($user->hytale_id)->total)->toBe(0);

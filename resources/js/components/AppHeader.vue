@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Menu, Search } from '@lucide/vue';
+import { Folder, LayoutGrid, Menu, Search } from '@lucide/vue';
 import { computed } from 'vue';
 import AppLogo from '@/components/AppLogo.vue';
 import AppLogoIcon from '@/components/AppLogoIcon.vue';
@@ -66,13 +66,8 @@ const mainNavItems = computed<NavItem[]>(() => [
 const rightNavItems = computed<NavItem[]>(() => [
     {
         title: t('nav.items.repository'),
-        href: 'https://github.com/laravel/vue-starter-kit',
+        href: 'https://github.com/Hytale-Assos/website',
         icon: Folder,
-    },
-    {
-        title: t('nav.items.documentation'),
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
     },
 ]);
 </script>
@@ -91,6 +86,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                                 class="mr-2 h-9 w-9"
                             >
                                 <Menu class="h-5 w-5" />
+                                <span class="sr-only">{{ t('nav.menu') }}</span>
                             </Button>
                         </SheetTrigger>
                         <SheetContent side="left" class="w-[300px] p-6">
@@ -200,6 +196,7 @@ const rightNavItems = computed<NavItem[]>(() => [
                             <Search
                                 class="size-5 opacity-80 group-hover:opacity-100"
                             />
+                            <span class="sr-only">{{ t('nav.search') }}</span>
                         </Button>
 
                         <div class="hidden space-x-1 lg:flex">

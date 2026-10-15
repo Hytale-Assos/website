@@ -6,9 +6,20 @@ import LinkedAccountController from '@/actions/App/Http/Controllers/Settings/Lin
 import LinkedAccountOAuthController from '@/actions/App/Http/Controllers/Settings/LinkedAccountOAuthController';
 import Heading from '@/components/Heading.vue';
 import InputError from '@/components/InputError.vue';
+import PasswordInput from '@/components/PasswordInput.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLocale } from '@/composables/useLocale';
@@ -171,21 +182,71 @@ watchEffect(() => {
                         </a>
                     </Button>
 
-                    <Form
-                        v-else
-                        v-bind="
-                            LinkedAccountOAuthController.destroy.form('discord')
-                        "
-                        v-slot="{ processing }"
-                    >
-                        <Button
-                            variant="outline"
-                            :disabled="processing"
-                            data-test="unlink-discord-button"
-                        >
-                            {{ t('settings.accounts.unlink') }}
-                        </Button>
-                    </Form>
+                    <Dialog v-if="isDiscordLinked">
+                        <DialogTrigger as-child>
+                            <Button
+                                variant="outline"
+                                data-test="unlink-discord-button"
+                            >
+                                {{ t('settings.accounts.unlink') }}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <Form
+                                v-bind="
+                                    LinkedAccountOAuthController.destroy.form(
+                                        'discord',
+                                    )
+                                "
+                                class="space-y-6"
+                                v-slot="{ errors, processing }"
+                            >
+                                <DialogHeader class="space-y-3">
+                                    <DialogTitle>{{
+                                        t('settings.accounts.unlinkTitle', {
+                                            provider: 'Discord',
+                                        })
+                                    }}</DialogTitle>
+                                    <DialogDescription>
+                                        {{
+                                            t('settings.accounts.unlinkText', {
+                                                provider: 'Discord',
+                                            })
+                                        }}
+                                    </DialogDescription>
+                                </DialogHeader>
+
+                                <div class="grid gap-2">
+                                    <Label for="password" class="sr-only">{{
+                                        t('deleteUser.password')
+                                    }}</Label>
+                                    <PasswordInput
+                                        id="password"
+                                        name="password"
+                                        :placeholder="t('deleteUser.password')"
+                                    />
+                                    <InputError :message="errors.password" />
+                                </div>
+
+                                <DialogFooter class="gap-2">
+                                    <DialogClose as-child>
+                                        <Button variant="secondary">
+                                            {{ t('common.cancel') }}
+                                        </Button>
+                                    </DialogClose>
+
+                                    <Button
+                                        type="submit"
+                                        variant="outline"
+                                        :disabled="processing"
+                                        data-test="confirm-unlink-discord-button"
+                                    >
+                                        {{ t('settings.accounts.unlink') }}
+                                    </Button>
+                                </DialogFooter>
+                            </Form>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </CardContent>
         </Card>

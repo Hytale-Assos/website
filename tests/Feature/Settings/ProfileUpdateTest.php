@@ -1,9 +1,6 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
 
 test('profile page is displayed', function () {
     $user = User::factory()->create();
@@ -23,6 +20,7 @@ test('profile information can be updated', function () {
         ->patch(route('profile.update'), [
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'current_password' => 'password',
         ]);
 
     $response
@@ -67,7 +65,9 @@ test('user can delete their account', function () {
         ->assertRedirect(route('home'));
 
     $this->assertGuest();
-    expect($user->fresh()->trashed())->toBeTrue();
+    // GDPR erasure: the account is gone for real — not even a
+    // soft-deleted tombstone may remain.
+    expect(User::withTrashed()->find($user->id))->toBeNull();
 });
 
 test('correct password must be provided to delete account', function () {

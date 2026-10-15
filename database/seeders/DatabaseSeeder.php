@@ -11,16 +11,41 @@ class DatabaseSeeder extends Seeder
     use WithoutModelEvents;
 
     /**
-     * Seed the application's database.
+     * Seed the application's database with demo accounts.
+     *
+     * Demo credentials never run outside local and testing: a verified
+     * demo member in production would be a live backdoor.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        if (! app()->environment(['local', 'testing'])) {
+            return;
+        }
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'hytale_id' => 'f70e3709-5014-44d2-95ef-124f7696252d',
+        // Internal member: registered with a school email, identity fully
+        // anchored (school email verified at "registration").
+        $internal = User::create([
+            'name' => 'Interne Démo',
+            'email' => 'internal@myskolae.fr',
+            'password' => 'password',
+            'school_email' => 'internal@myskolae.fr',
         ]);
+        $internal->forceFill([
+            'is_internal' => true,
+            'is_external' => false,
+            'email_verified_at' => now(),
+        ])->save();
+
+        // External member: no school anchor, status frozen as external.
+        $external = User::create([
+            'name' => 'Externe Démo',
+            'email' => 'external@example.com',
+            'password' => 'password',
+        ]);
+        $external->forceFill([
+            'is_internal' => false,
+            'is_external' => true,
+            'email_verified_at' => now(),
+        ])->save();
     }
 }

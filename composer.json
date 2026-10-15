@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/vue-starter-kit",
+    "name": "hytale-assos/website",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Member portal for the Hytale Assos association.",
     "keywords": [
         "laravel",
         "framework"
@@ -17,7 +17,8 @@
         "laravel/socialite": "^5.31",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14",
-        "socialiteproviders/discord": "^4.2"
+        "socialiteproviders/discord": "^4.2",
+        "spatie/laravel-prometheus": "^1.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -51,6 +52,7 @@
             "@php artisan key:generate",
             "@php artisan migrate --force",
             "bun install",
+            "bun x vp hooks enable",
             "bun run build"
         ],
         "dev": [

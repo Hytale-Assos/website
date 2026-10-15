@@ -40,18 +40,10 @@ class InvitationStoreRequest extends FormRequest
                         $fail(__('This email can register on its own: invitations are for external guests.'));
                     }
                 },
-                // An email with an account has nothing to be invited to.
+                // School emails register on their own: no invitation needed.
                 function (string $attribute, mixed $value, Closure $fail): void {
-                    if (! is_string($value)) {
-                        return;
-                    }
-
-                    $registered = User::query()
-                        ->where('email_hash', EmailHasher::hash($value))
-                        ->exists();
-
-                    if ($registered) {
-                        $fail(__('This email already has an account.'));
+                    if (is_string($value) && SchoolEmails::isSchoolEmail($value)) {
+                        $fail(__('This email can register on its own: invitations are for external guests.'));
                     }
                 },
                 // One usable invitation per email at a time; the partial
@@ -61,13 +53,34 @@ class InvitationStoreRequest extends FormRequest
                         return;
                     }
 
+                    // Whether the email already has an account or already
+                    // holds an invitation must be indistinguishable: a
+                    // single neutral refusal for both. Only the member's
+                    // OWN pending invitation stays identifiable — it is
+                    // their history, not an oracle on other people.
+                    $ownPending = Invitation::query()
+                        ->where('email_hash', EmailHasher::hash($value))
+                        ->where('inviter_user_id', $this->user()->id)
+                        ->usable()
+                        ->exists();
+
+                    if ($ownPending) {
+                        $fail(__('You have already invited this email and the invitation is still pending.'));
+
+                        return;
+                    }
+
+                    $registered = User::query()
+                        ->where('email_hash', EmailHasher::hash($value))
+                        ->exists();
+
                     $invited = Invitation::query()
                         ->where('email_hash', EmailHasher::hash($value))
                         ->usable()
                         ->exists();
 
-                    if ($invited) {
-                        $fail(__('This email has already been invited.'));
+                    if ($registered || $invited) {
+                        $fail(__('This email cannot receive an invitation.'));
                     }
                 },
             ],

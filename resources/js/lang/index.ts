@@ -8,85 +8,11 @@ export const messages: Record<Locale, Messages> = {
         'meta.description':
             'Association étudiante dédiée à Hytale : serveurs vanilla et moddés, cours et initiation au modding en Java.',
 
-        'nav.about': "L'association",
-        'nav.offer': 'Ce qu’on propose',
-        'nav.event': 'Événement',
-        'nav.join': 'Rejoindre',
-        'nav.login': 'Connexion',
-        'nav.register': 'Inscription',
-        'nav.dashboard': 'Tableau de bord',
-        'nav.discord': 'Discord',
-
-        'hero.badge': 'Association étudiante · ESGI',
-        'hero.title': 'Crée, joue et modde Hytale avec nous.',
-        'hero.subtitle':
-            'Hytale Assos rassemble les passionnés du jeu au sein de l’école. Nous faisons tourner des serveurs vanilla et moddés, et nous t’apprenons à coder tes propres mods en Java — de zéro à ton premier mod.',
-        'hero.ctaPrimary': 'Créer mon compte',
-        'hero.ctaSecondary': 'Découvrir nos serveurs',
-        'hero.discordHint': 'Déjà membre ? Viens échanger sur',
-        'hero.stat1': 'Membres actifs',
-        'hero.stat2': 'Serveurs officiels',
-        'hero.stat3': 'Ateliers par an',
-        'hero.stat4': 'Projets maison',
-
-        'about.title': 'Une asso, une passion : Hytale',
-        'about.subtitle':
-            'Hytale est un jeu d’aventure et de création. Nous en faisons un terrain de jeu collectif au sein de l’ESGI.',
-        'about.p1':
-            'Notre association réunit les étudiants curieux de Hytale, que tu sois un joueur chevronné ou que tu découvres le jeu. Ensemble, on explore l’aventure, on construit, on partage et on apprend.',
-        'about.p2':
-            'Notre spécialité, c’est le modding : nous concevons nos propres mods, nous les testons sur nos serveurs et nous formons les nouveaux à la programmation Java. Une vraie porte d’entrée vers le développement de jeu vidéo.',
-
-        'offer.title': 'Ce qu’on propose',
-        'offer.subtitle':
-            'Des serveurs pour jouer, des ateliers pour apprendre, des événements pour se retrouver.',
-        'offer.vanilla.title': 'Serveurs vanilla',
-        'offer.vanilla.desc':
-            'Survie, construction et événements sur nos serveurs officiels. Un espace sain et encadré pour jouer entre étudiants.',
-        'offer.modded.title': 'Serveurs moddés',
-        'offer.modded.desc':
-            'Découvre les mods maison de l’asso, teste les nouveautés en avant-première et propose tes propres idées.',
-        'offer.java.title': 'Initiation au modding Java',
-        'offer.java.desc':
-            'Des cours et ateliers pour apprendre à coder des mods Hytale en Java, pas à pas, même en partant de zéro.',
-        'offer.events.title': 'Événements & tournois',
-        'offer.events.desc':
-            'Soirées jeux, défis créatifs et rencontres au sein de l’ESGI pour progresser et rigoler ensemble.',
-
-        'event.tag': 'Prochain événement',
-        'event.title': 'Atelier : ton premier mod Hytale',
-        'event.date': 'Date à venir',
-        'event.location': 'Sur le campus ESGI',
-        'event.desc':
-            'Une session d’initiation pour installer ton environnement, comprendre la structure d’un mod et écrire ton premier bloc de code en Java. Aucun prérequis.',
-        'event.cta': 'S’inscrire à l’atelier',
-        'event.footer': 'Places limitées · Ouvert aux débutants',
-
-        'join.title': 'Comment rejoindre',
-        'join.subtitle':
-            'Crée ton compte sur le site, puis viens discuter avec nous sur le Discord.',
-        'join.step1.title': 'Crée ton compte',
-        'join.step1.desc':
-            'Inscris-toi directement sur le site avec ton email pour rejoindre l’association.',
-        'join.step2.title': 'Active ton profil',
-        'join.step2.desc':
-            'Complète ton profil de membre : pseudo, centres d’intérêt, niveau en modding.',
-        'join.step3.title': 'Rejoins le Discord',
-        'join.step3.desc':
-            'Discute, échange et organise tes sessions de jeu et ateliers avec les membres.',
-        'join.cta': 'Créer mon compte',
-        'join.ctaAlt': 'Rejoindre le Discord',
-        'footer.tagline':
-            'Association étudiante autour du jeu Hytale à l’ESGI.',
-        'footer.rights': 'Tous droits réservés.',
-        'footer.builtWith': 'Fait avec passion par les membres.',
-        'footer.discord': 'Discord',
-
         'dash.title': 'Tableau de bord',
         'dash.description':
             'Retrouve tes serveurs, ta whitelist et tes sessions Hytale.',
+        'dash.tabs.points': 'Points Open',
         'dash.tabs.servers': 'Serveurs',
-        'dash.tabs.whitelist': 'Liste blanche',
         'dash.tabs.sessions': 'Mes sessions',
         'dash.tabs.account': 'Mon compte',
         'dash.error.title': 'API Hytale injoignable',
@@ -116,6 +42,7 @@ export const messages: Record<Locale, Messages> = {
             'Rejoins un serveur pour être ajouté à sa whitelist.',
         'dash.servers.empty': 'Aucun serveur disponible pour le moment.',
         'dash.servers.join': 'Rejoindre',
+        'dash.servers.leave': 'Quitter',
         'dash.servers.joined': 'Tu es whitelisté',
         'dash.servers.visit': 'Visiter',
         'dash.servers.count': 'serveurs',
@@ -124,13 +51,6 @@ export const messages: Record<Locale, Messages> = {
         'dash.servers.copied': 'Adresse copiée',
         'dash.servers.enterInGame':
             'Colle cette adresse dans le jeu pour rejoindre le serveur.',
-
-        'dash.whitelist.title': 'Liste blanche',
-        'dash.whitelist.description':
-            'Les serveurs sur lesquels tu es autorisé à jouer.',
-        'dash.whitelist.empty': 'Tu n’es encore whitelisté sur aucun serveur.',
-        'dash.whitelist.leave': 'Quitter',
-        'dash.whitelist.since': 'Depuis',
 
         'dash.sessions.title': 'Mes sessions de jeu',
         'dash.sessions.description':
@@ -154,15 +74,10 @@ export const messages: Record<Locale, Messages> = {
         'dash.maps.title': 'Cartes',
         'dash.maps.description':
             'Visualise la carte des serveurs en temps réel.',
-        'dash.maps.selectServer': 'Choisir un serveur',
-        'dash.maps.serverPlaceholder': 'Sélectionne un serveur',
         'dash.maps.empty': 'La carte arrive bientôt',
         'dash.maps.comingSoon':
-            'Rendu de carte en temps réel (type BlueMap / Dynmap) prochainement disponible. Sélectionne un serveur pour préparer l’affichage.',
+            'Rendu de carte en temps réel (type BlueMap / Dynmap) prochainement disponible.',
         'dash.maps.badge': 'En développement',
-        'dash.maps.cta': 'Bientôt disponible',
-        'dash.maps.noServer': 'Aucun serveur disponible.',
-        'dash.maps.openExternal': 'Ouvrir la carte',
 
         'dash.mods.title': 'Mods',
         'dash.mods.description':
@@ -218,14 +133,13 @@ export const messages: Record<Locale, Messages> = {
 
         'nav.items.dashboard': 'Tableau de bord',
         'nav.items.servers': 'Serveurs',
-        'nav.items.whitelist': 'Liste blanche',
         'nav.items.sessions': 'Sessions',
         'nav.items.maps': 'Cartes',
         'nav.items.mods': 'Mods',
         'nav.items.points': 'Points Open',
         'nav.items.repository': 'Dépôt',
-        'nav.items.documentation': 'Documentation',
         'nav.menu': 'Menu de navigation',
+        'nav.search': 'Recherche',
 
         'settings.title': 'Paramètres',
         'settings.description':
@@ -237,6 +151,7 @@ export const messages: Record<Locale, Messages> = {
         'settings.nav.invitations': 'Invitations',
         'settings.nav.data': 'Données et confidentialité',
         'settings.nav.appearance': 'Apparence',
+        'settings.nav.accessibility': 'Accessibilité',
 
         'settings.profile.head': 'Réglages du profil',
         'settings.profile.title': 'Profil',
@@ -245,6 +160,9 @@ export const messages: Record<Locale, Messages> = {
         'settings.profile.name': 'Nom',
         'settings.profile.namePlaceholder': 'Nom complet',
         'settings.profile.email': 'Adresse email',
+        'settings.profile.currentPassword': 'Mot de passe actuel',
+        'settings.profile.currentPasswordHint':
+            'Confirmez votre mot de passe pour valider le changement d’adresse email.',
         'settings.profile.public': 'Apparaître sur le classement public',
         'settings.profile.publicHint':
             'Seul votre pseudo de jeu peut apparaître publiquement. Votre nom, votre adresse email et vos données d’identification ne sont jamais affichés.',
@@ -270,7 +188,15 @@ export const messages: Record<Locale, Messages> = {
         'settings.identity.schoolEmail': 'Email scolaire',
         'settings.identity.schoolEmailPlaceholder': 'email scolaire',
         'settings.identity.schoolEmailHint':
-            'Votre email scolaire fixe votre statut interne ; il ne le modifie pas et ne sert pas à se connecter.',
+            'Votre email scolaire fixe votre statut interne ; il ne le modifie pas et ne sert pas à se connecter. Il est fixé à l’inscription et ne peut être changé qu’en confirmant un lien envoyé à la nouvelle adresse.',
+        'settings.identity.newSchoolEmail': 'Nouvelle adresse scolaire',
+        'settings.identity.newSchoolEmailPlaceholder':
+            'nouvelle adresse @domaine-ecole',
+        'settings.identity.newSchoolEmailHint':
+            'Pour changer d’adresse scolaire : un lien de confirmation vous sera envoyé à cette nouvelle adresse. Sans confirmation, l’adresse actuelle reste inchangée.',
+        'settings.identity.currentPassword': 'Mot de passe actuel',
+        'settings.identity.currentPasswordHint':
+            'Confirmez votre mot de passe pour demander le changement d’adresse scolaire.',
         'settings.identity.grade': 'Niveau',
         'settings.identity.gradePlaceholder': 'Sélectionnez votre niveau',
 
@@ -307,6 +233,9 @@ export const messages: Record<Locale, Messages> = {
             'Votre identité Discord est fournie par Discord OAuth.',
         'settings.accounts.link': 'Lier',
         'settings.accounts.unlink': 'Délier',
+        'settings.accounts.unlinkTitle': 'Délier votre compte {provider} ?',
+        'settings.accounts.unlinkText':
+            'Votre compte {provider} ne sera plus associé à votre profil. Saisissez votre mot de passe pour confirmer.',
 
         'settings.invitations.title': 'Invitations',
         'settings.invitations.description':
@@ -328,6 +257,20 @@ export const messages: Record<Locale, Messages> = {
         'settings.appearance.title': 'Réglages d’apparence',
         'settings.appearance.description':
             'Mettez à jour les paramètres d’apparence de votre compte',
+
+        'settings.accessibility.head': 'Accessibilité',
+        'settings.accessibility.title': 'Accessibilité',
+        'settings.accessibility.description':
+            'Ajustez la lecture du site à vos besoins',
+
+        'settings.accessibility.font.title': 'Taille de la police',
+        'settings.accessibility.font.description':
+            'Système suit la taille configurée dans votre navigateur ; les autres choix l’appliquent à tout le site.',
+        'accessibility.font.system': 'Système',
+
+        'settings.accessibility.dyslexic.title': 'Police adaptée à la dyslexie',
+        'settings.accessibility.dyslexic.description':
+            'Remplace la police du site par OpenDyslexic, conçue pour faciliter la lecture des personnes dyslexiques.',
         'appearance.light': 'Clair',
         'appearance.dark': 'Sombre',
         'appearance.system': 'Système',
@@ -385,6 +328,12 @@ export const messages: Record<Locale, Messages> = {
             'Voulez-vous vraiment supprimer votre compte ?',
         'deleteUser.confirmText':
             'Une fois votre compte supprimé, toutes ses ressources et données seront également définitivement supprimées. Saisissez votre mot de passe pour confirmer que vous souhaitez supprimer définitivement votre compte.',
+        'deleteUser.irreversible':
+            'Impossible de récupérer votre compte après cette action.',
+        'deleteUser.confirmPhraseLabel':
+            'Pour confirmer, recopiez la phrase : « {phrase} »',
+        'deleteUser.confirmPhrase': 'je confirme la suppression de mon compte',
+        'deleteUser.waiting': 'Confirmation possible dans {count} s',
         'deleteUser.password': 'Mot de passe',
 
         'twoFactor.title': 'Authentification à deux facteurs',
@@ -516,85 +465,11 @@ export const messages: Record<Locale, Messages> = {
         'meta.description':
             'Student club for Hytale: vanilla and modded servers, plus Java modding lessons for beginners.',
 
-        'nav.about': 'The club',
-        'nav.offer': 'What we offer',
-        'nav.event': 'Event',
-        'nav.join': 'Join us',
-        'nav.login': 'Log in',
-        'nav.register': 'Register',
-        'nav.dashboard': 'Dashboard',
-        'nav.discord': 'Discord',
-
-        'hero.badge': 'Student club · ESGI',
-        'hero.title': 'Build, play and mod Hytale with us.',
-        'hero.subtitle':
-            'Hytale Club brings together students who love the game. We run vanilla and modded servers, and we teach you how to code your own mods in Java — from scratch to your first mod.',
-        'hero.ctaPrimary': 'Create my account',
-        'hero.ctaSecondary': 'Explore our servers',
-        'hero.discordHint': 'Already a member? Come chat on',
-        'hero.stat1': 'Active members',
-        'hero.stat2': 'Official servers',
-        'hero.stat3': 'Workshops a year',
-        'hero.stat4': 'In-house projects',
-
-        'about.title': 'One club, one passion: Hytale',
-        'about.subtitle':
-            'Hytale is a game of adventure and creation. We turn it into a shared playground at ESGI.',
-        'about.p1':
-            'Our club gathers students who are curious about Hytale, whether you are a veteran player or just discovering the game. Together we explore, build, share and learn.',
-        'about.p2':
-            'Our specialty is modding: we design our own mods, test them on our servers and train newcomers in Java programming. A real gateway into game development.',
-
-        'offer.title': 'What we offer',
-        'offer.subtitle':
-            'Servers to play on, workshops to learn, events to meet up.',
-        'offer.vanilla.title': 'Vanilla servers',
-        'offer.vanilla.desc':
-            'Survival, building and events on our official servers. A friendly, moderated space to play with fellow students.',
-        'offer.modded.title': 'Modded servers',
-        'offer.modded.desc':
-            'Discover the club’s in-house mods, try new features early and pitch your own ideas.',
-        'offer.java.title': 'Java modding 101',
-        'offer.java.desc':
-            'Lessons and workshops to learn how to code Hytale mods in Java, step by step, even from zero.',
-        'offer.events.title': 'Events & tournaments',
-        'offer.events.desc':
-            'Game nights, creative challenges and meetups at ESGI to level up and have fun together.',
-
-        'event.tag': 'Next event',
-        'event.title': 'Workshop: your first Hytale mod',
-        'event.date': 'Date coming soon',
-        'event.location': 'On the ESGI campus',
-        'event.desc':
-            'A beginner session to set up your environment, understand a mod’s structure and write your first line of Java code. No prerequisites.',
-        'event.cta': 'Sign up for the workshop',
-        'event.footer': 'Limited seats · Open to beginners',
-
-        'join.title': 'How to join',
-        'join.subtitle':
-            'Create your account on the site, then come chat with us on Discord.',
-        'join.step1.title': 'Create your account',
-        'join.step1.desc':
-            'Sign up right here on the site with your email to join the club.',
-        'join.step2.title': 'Set up your profile',
-        'join.step2.desc':
-            'Complete your member profile: nickname, interests, modding level.',
-        'join.step3.title': 'Join the Discord',
-        'join.step3.desc':
-            'Chat, connect and organise your play and workshop sessions with members.',
-        'join.cta': 'Create my account',
-        'join.ctaAlt': 'Join the Discord',
-
-        'footer.tagline': 'Student club around the game Hytale at ESGI.',
-        'footer.rights': 'All rights reserved.',
-        'footer.builtWith': 'Made with passion by our members.',
-        'footer.discord': 'Discord',
-
         'dash.title': 'Dashboard',
         'dash.description':
             'Find your servers, your whitelist and your Hytale sessions.',
+        'dash.tabs.points': 'Open Points',
         'dash.tabs.servers': 'Servers',
-        'dash.tabs.whitelist': 'Whitelist',
         'dash.tabs.sessions': 'My sessions',
         'dash.tabs.account': 'My account',
         'dash.error.title': 'Hytale API unreachable',
@@ -624,6 +499,7 @@ export const messages: Record<Locale, Messages> = {
             'Join a server to be added to its whitelist.',
         'dash.servers.empty': 'No server available yet.',
         'dash.servers.join': 'Join',
+        'dash.servers.leave': 'Leave',
         'dash.servers.joined': 'You are whitelisted',
         'dash.servers.visit': 'Visit',
         'dash.servers.count': 'servers',
@@ -632,12 +508,6 @@ export const messages: Record<Locale, Messages> = {
         'dash.servers.copied': 'Address copied',
         'dash.servers.enterInGame':
             'Paste this address in-game to join the server.',
-
-        'dash.whitelist.title': 'Whitelist',
-        'dash.whitelist.description': 'The servers you are allowed to play on.',
-        'dash.whitelist.empty': 'You are not whitelisted on any server yet.',
-        'dash.whitelist.leave': 'Leave',
-        'dash.whitelist.since': 'Since',
 
         'dash.sessions.title': 'My gaming sessions',
         'dash.sessions.description': 'Your connection history on servers.',
@@ -659,15 +529,10 @@ export const messages: Record<Locale, Messages> = {
 
         'dash.maps.title': 'Maps',
         'dash.maps.description': 'View servers maps in real time.',
-        'dash.maps.selectServer': 'Choose a server',
-        'dash.maps.serverPlaceholder': 'Select a server',
         'dash.maps.empty': 'The map is coming soon',
         'dash.maps.comingSoon':
-            'Real-time map rendering (BlueMap / Dynmap style) available soon. Select a server to prepare the view.',
+            'Real-time map rendering (BlueMap / Dynmap style) available soon.',
         'dash.maps.badge': 'In development',
-        'dash.maps.cta': 'Coming soon',
-        'dash.maps.noServer': 'No server available.',
-        'dash.maps.openExternal': 'Open the map',
 
         'dash.mods.title': 'Mods',
         'dash.mods.description': 'The mods created by club members.',
@@ -722,14 +587,13 @@ export const messages: Record<Locale, Messages> = {
 
         'nav.items.dashboard': 'Dashboard',
         'nav.items.servers': 'Servers',
-        'nav.items.whitelist': 'Whitelist',
         'nav.items.sessions': 'Sessions',
         'nav.items.maps': 'Maps',
         'nav.items.mods': 'Mods',
         'nav.items.points': 'Open Points',
         'nav.items.repository': 'Repository',
-        'nav.items.documentation': 'Documentation',
         'nav.menu': 'Navigation menu',
+        'nav.search': 'Search',
 
         'settings.title': 'Settings',
         'settings.description': 'Manage your profile and account settings',
@@ -740,6 +604,7 @@ export const messages: Record<Locale, Messages> = {
         'settings.nav.invitations': 'Invitations',
         'settings.nav.data': 'Data & privacy',
         'settings.nav.appearance': 'Appearance',
+        'settings.nav.accessibility': 'Accessibility',
 
         'settings.profile.head': 'Profile settings',
         'settings.profile.title': 'Profile',
@@ -747,6 +612,9 @@ export const messages: Record<Locale, Messages> = {
         'settings.profile.name': 'Name',
         'settings.profile.namePlaceholder': 'Full name',
         'settings.profile.email': 'Email address',
+        'settings.profile.currentPassword': 'Current password',
+        'settings.profile.currentPasswordHint':
+            'Confirm your password to approve the email address change.',
         'settings.profile.public': 'Appear on the public leaderboard',
         'settings.profile.publicHint':
             'Only your game nickname can appear publicly. Your name, email address, and identification data are never shown.',
@@ -771,7 +639,15 @@ export const messages: Record<Locale, Messages> = {
         'settings.identity.schoolEmail': 'School email',
         'settings.identity.schoolEmailPlaceholder': 'school email',
         'settings.identity.schoolEmailHint':
-            'Your school email anchors your internal status; it does not change it and is not used to sign in.',
+            'Your school email anchors your internal status; it does not change it and is not used to sign in. It is set at registration and can only be changed by confirming a link sent to the new address.',
+        'settings.identity.newSchoolEmail': 'New school email address',
+        'settings.identity.newSchoolEmailPlaceholder':
+            'new @school-domain address',
+        'settings.identity.newSchoolEmailHint':
+            'To change your school email: a confirmation link will be sent to this new address. Until confirmed, your current address stays unchanged.',
+        'settings.identity.currentPassword': 'Current password',
+        'settings.identity.currentPasswordHint':
+            'Confirm your password to request the school email change.',
         'settings.identity.grade': 'Grade level',
         'settings.identity.gradePlaceholder': 'Select your grade level',
 
@@ -808,6 +684,9 @@ export const messages: Record<Locale, Messages> = {
             'Your Discord identity is provided by Discord OAuth.',
         'settings.accounts.link': 'Link',
         'settings.accounts.unlink': 'Unlink',
+        'settings.accounts.unlinkTitle': 'Unlink your {provider} account?',
+        'settings.accounts.unlinkText':
+            'Your {provider} account will no longer be linked to your profile. Enter your password to confirm.',
 
         'settings.invitations.title': 'Invitations',
         'settings.invitations.description':
@@ -829,6 +708,20 @@ export const messages: Record<Locale, Messages> = {
         'settings.appearance.title': 'Appearance settings',
         'settings.appearance.description':
             'Update the appearance settings for your account',
+
+        'settings.accessibility.head': 'Accessibility',
+        'settings.accessibility.title': 'Accessibility',
+        'settings.accessibility.description':
+            'Adjust the site to your reading needs',
+
+        'settings.accessibility.font.title': 'Font size',
+        'settings.accessibility.font.description':
+            'System follows the size configured in your browser; the other choices apply it across the whole site.',
+        'accessibility.font.system': 'System',
+
+        'settings.accessibility.dyslexic.title': 'Dyslexia-friendly font',
+        'settings.accessibility.dyslexic.description':
+            'Replaces the site font with OpenDyslexic, designed to make reading easier for dyslexic readers.',
         'appearance.light': 'Light',
         'appearance.dark': 'Dark',
         'appearance.system': 'System',
@@ -885,6 +778,12 @@ export const messages: Record<Locale, Messages> = {
             'Are you sure you want to delete your account?',
         'deleteUser.confirmText':
             'Once your account is deleted, all of its resources and data will also be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
+        'deleteUser.irreversible':
+            'Your account cannot be recovered after this action.',
+        'deleteUser.confirmPhraseLabel':
+            'To confirm, type the phrase: "{phrase}"',
+        'deleteUser.confirmPhrase': 'I confirm the deletion of my account',
+        'deleteUser.waiting': 'You can confirm in {count}s',
         'deleteUser.password': 'Password',
 
         'twoFactor.title': 'Two-factor authentication',
