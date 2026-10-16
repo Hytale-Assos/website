@@ -2,14 +2,17 @@ import { usePage } from '@inertiajs/vue3';
 import { locale } from '@/composables/useLocale';
 
 /**
- * Format times in the application timezone shared by the server, not the
- * browser timezone. Otherwise the server-rendered markup and the freshly
- * hydrated client disagree on every timestamp, which desyncs Vue's DOM and
- * can crash the keyed diff during navigation.
+ * Instant timestamps come from the server in UTC and are rendered in the
+ * visitor's own timezone, so a session shown at 12:00Z reads as the local
+ * time of the machine browsing the site. Server-side rendering is disabled
+ * (`INERTIA_SSR_ENABLED=false`), so there is no markup to keep in sync;
+ * outside a browser we fall back to the application timezone.
  */
 const timeZone = (): string =>
-    (usePage().props.app as { timezone?: string } | undefined)?.timezone ??
-    Intl.DateTimeFormat().resolvedOptions().timeZone;
+    typeof window === 'undefined'
+        ? ((usePage().props.app as { timezone?: string } | undefined)
+              ?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone)
+        : Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 export function formatDateTime(value: string | null): string {
     if (!value) {
