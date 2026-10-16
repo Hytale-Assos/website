@@ -4,7 +4,7 @@ use App\Hytale\Contracts\HytaleApiClient;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
-test('a server registered with a normal url keeps its url intact in the servers page props', function (string $url) {
+test('a server registered with a safe url keeps its url intact in the servers page props', function (string $url) {
     $user = User::factory()->create();
 
     app(HytaleApiClient::class)->createServer(config('hytale.module_id'), 'Safe Server', $url);
@@ -28,6 +28,8 @@ test('a server registered with a normal url keeps its url intact in the servers 
     expect($server)->not->toBeNull();
     expect($server['url'])->toBe($url);
 })->with([
+    'scheme-less join address' => ['play.hytale.ajt.ovh'],
+    'scheme-less join address with port' => ['play.hytale.ajt.ovh:25565'],
     'http url' => ['http://play.example.com'],
     'https url' => ['https://play.example.com/server/1'],
 ]);

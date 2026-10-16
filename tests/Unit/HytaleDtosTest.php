@@ -69,6 +69,35 @@ it('hydrates a server from a well-formed payload', function () {
         ->and($server->updatedAt)->toEqual(Carbon::parse('2026-09-16T09:15:00Z'));
 });
 
+it('keeps a scheme-less join address intact when hydrating a server', function (string $url) {
+    $server = HytaleServer::fromArray(serverPayload(['url' => $url]));
+
+    expect($server->url)->toBe($url);
+})->with([
+    'scheme-less host' => ['play.hytale.ajt.ovh'],
+    'scheme-less host with port' => ['play.hytale.ajt.ovh:25565'],
+]);
+
+it('normalizes a dangerous scheme url to an empty string when hydrating a server', function (string $url) {
+    $server = HytaleServer::fromArray(serverPayload(['url' => $url]));
+
+    expect($server->url)->toBe('');
+})->with([
+    'javascript scheme' => ['javascript:alert(1)'],
+    'data uri' => ['data:text/html;base64,SGVsbG8gd29ybGQ='],
+    'mailto scheme' => ['mailto:admin@example.com'],
+]);
+
+it('normalizes an empty or non-string url to an empty string when hydrating a server', function (mixed $url) {
+    $server = HytaleServer::fromArray(serverPayload(['url' => $url]));
+
+    expect($server->url)->toBe('');
+})->with([
+    'empty string' => [''],
+    'null' => [null],
+    'integer' => [12345],
+]);
+
 it('hydrates a module from a well-formed payload', function () {
     $module = Module::fromArray(modulePayload());
 

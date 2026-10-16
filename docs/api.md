@@ -54,7 +54,7 @@ Every error returns JSON:
   "id": "01a0a967-cbaa-7746-b9e8-b16daee6d50b",
   "module_id": "01a0a967-cb39-76c1-a30a-4983d3633604",
   "name": "survie",
-  "url": "https://hytale.example/survie",
+  "url": "survie.hytale.ajt.ovh",
   "created_at": "2026-09-16T08:49:06Z",
   "updated_at": "2026-09-16T08:49:06Z"
 }
@@ -178,14 +178,14 @@ create for itself (`module_id` = its own id); admin may create for any module.
 - **Input**:
 
 ```json
-{ "module_id": "01a0a967-...", "name": "survie", "url": "https://hytale.example/survie" }
+{ "module_id": "01a0a967-...", "name": "survie", "url": "survie.hytale.ajt.ovh" }
 ```
 
 | Field | Type | Required |
 |---|---|---|
 | `module_id` | UUID | yes |
 | `name` | string | yes (unique per module) |
-| `url` | string | yes |
+| `url` | string | yes (join address `host[:port]`; an http(s) URL is also accepted) |
 
 - **Output 201**: `HytaleServerView`.
 - **Errors**: 400 (empty field), 403, 409 (name already taken for this module).
