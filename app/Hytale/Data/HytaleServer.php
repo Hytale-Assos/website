@@ -50,9 +50,10 @@ final readonly class HytaleServer
     }
 
     /**
-     * Keep only http(s) URLs: a server url comes from the core and is
-     * rendered as a link, so any other scheme (javascript:, data:, ...) is
-     * neutralized to an empty string instead of becoming clickable.
+     * A server url is a join address (host or host:port) with no scheme, but
+     * the core may also hand back an http(s) URL. Either is kept; any other
+     * scheme (javascript:, data:, ...) is neutralized to an empty string so
+     * it can never become a clickable link.
      */
     private static function toUrl(mixed $value): string
     {
@@ -62,6 +63,6 @@ final readonly class HytaleServer
 
         $scheme = parse_url($value, PHP_URL_SCHEME);
 
-        return in_array($scheme, ['http', 'https'], true) ? $value : '';
+        return $scheme === null || in_array($scheme, ['http', 'https'], true) ? $value : '';
     }
 }
